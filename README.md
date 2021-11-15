@@ -22,7 +22,7 @@ This plugin allow us to get path of top-level shared folder (Downloads, DCIM, Vi
 final sharedDirectory = 
     await getExternalStoragePublicDirectory(EnvironmentDirectory.downloads); 
 
-print(sharedDirectory.path); /// /storage/emulated/0/Download
+print(sharedDirectory.path); /// `/storage/emulated/0/Download`
 ```
 
 - Get external/shared folders path from [`MediaStore` Android API](https://developer.android.com/training/data-storage/shared/media)
@@ -32,7 +32,7 @@ print(sharedDirectory.path); /// /storage/emulated/0/Download
 final sharedDirectory = 
     await getMediaStoreContentDirectory(MediaStoreCollection.downloads);
 
-print(sharedDirectory.path); /// /storage/emulated/0/Download
+print(sharedDirectory.path); /// `/external/downloads`
 ```
 
 - Get root Android path, note that is a read-only folder
@@ -41,7 +41,7 @@ print(sharedDirectory.path); /// /storage/emulated/0/Download
 /// Get Android root folder
 final sharedDirectory = await getRootDirectory();
 
-print(sharedDirectory.path); /// /system
+print(sharedDirectory.path); /// `/system`
 ```
 
 ### Android API's
