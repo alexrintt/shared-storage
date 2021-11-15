@@ -1,6 +1,6 @@
 name: shared_storage
 description: Flutter plugin to get internal and external public directory path.
-version: 0.1.0+1
+version: 0.1.0
 homepage: https://github.com/LaksCastro/shared-storage
 
 environment:
