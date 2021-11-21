@@ -164,6 +164,25 @@ Future<Directory?> getExternalStoragePublicDirectory(
   return Directory(publicDir);
 }
 
+/// Return the primary shared/external storage directory.
+/// This directory may not currently be accessible
+/// if it has been mounted by the user on their
+/// computer, has been removed from the device,
+/// or some other problem has happened.
+/// You can determine its current state with getExternalStorageState().
+///
+/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getExternalStorageDirectory())
+Future<Directory?> getExternalStorageDirectory() async {
+  const kGetExternalStorageDirectory = 'getExternalStorageDirectory';
+
+  final publicDir =
+      await _kChannel.invokeMethod<String>(kGetExternalStorageDirectory);
+
+  if (publicDir == null) return null;
+
+  return Directory(publicDir);
+}
+
 /// The contract between the media provider and applications.
 ///
 /// Can get the absolute path given a [collection]

@@ -1,6 +1,6 @@
-# external_path_example
+# sharedstorage_example
 
-Demonstrates how to use the external_path plugin.
+Demonstrates how to use the shared_storage plugin.
 
 ## Getting Started
 

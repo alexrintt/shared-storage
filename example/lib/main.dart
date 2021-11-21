@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_storage/shared_storage.dart';
 
 void main() => runApp(const App());
@@ -26,9 +27,20 @@ class _AppState extends State<App> {
   }
 
   Future<void> _getPublicDirectoryPath() async {
-    /// [/storage/emulated/0/Download]
-    topLevelSharedDirectory =
-        await getExternalStoragePublicDirectory(EnvironmentDirectory.downloads);
+    /// `/storage/emulated/0`
+    topLevelSharedDirectory = await getExternalStoragePublicDirectory(
+        const EnvironmentDirectory.custom('CustomExternalStorageFolder'));
+
+    /// If you want to write on the shared storage path, remember to
+    /// add [permission_handler] package
+    await Permission.storage.request();
+
+    if (topLevelSharedDirectory != null) {
+      /// Remember to add `android:requestLegacyExternalStorage="true"`
+      /// to your Android manifest, otherwise this write request will fail
+      await Directory(topLevelSharedDirectory!.absolute.path)
+          .create(recursive: true);
+    }
 
     setState(() => {});
   }

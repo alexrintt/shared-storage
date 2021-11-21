@@ -1,8 +1,9 @@
 package io.lakscastro.sharedstorage
 
 import android.os.Environment
+import java.io.File
 
-fun environmentDirectoryOf(directory: String): String {
+fun environmentDirectoryOf(directory: String): File {
   val mapper = mapOf(
     "EnvironmentDirectory.Alarms" to Environment.DIRECTORY_ALARMS,
     "EnvironmentDirectory.DCIM" to Environment.DIRECTORY_DCIM,
@@ -15,5 +16,5 @@ fun environmentDirectoryOf(directory: String): String {
     "EnvironmentDirectory.Ringtones" to Environment.DIRECTORY_RINGTONES
   )
 
-  return mapper[directory] ?: directory
+  return Environment.getExternalStoragePublicDirectory(mapper[directory] ?: directory)
 }

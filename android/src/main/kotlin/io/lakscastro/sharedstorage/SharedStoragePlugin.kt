@@ -25,6 +25,8 @@ class SharedStoragePlugin : FlutterPlugin, MethodCallHandler {
     const val METHOD_CHANNEL_NAME = "io.lakscastro.plugins/sharedstorage"
 
     const val GET_EXTERNAL_STORAGE_PUBLIC_DIRECTORY = "getExternalStoragePublicDirectory"
+    const val GET_EXTERNAL_STORAGE_DIRECTORY = "getExternalStorageDirectory"
+
     const val GET_MEDIA_STORE_CONTENT_DIRECTORY = "getMediaStoreContentDirectory"
     const val GET_ROOT_DIRECTORY = "getRootDirectory"
   }
@@ -42,13 +44,16 @@ class SharedStoragePlugin : FlutterPlugin, MethodCallHandler {
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     when (call.method) {
       GET_EXTERNAL_STORAGE_PUBLIC_DIRECTORY -> getExternalStoragePublicDirectory(result, call.argument<String?>("directory") as String)
+      GET_EXTERNAL_STORAGE_DIRECTORY -> getExternalStorageDirectory(result)
       GET_MEDIA_STORE_CONTENT_DIRECTORY -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) getMediaStoreContentDirectory(result, call.argument<String?>("collection") as String) else result.notImplemented()
       GET_ROOT_DIRECTORY -> getRootDirectory(result)
       else -> result.notImplemented()
     }
   }
 
-  private fun getExternalStoragePublicDirectory(result: Result, directory: String) = result.success(Environment.getExternalStoragePublicDirectory(environmentDirectoryOf(directory)).absolutePath)
+  private fun getExternalStoragePublicDirectory(result: Result, directory: String) = result.success(environmentDirectoryOf(directory).absolutePath)
+
+  private fun getExternalStorageDirectory(result: Result) = result.success(Environment.getExternalStorageDirectory().absolutePath)
 
   @RequiresApi(Build.VERSION_CODES.Q)
   private fun getMediaStoreContentDirectory(result: Result, collection: String) = result.success(mediaStoreOf(collection))

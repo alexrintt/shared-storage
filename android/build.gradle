@@ -1,4 +1,4 @@
-group 'com.pinciat.external_path'
+group 'io.lakscastro.sharedstorage'
 version '1.0-SNAPSHOT'
 
 buildscript {
