@@ -1,11 +1,25 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_storage/shared_storage.dart';
+import 'package:shared_storage_example/persisted_uri_card.dart';
 
-void main() => runApp(const App());
+/// TODO: Add examples using [Environment] and [MediaStore] API
+void main() => runApp(const Root());
+
+class Root extends StatefulWidget {
+  const Root({Key? key}) : super(key: key);
+
+  @override
+  _RootState createState() => _RootState();
+}
+
+class _RootState extends State<Root> {
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(home: App());
+  }
+}
 
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -15,45 +29,80 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  Directory? topLevelSharedDirectory;
-
-  String? get _absolutePath => topLevelSharedDirectory?.absolute.path;
+  List<UriPermission>? persistedPermissionUris;
 
   @override
   void initState() {
     super.initState();
 
-    _getPublicDirectoryPath();
+    _loadPersistedUriPermissions();
   }
 
-  Future<void> _getPublicDirectoryPath() async {
-    /// `/storage/emulated/0`
-    topLevelSharedDirectory = await getExternalStoragePublicDirectory(
-        const EnvironmentDirectory.custom('CustomExternalStorageFolder'));
-
-    /// If you want to write on the shared storage path, remember to
-    /// add [permission_handler] package
-    await Permission.storage.request();
-
-    if (topLevelSharedDirectory != null) {
-      /// Remember to add `android:requestLegacyExternalStorage="true"`
-      /// to your Android manifest, otherwise this write request will fail
-      await Directory(topLevelSharedDirectory!.absolute.path)
-          .create(recursive: true);
-    }
+  Future<void> _loadPersistedUriPermissions() async {
+    persistedPermissionUris = await persistedUriPermissions();
 
     setState(() => {});
   }
 
+  void _openDocumentTree() async {
+    /// Prompt user with a folder picker (Available for Android 5.0+)
+    await openDocumentTree();
+
+    /// TODO: Add broadcast listener to be aware when a Uri permission changes
+    await _loadPersistedUriPermissions();
+  }
+
+  Widget _buildNoFolderAllowedYetWarning() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Center(
+        child: Text(
+          'No folders allowed yet',
+          style: TextStyle(
+            color: const Color(0xFF000000).withOpacity(.2),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('SharedStorage Sample'),
-        ),
-        body: Center(
-          child: Text(_absolutePath ?? 'Loading...'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('SharedStorage Sample'),
+      ),
+      body: RefreshIndicator(
+        onRefresh: _loadPersistedUriPermissions,
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(12),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Center(
+                      child: TextButton(
+                        onPressed: _openDocumentTree,
+                        child: const Text('New allowed folder'),
+                      ),
+                    ),
+                    if (persistedPermissionUris != null)
+                      if (persistedPermissionUris!.isEmpty)
+                        _buildNoFolderAllowedYetWarning()
+                      else
+                        for (final permissionUri in persistedPermissionUris!)
+                          PersistedUriCard(
+                            permissionUri: permissionUri,
+                            onChange: _loadPersistedUriPermissions,
+                          )
+                    else
+                      const Text('Loading...'),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
