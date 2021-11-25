@@ -12,4 +12,4 @@ jobs:
       - uses: dart-lang/setup-dart@v1
 
       - name: Run Pub Publish
-        run: dart pub publish --dry-run --force
+        run: dart pub publish --force
