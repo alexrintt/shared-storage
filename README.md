@@ -65,7 +65,7 @@ print(newDocumentFile);
 /// You have [write] and [read] access to all persisted [URI]s
 final listOfPersistedUris = await persistedUriPermissions();
 
-print(newDocumentFile);
+print(listOfPersistedUris);
 ```
 
 - Revoke a current persisted [URI], from `SAF` API
@@ -76,8 +76,6 @@ final uri = ...;
 
 /// After calling this, you no longer has access to the [uri]
 await releasePersistableUriPermission(uri);
-
-print(newDocumentFile);
 ```
 
 - Convenient method to know if a given [uri] is a persisted `uri` ("persisted uri" means that you have `write` and `read` access to the `uri` even if devices reboot)
@@ -89,8 +87,6 @@ final uri = ...;
 
 /// Verify if you have [write] and [read] access to a given [uri]
 final isPersisted = await isPersistedUri(uri);
-
-print(newDocumentFile);
 ```
 
 ### Android API's
