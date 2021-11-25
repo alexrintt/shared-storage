@@ -1,4 +1,4 @@
-group 'com.pinciat.external_path'
+group 'io.lakscastro.sharedstorage'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -37,4 +37,5 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.documentfile:documentfile:1.0.1"
 }
