@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - release
+      - master
 
 jobs:
   publish:
