@@ -1,0 +1,15 @@
+on: 
+  push:
+    branches:
+      - release
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Run Pub Publish
+        run: dart pub publish --dry-run --force
