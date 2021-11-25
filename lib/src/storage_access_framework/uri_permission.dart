@@ -4,11 +4,26 @@
 ///
 /// [Refer to details](https://developer.android.com/reference/android/content/UriPermission)
 class UriPermission {
+  /// Whether an [UriPermission] is created with [`FLAG_GRANT_READ_URI_PERMISSION`](https://developer.android.com/reference/android/content/Intent#FLAG_GRANT_READ_URI_PERMISSION)
   final bool isReadPermission;
+
+  /// Whether an [UriPermission] is created with [`FLAG_GRANT_WRITE_URI_PERMISSION`](https://developer.android.com/reference/android/content/Intent#FLAG_GRANT_WRITE_URI_PERMISSION)
   final bool isWritePermission;
+
+  /// Return the time when this permission was first persisted, in milliseconds
+  /// since January 1, 1970 00:00:00.0 UTC. Returns `INVALID_TIME` if
+  /// not persisted.
+  ///
+  /// [Refer to details](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/content/UriPermission.java#77)
   final int persistedTime;
+
+  /// Return the Uri this permission pertains to.
+  ///
+  /// [Refer to details](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/content/UriPermission.java#56)
   final Uri uri;
 
+  /// Even we allow create instances of this class avoid it and use
+  /// `persistedUriPermissions` API instead
   const UriPermission(
       {required this.isReadPermission,
       required this.isWritePermission,
