@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:shared_storage/src/media_store/media_store_collection.dart';
 
-import '../method_channel.dart';
+import '../channels.dart';
 
 /// The contract between the media provider and applications.
 ///
@@ -16,7 +16,7 @@ Future<Directory?> getMediaStoreContentDirectory(
 
   final args = <String, String>{kCollectionArg: '$collection'};
 
-  final publicDir = await kChannel.invokeMethod<String?>(
+  final publicDir = await kMediaStoreChannel.invokeMethod<String?>(
       kGetMediaStoreContentDirectory, args);
 
   if (publicDir == null) return null;

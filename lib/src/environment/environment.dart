@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import '../method_channel.dart';
+import '../channels.dart';
 import 'environment_directory.dart';
 
 /// Return root of the "system" partition holding the core Android OS.
@@ -12,7 +12,8 @@ import 'environment_directory.dart';
 Future<Directory?> getRootDirectory() async {
   const kGetRootDirectory = 'getRootDirectory';
 
-  final publicDir = await kChannel.invokeMethod<String?>(kGetRootDirectory);
+  final publicDir =
+      await kEnvironmentChannel.invokeMethod<String?>(kGetRootDirectory);
 
   if (publicDir == null) return null;
 
@@ -42,7 +43,7 @@ Future<Directory?> getExternalStoragePublicDirectory(
 
   final args = <String, String>{kDirectoryArg: '$directory'};
 
-  final publicDir = await kChannel.invokeMethod<String?>(
+  final publicDir = await kEnvironmentChannel.invokeMethod<String?>(
       kGetExternalStoragePublicDirectory, args);
 
   if (publicDir == null) return null;
@@ -61,8 +62,8 @@ Future<Directory?> getExternalStoragePublicDirectory(
 Future<Directory?> getExternalStorageDirectory() async {
   const kGetExternalStorageDirectory = 'getExternalStorageDirectory';
 
-  final publicDir =
-      await kChannel.invokeMethod<String>(kGetExternalStorageDirectory);
+  final publicDir = await kEnvironmentChannel
+      .invokeMethod<String>(kGetExternalStorageDirectory);
 
   if (publicDir == null) return null;
 

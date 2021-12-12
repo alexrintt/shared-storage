@@ -51,7 +51,7 @@ class UriPermission {
     );
   }
 
-  Map<String, dynamic> toMap(Map<String, dynamic> map) {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'isReadPermission': isReadPermission,
       'isWritePermission': isWritePermission,

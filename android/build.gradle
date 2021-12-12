@@ -38,4 +38,8 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.documentfile:documentfile:1.0.1"
+
+    /// Allow usage of `CoroutineScope` to run heavy
+    // computation and queries outside the Main (UI) Thread
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1"
 }

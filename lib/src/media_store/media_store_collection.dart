@@ -41,5 +41,5 @@ class MediaStoreCollection {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'MediaStoreCollection.$id';
+  String toString() => id;
 }
