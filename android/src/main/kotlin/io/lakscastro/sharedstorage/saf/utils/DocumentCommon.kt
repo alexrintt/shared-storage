@@ -2,20 +2,34 @@ package io.lakscastro.sharedstorage.saf.utils
 
 import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
+import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
+import java.io.ByteArrayOutputStream
 import java.io.Closeable
 
+
 /// Generate the `DocumentFile` reference from string `uri`
+@RequiresApi(Build.VERSION_CODES.N)
 fun documentFromTreeUri(context: Context, uri: String): DocumentFile? =
   documentFromTreeUri(context, Uri.parse(uri))
 
 /// Generate the `DocumentFile` reference from URI `uri`
+@RequiresApi(Build.VERSION_CODES.N)
 fun documentFromTreeUri(context: Context, uri: Uri): DocumentFile? =
-  DocumentFile.fromTreeUri(context, uri)
+  DocumentFile.fromTreeUri(
+    context,
+    if (DocumentsContract.isTreeUri(uri))
+      uri
+    else DocumentsContract.buildDocumentUriUsingTree(
+      uri,
+      DocumentsContract.getDocumentId(uri)
+    )
+  )
 
 /// Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
 /// from plugin results, like:
@@ -56,9 +70,13 @@ fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
 /// }
 /// ```
 @RequiresApi(Build.VERSION_CODES.KITKAT)
-fun createCursorRowMap(rootUri: Uri, parentUri: Uri, data: Map<String, Any>?): Map<String, Any>? {
-  if (data == null) return null
-
+fun createCursorRowMap(
+  rootUri: Uri,
+  parentUri: Uri,
+  uri: Uri,
+  data: Map<String, Any>,
+  isDirectory: Boolean?
+): Map<String, Any> {
   val values = DocumentFileColumn.values()
 
   val formattedData = mutableMapOf<String, Any>()
@@ -75,7 +93,9 @@ fun createCursorRowMap(rootUri: Uri, parentUri: Uri, data: Map<String, Any>?): M
     "data" to formattedData,
     "metadata" to mapOf(
       "parentUri" to "$parentUri",
-      "rootUri" to "$rootUri"
+      "rootUri" to "$rootUri",
+      "isDirectory" to isDirectory,
+      "uri" to "$uri"
     )
   )
 }
@@ -138,19 +158,20 @@ fun traverseDirectoryEntries(
           )
         }
 
-        block(createCursorRowMap(rootUri, parent, data)!!)
-
         val mimeType = data[DocumentsContract.Document.COLUMN_MIME_TYPE] as String?
         val id = data[DocumentsContract.Document.COLUMN_DOCUMENT_ID] as String as String?
 
-        if (!rootOnly) {
-          if (isDirectory(mimeType)) {
-            val nextChildren = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
-            val nextParent = DocumentsContract.buildDocumentUri(rootUri.authority, id)
-            val nextNode = Pair(nextParent, nextChildren)
+        val isDirectory = if (mimeType != null) isDirectory(mimeType) else null
 
-            dirNodes.add(nextNode)
-          }
+        val uri = DocumentsContract.buildDocumentUri(rootUri.authority, id)
+
+        block(createCursorRowMap(rootUri, parent, uri, data, isDirectory = isDirectory))
+
+        if (isDirectory != null && isDirectory) {
+          val nextChildren = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
+          val nextNode = Pair(uri, nextChildren)
+
+          dirNodes.add(nextNode)
         }
       }
     } finally {
@@ -160,6 +181,16 @@ fun traverseDirectoryEntries(
 }
 
 @RequiresApi(Build.VERSION_CODES.KITKAT)
-private fun isDirectory(mimeType: String?): Boolean {
+private fun isDirectory(mimeType: String): Boolean {
   return DocumentsContract.Document.MIME_TYPE_DIR == mimeType
+}
+
+fun bitmapToBase64(bitmap: Bitmap): String {
+  val outputStream = ByteArrayOutputStream();
+
+  val fullQuality = 100
+
+  bitmap.compress(Bitmap.CompressFormat.PNG, fullQuality, outputStream);
+
+  return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP);
 }

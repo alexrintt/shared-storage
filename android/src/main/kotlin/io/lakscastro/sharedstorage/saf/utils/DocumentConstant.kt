@@ -3,8 +3,8 @@ package io.lakscastro.sharedstorage.saf.utils
 /// Storage Access Framework Exceptions
 const val EXCEPTION_PARENT_DOCUMENT_MUST_BE_DIRECTORY =
   "EXCEPTION_PARENT_DOCUMENT_MUST_BE_DIRECTORY"
-
 const val EXCEPTION_MISSING_PERMISSIONS = "EXCEPTION_MISSING_PERMISSIONS"
+const val EXCEPTION_BITMAP_NOT_FOUND = "EXCEPTION_BITMAP_NOT_FOUND"
 
 /// Available Method Channel APIs
 const val OPEN_DOCUMENT_TREE = "openDocumentTree"
@@ -12,7 +12,6 @@ const val PERSISTED_URI_PERMISSIONS = "persistedUriPermissions"
 const val RELEASE_PERSISTABLE_URI_PERMISSION =
   "releasePersistableUriPermission"
 const val CREATE_FILE = "createFile"
-const val LIST_FILES = "listFiles"
 const val FROM_TREE_URI = "fromTreeUri"
 const val CAN_WRITE = "canWrite"
 const val CAN_READ = "canRead"
@@ -25,10 +24,12 @@ const val DELETE = "delete"
 const val FIND_FILE = "findFile"
 const val LAST_MODIFIED = "lastModified"
 const val GET_DOCUMENT_THUMBNAIL = "getDocumentThumbnail"
-
+const val BUILD_DOCUMENT_URI_USING_TREE = "buildDocumentUriUsingTree"
+const val BUILD_DOCUMENT_URI = "buildDocumentUri"
+const val BUILD_TREE_DOCUMENT_URI = "buildTreeDocumentUri"
 
 /// Available Event Channels APIs
-const val LIST_FILES_AS_STREAM = "listFilesAsStream"
+const val LIST_FILES = "listFiles"
 
 /// Intent Request Codes
 const val OPEN_DOCUMENT_TREE_CODE = 10

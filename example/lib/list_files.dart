@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,33 +35,8 @@ class _ListFilesState extends State<ListFiles> {
       itemCount: _files!.length,
       itemBuilder: (context, index) {
         final file = _files![index];
-        return SimpleCard(
-          onTap: () {},
-          children: [
-            KeyValueText(
-              entries: {
-                'name': '${file.data?[DocumentFileColumn.displayName]}',
-                'type': '${file.data?[DocumentFileColumn.mimeType]}',
-                'size': '${file.data?[DocumentFileColumn.size]}',
-                'lastModified': '${(() {
-                  if (file.data?[DocumentFileColumn.lastModified] == null) {
-                    return null;
-                  }
-                  final millisecondsSinceEpoch =
-                      file.data?[DocumentFileColumn.lastModified]! ~/ 100;
 
-                  final date = DateTime.fromMillisecondsSinceEpoch(
-                    millisecondsSinceEpoch,
-                  );
-
-                  return date.toIso8601String();
-                })()}',
-                'summary': '${file.data?[DocumentFileColumn.summary]}',
-                'id': '${file.data?[DocumentFileColumn.id]}',
-              },
-            ),
-          ],
-        );
+        return FileTile(partialFile: file);
       },
     );
   }
@@ -90,28 +66,16 @@ class _ListFilesState extends State<ListFiles> {
       DocumentFileColumn.mimeType,
     ];
 
-    _listener = documentUri?.listFilesAsStream(columns).listen(
-          (file) => setState(
-            () => _files == null ? _files = [file] : _files!.add(file),
-          ),
-        );
-    // _files = (await documentUri!.listFiles())!
-    //     .map((e) => <DocumentFileColumn, dynamic>{
-    //           DocumentFileColumn.displayName: e.name,
-    //           DocumentFileColumn.mimeType: e.type
-    //         })
-    //     .toList();
+    _listener = documentUri?.listFiles(columns).listen((file) {
+      /// Append new files to the current file list
+      _files == null ? _files = [file] : _files!.add(file);
 
-    setState(() {});
+      /// Update the state only if the widget is currently showing
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
-
-  // void _openListFilesPage(Uri uri) {
-  //   Navigator.of(context).push(
-  //     MaterialPageRoute(
-  //       builder: (context) => ListFiles(uri: uri),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +84,119 @@ class _ListFilesState extends State<ListFiles> {
       body: _files == null
           ? const Center(child: CircularProgressIndicator())
           : _buildFileList(),
+    );
+  }
+}
+
+class FileTile extends StatefulWidget {
+  final PartialDocumentFile partialFile;
+
+  const FileTile({Key? key, required this.partialFile}) : super(key: key);
+
+  @override
+  _FileTileState createState() => _FileTileState();
+}
+
+class _FileTileState extends State<FileTile> {
+  PartialDocumentFile get file => widget.partialFile;
+
+  static const _size = Size.square(150);
+
+  Uint8List? imageBytes;
+
+  void _loadThumbnailIfAvailable() async {
+    final rootUri = file.metadata?.rootUri;
+    final documentId = file.data?[DocumentFileColumn.id];
+
+    if (rootUri == null || documentId == null) return;
+
+    final bitmap = await getDocumentThumbnail(
+      rootUri: rootUri,
+      documentId: documentId,
+      width: _size.width,
+      height: _size.height,
+    );
+
+    if (bitmap == null) return;
+
+    setState(() => imageBytes = bitmap.bytes);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadThumbnailIfAvailable();
+  }
+
+  void _openListFilesPage(Uri uri) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ListFiles(uri: uri),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleCard(
+      onTap: () {},
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: imageBytes == null
+              ? Container(
+                  height: _size.height,
+                  width: _size.width,
+                  color: Colors.grey,
+                )
+              : Image.memory(
+                  imageBytes!,
+                  height: _size.height,
+                  width: _size.width,
+                  fit: BoxFit.contain,
+                ),
+        ),
+        KeyValueText(
+          entries: {
+            'name': '${file.data?[DocumentFileColumn.displayName]}',
+            'type': '${file.data?[DocumentFileColumn.mimeType]}',
+            'size': '${file.data?[DocumentFileColumn.size]}',
+            'lastModified': '${(() {
+              if (file.data?[DocumentFileColumn.lastModified] == null) {
+                return null;
+              }
+
+              final millisecondsSinceEpoch =
+                  file.data?[DocumentFileColumn.lastModified]!;
+
+              final date = DateTime.fromMillisecondsSinceEpoch(
+                millisecondsSinceEpoch,
+              );
+
+              return date.toIso8601String();
+            })()}',
+            'summary': '${file.data?[DocumentFileColumn.summary]}',
+            'id': '${file.data?[DocumentFileColumn.id]}',
+            'parentUri': '${file.metadata?.parentUri}',
+            'rootUri': '${file.metadata?.rootUri}',
+          },
+        ),
+        if (file.metadata?.isDirectory ?? false)
+          TextButton(
+            onPressed: () async {
+              if (file.metadata?.isDirectory ?? false) {
+                final uri = await buildTreeDocumentUri(
+                  file.metadata!.rootUri!.authority,
+                  file.data![DocumentFileColumn.id]!,
+                );
+
+                _openListFilesPage(uri!);
+              }
+            },
+            child: const Text('Open folder'),
+          ),
+      ],
     );
   }
 }

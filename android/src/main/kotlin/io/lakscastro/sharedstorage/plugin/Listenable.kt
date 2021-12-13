@@ -2,7 +2,7 @@ package io.lakscastro.sharedstorage.plugin
 
 import io.flutter.plugin.common.BinaryMessenger
 
-/// Interface shared across API classes to enable make
+/// Interface shared across API classes to make
 /// intuitive and clean [init] and [dispose] plugin lifecycle of [MethodCallHandler] resources
 interface Listenable {
   fun startListening(binaryMessenger: BinaryMessenger);

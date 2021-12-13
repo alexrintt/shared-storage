@@ -1,5 +1,6 @@
 import 'package:shared_storage/shared_storage.dart';
 import 'package:shared_storage/src/channels.dart';
+import 'package:shared_storage/src/storage_access_framework/document_bitmap.dart';
 import 'package:shared_storage/src/storage_access_framework/uri_permission.dart';
 
 /// Start Activity Action: Allow the user to pick a directory subtree.
@@ -69,4 +70,179 @@ Future<bool> isPersistedUri(Uri uri) async {
   final persistedUris = await persistedUriPermissions();
 
   return persistedUris?.any((persistedUri) => persistedUri.uri == uri) ?? false;
+}
+
+/// Equivalent to `DocumentFile.canRead`
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canRead())
+Future<bool?> canRead(Uri uri) async {
+  const kCanRead = 'canRead';
+
+  const kUri = 'uri';
+
+  final args = {kUri: '$uri'};
+
+  return await kDocumentFileChannel.invokeMethod<bool>(kCanRead, args);
+}
+
+/// Equivalent to `DocumentFile.canWrite`
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canWrite())
+Future<bool?> canWrite(Uri uri) async {
+  const kCanWrite = 'canWrite';
+
+  const kUri = 'uri';
+
+  final args = {kUri: '$uri'};
+
+  return await kDocumentFileChannel.invokeMethod<bool>(kCanWrite, args);
+}
+
+/// Equivalent to `DocumentsContract.getDocumentThumbnail`
+///
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#getDocumentThumbnail(android.content.ContentResolver,%20android.net.Uri,%20android.graphics.Point,%20android.os.CancellationSignal))
+Future<DocumentBitmap?> getDocumentThumbnail({
+  required Uri rootUri,
+  required String documentId,
+  required double width,
+  required double height,
+}) async {
+  const kGetDocumentThumbnail = 'getDocumentThumbnail';
+
+  const kRootUri = 'rootUri';
+  const kDocumentId = 'documentId';
+  const kWidth = 'width';
+  const kHeight = 'height';
+
+  final args = {
+    kRootUri: '$rootUri',
+    kDocumentId: documentId,
+    kWidth: width,
+    kHeight: height,
+  };
+
+  final bitmap = await kDocumentsContractChannel
+      .invokeMapMethod<String, dynamic>(kGetDocumentThumbnail, args);
+
+  if (bitmap == null) return null;
+
+  return DocumentBitmap.fromMap(bitmap);
+}
+
+/// Emits a new event for each child document file
+///
+/// Works with small and large data file sets
+///
+/// ```dart
+/// /// Usage:
+///
+/// final myState = <PartialDocumentFile>[];
+///
+/// final onDocumentFile = listFiles(myUri, [DocumentFileColumn.id]);
+///
+/// onDocumentFile.listen((document) {
+///   myState.add(document);
+///
+///   final documentId = document.data?[DocumentFileColumn.id]
+///
+///   print('$documentId was added to state');
+/// });
+/// ```
+Stream<PartialDocumentFile> listFiles(
+    {required Uri uri, required List<DocumentFileColumn> columns}) {
+  const kListFiles = 'listFiles';
+
+  const kUri = 'uri';
+  const kEvent = 'event';
+  const kColumns = 'columns';
+
+  final args = <String, dynamic>{
+    kUri: '$uri',
+    kEvent: kListFiles,
+    kColumns: columns.map((e) => '$e').toList(),
+  };
+
+  final onCursorRowResult =
+      kDocumentFileEventChannel.receiveBroadcastStream(args);
+
+  return onCursorRowResult
+      .map((e) => PartialDocumentFile.fromMap(Map.from(e)))
+      .cast<PartialDocumentFile>();
+}
+
+/// Verify if a given [uri] exists
+Future<bool?> exists(Uri uri) async {
+  const kExists = 'exists';
+
+  const kUri = 'uri';
+
+  final args = {kUri: uri};
+
+  return await kDocumentFileChannel.invokeMethod<bool>(kExists, args);
+}
+
+/// Equivalent to `DocumentsContract.buildDocumentUriUsingTree`
+///
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUriUsingTree(android.net.Uri,%20java.lang.String))
+Future<Uri?> buildDocumentUriUsingTree(Uri treeUri, String documentId) async {
+  const kBuildDocumentUriUsingTree = 'buildDocumentUriUsingTree';
+
+  const kTreeUri = 'treeUri';
+  const kDocumentId = 'documentId';
+
+  final args = <String, String>{
+    kTreeUri: '$treeUri',
+    kDocumentId: documentId,
+  };
+
+  final uri = await kDocumentsContractChannel.invokeMethod<String>(
+      kBuildDocumentUriUsingTree, args);
+
+  if (uri == null) return null;
+
+  return Uri.parse(uri);
+}
+
+/// Equivalent to `DocumentsContract.buildDocumentUri`
+///
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri(java.lang.String,%20java.lang.String))
+Future<Uri?> buildDocumentUri(String authority, String documentId) async {
+  const kBuildDocumentUri = 'buildDocumentUri';
+
+  const kAuthority = 'authority';
+  const kDocumentId = 'documentId';
+
+  final args = <String, String>{
+    kAuthority: authority,
+    kDocumentId: documentId,
+  };
+
+  final uri = await kDocumentsContractChannel.invokeMethod<String>(
+      kBuildDocumentUri, args);
+
+  if (uri == null) return null;
+
+  return Uri.parse(uri);
+}
+
+/// Equivalent to `DocumentsContract.buildDocumentUri`
+///
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri(java.lang.String,%20java.lang.String))
+Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
+  const kBuildTreeDocumentUri = 'buildTreeDocumentUri';
+
+  const kAuthority = 'authority';
+  const kDocumentId = 'documentId';
+
+  final args = <String, String>{
+    kAuthority: authority,
+    kDocumentId: documentId,
+  };
+
+  final uri = await kDocumentsContractChannel.invokeMethod<String>(
+      kBuildTreeDocumentUri, args);
+
+  if (uri == null) return null;
+
+  return Uri.parse(uri);
 }

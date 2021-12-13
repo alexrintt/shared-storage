@@ -3,6 +3,7 @@ package io.lakscastro.sharedstorage.saf
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.provider.DocumentsContract
 import android.util.Log
 import androidx.annotation.RequiresApi
 import io.flutter.plugin.common.*
@@ -22,7 +23,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   Listenable,
   ActivityListener,
   StreamHandler {
-  private val pendingResults: MutableMap<Int, MethodChannel.Result> =
+  private val pendingResults: MutableMap<Int, Pair<MethodCall, MethodChannel.Result>> =
     mutableMapOf()
   private var channel: MethodChannel? = null
   private var eventChannel: EventChannel? = null
@@ -36,7 +37,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     when (call.method) {
       OPEN_DOCUMENT_TREE ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-          openDocumentTree(result)
+          openDocumentTree(call, result)
         }
       CREATE_FILE ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -58,10 +59,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             result,
             call.argument<String?>("uri") as String
           )
-        }
-      LIST_FILES ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-          listFiles(result, call.argument<String?>("uri") as String)
         }
       FROM_TREE_URI ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -188,16 +185,22 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
 
   @RequiresApi(Build.VERSION_CODES.O)
-  private fun openDocumentTree(result: MethodChannel.Result) {
+  private fun openDocumentTree(call: MethodCall, result: MethodChannel.Result) {
+    val grantWritePermission = call.argument<Boolean>("grantWritePermission")!!
+    val initialUri = call.argument<String>("initialUri")
+
     val intent =
       Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-        addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-        addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        addFlags(if (grantWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION else Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+        if (initialUri != null) {
+          putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(initialUri))
+        }
       }
 
     if (pendingResults[OPEN_DOCUMENT_TREE_CODE] != null) return
 
-    pendingResults[OPEN_DOCUMENT_TREE_CODE] = result
+    pendingResults[OPEN_DOCUMENT_TREE_CODE] = Pair(call, result)
 
     plugin.binding?.activity?.startActivityForResult(
       intent,
@@ -227,44 +230,15 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
     val createdFile = documentFile.createFile(mimeType, displayName)
 
-    CoroutineScope(Dispatchers.Default).launch {
-      createdFile?.uri?.apply {
-        plugin.context.contentResolver.openOutputStream(this)?.apply {
-          write(content.toByteArray())
-          flush()
+    createdFile?.uri?.apply {
+      plugin.context.contentResolver.openOutputStream(this)?.apply {
+        write(content.toByteArray())
+        flush()
 
-          val createdFileDocument =
-            documentFromTreeUri(plugin.context, createdFile.uri)
+        val createdFileDocument =
+          documentFromTreeUri(plugin.context, createdFile.uri)
 
-          launch(Dispatchers.Main) {
-            result.success(createDocumentFileMap(createdFileDocument))
-          }
-        }
-      }
-    }
-  }
-
-  @RequiresApi(Build.VERSION_CODES.KITKAT)
-  private fun listFiles(result: MethodChannel.Result, uri: String) {
-    CoroutineScope(Dispatchers.Default).launch {
-      val documentsTree = documentFromTreeUri(plugin.context, uri)
-
-      if (documentsTree != null) {
-        val childDocuments = documentsTree.listFiles()
-
-        val rawChildDocuments = childDocuments.map { createDocumentFileMap(it) }.toList()
-
-        launch(Dispatchers.Main) {
-          result.success(rawChildDocuments)
-        }
-      } else {
-        launch(Dispatchers.Main) {
-          result.error(
-            EXCEPTION_PARENT_DOCUMENT_MUST_BE_DIRECTORY,
-            "You must provide a valid parent URI",
-            uri
-          )
-        }
+        result.success(createDocumentFileMap(createdFileDocument))
       }
     }
   }
@@ -309,6 +283,8 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   ): Boolean {
     when (requestCode) {
       OPEN_DOCUMENT_TREE_CODE -> {
+        val pendingResult = pendingResults[OPEN_DOCUMENT_TREE_CODE] ?: return false
+
         try {
           val uri = data?.data
 
@@ -316,10 +292,13 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             plugin.context.contentResolver
               .takePersistableUriPermission(
                 uri,
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                if (pendingResult.first.argument<Boolean>("grantWritePermission")!!)
+                  Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                else
+                  Intent.FLAG_GRANT_READ_URI_PERMISSION
               )
 
-            pendingResults[OPEN_DOCUMENT_TREE_CODE]?.success("$uri")
+            pendingResult.second.success("$uri")
 
             return true
           }
@@ -334,7 +313,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
   override fun startListening(binaryMessenger: BinaryMessenger) {
     if (channel != null) stopListening()
-
 
     channel = MethodChannel(binaryMessenger, "$ROOT_CHANNEL/$CHANNEL")
     channel?.setMethodCallHandler(this)
@@ -368,7 +346,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     eventSink = events
 
     when (args["event"]) {
-      LIST_FILES_AS_STREAM -> {
+      LIST_FILES -> {
         if (eventSink == null) return
 
         val document = documentFromTreeUri(plugin.context, args["uri"] as String) ?: return

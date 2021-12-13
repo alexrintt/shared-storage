@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
 import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
@@ -13,16 +12,17 @@ import io.lakscastro.sharedstorage.SharedStoragePlugin
 import io.lakscastro.sharedstorage.plugin.ActivityListener
 import io.lakscastro.sharedstorage.plugin.Listenable
 import io.lakscastro.sharedstorage.saf.utils.*
+import io.lakscastro.sharedstorage.saf.utils.GET_DOCUMENT_THUMBNAIL
+import io.lakscastro.sharedstorage.saf.utils.bitmapToBase64
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
   MethodChannel.MethodCallHandler,
   Listenable,
   ActivityListener {
-  private val pendingResults: MutableMap<Int, MethodChannel.Result> =
-    mutableMapOf()
   private var channel: MethodChannel? = null
-  private var eventChannel: EventChannel? = null
-  private var eventSink: EventChannel.EventSink? = null
 
   companion object {
     private const val CHANNEL = "documentscontract"
@@ -32,16 +32,74 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
     when (call.method) {
       GET_DOCUMENT_THUMBNAIL -> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-          val uri = Uri.parse(call.argument("uri"))
+          val rootUri = Uri.parse(call.argument("rootUri"))
+          val documentId = call.argument<String>("documentId")
           val width = call.argument<Int>("width")!!
           val height = call.argument<Int>("height")!!
 
-          DocumentsContract.getDocumentThumbnail(
+          val uri = DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
+
+          val bitmap = DocumentsContract.getDocumentThumbnail(
             plugin.context.contentResolver,
             uri,
             Point(width, height),
             null
           )
+
+          CoroutineScope(Dispatchers.Default).launch {
+            if (bitmap != null) {
+              val base64 = bitmapToBase64(bitmap)
+
+              val data = mapOf(
+                "base64" to base64,
+                "uri" to "$uri",
+                "width" to bitmap.width,
+                "height" to bitmap.height,
+                "byteCount" to bitmap.byteCount,
+                "density" to bitmap.density
+              )
+
+              launch(Dispatchers.Main) {
+                result.success(data)
+              }
+            }
+          }
+        }
+      }
+      BUILD_DOCUMENT_URI_USING_TREE -> {
+        val treeUri = Uri.parse(call.argument<String>("treeUri"))
+        val documentId = call.argument<String>("documentId")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+          val documentUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, documentId)
+
+          result.success("$documentUri")
+        } else {
+          result.notImplemented()
+        }
+      }
+      BUILD_DOCUMENT_URI -> {
+        val authority = call.argument<String>("authority")
+        val documentId = call.argument<String>("documentId")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+          val documentUri = DocumentsContract.buildDocumentUri(authority,documentId)
+
+          result.success("$documentUri")
+        } else {
+          result.notImplemented()
+        }
+      }
+      BUILD_TREE_DOCUMENT_URI -> {
+        val authority = call.argument<String>("authority")
+        val documentId = call.argument<String>("documentId")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+          val treeDocumentUri = DocumentsContract.buildTreeDocumentUri(authority, documentId)
+
+          result.success("$treeDocumentUri")
+        } else {
+          result.notImplemented()
         }
       }
     }
@@ -59,9 +117,6 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
 
     channel?.setMethodCallHandler(null)
     channel = null
-
-    eventChannel?.setStreamHandler(null)
-    eventChannel = null
   }
 
   override fun startListeningToActivity() {

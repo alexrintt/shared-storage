@@ -1,6 +1,7 @@
+import 'package:shared_storage/shared_storage.dart';
 import 'package:shared_storage/src/channels.dart';
 import 'package:shared_storage/src/storage_access_framework/document_file_column.dart';
-import 'package:shared_storage/src/storage_access_framework/partial_document_file.dart';
+import 'package:shared_storage/src/storage_access_framework/saf.dart' as saf;
 
 extension UriDocumentFileUtils on Uri {
   Future<DocumentFile?> toDocumentFile() => DocumentFile.fromTreeUri(this);
@@ -37,69 +38,14 @@ class DocumentFile {
 
   Map<String, String> get uriArgs => <String, String>{'uri': '$uri'};
 
-  Future<bool?> canRead() async {
-    const kCanRead = 'canRead';
+  Future<bool?> canRead() async => saf.canWrite(uri);
 
-    return await kDocumentFileChannel
-        .invokeMethod<bool>(kCanRead, {...uriArgs});
-  }
+  Future<bool?> canWrite() async => saf.canWrite(uri);
 
-  Future<bool?> canWrite() async {
-    const kCanWrite = 'canWrite';
+  Stream<PartialDocumentFile> listFiles(List<DocumentFileColumn> columns) =>
+      saf.listFiles(uri: uri, columns: columns);
 
-    return await kDocumentFileChannel
-        .invokeMethod<bool>(kCanWrite, {...uriArgs});
-  }
-
-  /// List document files of a given [uri]
-  ///
-  /// Note that the [uri] must be a `URI` returned by [openDocumentTree] method
-  Future<List<DocumentFile>?> listFiles() async {
-    const kListFiles = 'listFiles';
-
-    const kUri = 'uri';
-
-    final args = <String, String>{
-      kUri: '$uri',
-    };
-
-    final files = await kDocumentFileChannel.invokeListMethod(kListFiles, args);
-
-    if (files == null) return null;
-
-    return files.map((e) => DocumentFile.fromMap(Map.from(e))).toList();
-  }
-
-  /// Emits a new event instead returning a single List as `listFiles`
-  ///
-  /// Great for large data file sets
-  Stream<PartialDocumentFile> listFilesAsStream(
-      List<DocumentFileColumn> columns) {
-    const kListFilesAsStream = 'listFilesAsStream';
-
-    const kUri = 'uri';
-    const kEvent = 'event';
-    const kColumns = 'columns';
-
-    final args = <String, dynamic>{
-      kUri: '$uri',
-      kEvent: kListFilesAsStream,
-      kColumns: columns.map((e) => '$e').toList(),
-    };
-
-    final onCursorRowResult =
-        kDocumentFileEventChannel.receiveBroadcastStream(args);
-
-    return onCursorRowResult
-        .map((e) => PartialDocumentFile.fromMap(Map.from(e)))
-        .cast<PartialDocumentFile>();
-  }
-
-  Future<bool?> exists() async {
-    const kExists = 'exists';
-
-    return await kDocumentFileChannel.invokeMethod<bool>(kExists, {...uriArgs});
-  }
+  Future<bool?> exists() => saf.exists(uri);
 
   /// Returns true if deleted successfully
   Future<bool?> delete() async {

@@ -52,8 +52,14 @@ class PartialDocumentFile {
 class QueryMetadata {
   final Uri? parentUri;
   final Uri? rootUri;
+  final bool? isDirectory;
+  final Uri? uri;
 
-  const QueryMetadata._({required this.parentUri, required this.rootUri});
+  const QueryMetadata._(
+      {required this.parentUri,
+      required this.rootUri,
+      required this.isDirectory,
+      required this.uri});
 
   static Uri? _parseUri(String? uri) {
     if (uri == null) return null;
@@ -65,6 +71,8 @@ class QueryMetadata {
     return QueryMetadata._(
       parentUri: _parseUri(map['parentUri']),
       rootUri: _parseUri(map['rootUri']),
+      isDirectory: map['isDirectory'],
+      uri: _parseUri(map['uri']),
     );
   }
 
@@ -72,6 +80,8 @@ class QueryMetadata {
     return <String, dynamic>{
       'parentUri': '$parentUri',
       'rootUri': '$rootUri',
+      'isDirectory': isDirectory,
+      'uri': uri,
     };
   }
 
@@ -79,9 +89,12 @@ class QueryMetadata {
   bool operator ==(Object other) {
     if (other is! QueryMetadata) return false;
 
-    return other.parentUri == parentUri;
+    return other.parentUri == parentUri &&
+        other.rootUri == rootUri &&
+        other.isDirectory == isDirectory &&
+        other.uri == uri;
   }
 
   @override
-  int get hashCode => parentUri.hashCode;
+  int get hashCode => Object.hash(parentUri, rootUri, isDirectory, uri);
 }
