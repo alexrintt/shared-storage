@@ -3,7 +3,6 @@ package io.lakscastro.sharedstorage.saf
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.provider.DocumentsContract
 import android.util.Log
 import androidx.annotation.RequiresApi
 import io.flutter.plugin.common.*
@@ -12,11 +11,12 @@ import io.lakscastro.sharedstorage.ROOT_CHANNEL
 import io.lakscastro.sharedstorage.SharedStoragePlugin
 import io.lakscastro.sharedstorage.plugin.ActivityListener
 import io.lakscastro.sharedstorage.plugin.Listenable
+import io.lakscastro.sharedstorage.saf.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DocumentFileApi(private val plugin: SharedStoragePlugin) :
+internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   MethodChannel.MethodCallHandler,
   PluginRegistry.ActivityResultListener,
   Listenable,
@@ -27,6 +27,165 @@ class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   private var channel: MethodChannel? = null
   private var eventChannel: EventChannel? = null
   private var eventSink: EventChannel.EventSink? = null
+
+  companion object {
+    private const val CHANNEL = "documentfile"
+  }
+
+  override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+    when (call.method) {
+      OPEN_DOCUMENT_TREE ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          openDocumentTree(result)
+        }
+      CREATE_FILE ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          createFile(
+            result,
+            call.argument<String?>("mimeType") as String,
+            call.argument<String?>("displayName") as String,
+            call.argument<String?>("directoryUri") as String,
+            call.argument<String?>("content") as String
+          )
+        }
+      PERSISTED_URI_PERMISSIONS ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          persistedUriPermissions(result)
+        }
+      RELEASE_PERSISTABLE_URI_PERMISSION ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          releasePersistableUriPermission(
+            result,
+            call.argument<String?>("uri") as String
+          )
+        }
+      LIST_FILES ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          listFiles(result, call.argument<String?>("uri") as String)
+        }
+      FROM_TREE_URI ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          result.success(
+            createDocumentFileMap(
+              documentFromTreeUri(
+                plugin.context,
+                call.argument<String?>("uri") as String
+              )
+            )
+          )
+        }
+      CAN_WRITE ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          result.success(
+            documentFromTreeUri(
+              plugin.context,
+              call.argument<String?>("uri") as String
+            )
+              ?.canWrite()
+          )
+        }
+      CAN_READ ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          result.success(
+            documentFromTreeUri(
+              plugin.context,
+              call.argument<String?>("uri") as String
+            )?.canRead()
+          )
+        }
+      LENGTH ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          result.success(
+            documentFromTreeUri(
+              plugin.context,
+              call.argument<String?>("uri") as String
+            )?.length()
+          )
+        }
+      EXISTS ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          result.success(
+            documentFromTreeUri(
+              plugin.context,
+              call.argument<String?>("uri") as String
+            )?.exists()
+          )
+        }
+      DELETE ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          result.success(
+            documentFromTreeUri(
+              plugin.context,
+              call.argument<String?>("uri") as String
+            )?.delete()
+          )
+        }
+      LAST_MODIFIED ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          result.success(
+            documentFromTreeUri(
+              plugin.context,
+              call.argument<String?>("uri") as String
+            )?.lastModified()
+          )
+        }
+      CREATE_DIRECTORY -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          val uri = call.argument<String?>("uri") as String
+          val displayName =
+            call.argument<String?>("displayName") as String
+
+          val createdDirectory =
+            documentFromTreeUri(plugin.context, uri)?.createDirectory(displayName) ?: return
+
+          result.success(createDocumentFileMap(createdDirectory))
+        }
+      }
+      FIND_FILE -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          val uri = call.argument<String?>("uri") as String
+          val displayName =
+            call.argument<String?>("displayName") as String
+
+          result.success(
+            createDocumentFileMap(
+              documentFromTreeUri(plugin.context, uri)?.findFile(displayName)
+            )
+          )
+        }
+      }
+      RENAME_TO -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          val uri = call.argument<String?>("uri") as String
+          val displayName =
+            call.argument<String?>("displayName") as String
+
+          documentFromTreeUri(plugin.context, uri)?.apply {
+            val success = renameTo(displayName)
+
+            result.success(
+              if (success)
+                createDocumentFileMap(
+                  documentFromTreeUri(plugin.context, this.uri)!!
+                )
+              else null
+            )
+          }
+        }
+      }
+      PARENT_FILE -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+          val uri = call.argument<String?>("uri") as String
+          val parent = documentFromTreeUri(plugin.context, uri)?.parentFile
+
+          if (parent != null)
+            result.success(createDocumentFileMap(parent))
+        }
+      }
+      else -> result.notImplemented()
+    }
+  }
+
 
   @RequiresApi(Build.VERSION_CODES.O)
   private fun openDocumentTree(result: MethodChannel.Result) {
@@ -174,15 +333,14 @@ class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   }
 
   override fun startListening(binaryMessenger: BinaryMessenger) {
-    if (channel != null) {
-      stopListening()
-    }
+    if (channel != null) stopListening()
 
-    channel = MethodChannel(binaryMessenger, "$ROOT_CHANNEL/documentfile")
+
+    channel = MethodChannel(binaryMessenger, "$ROOT_CHANNEL/$CHANNEL")
     channel?.setMethodCallHandler(this)
 
     eventChannel =
-      EventChannel(binaryMessenger, "$ROOT_CHANNEL/event/documentfile")
+      EventChannel(binaryMessenger, "$ROOT_CHANNEL/event/$CHANNEL")
     eventChannel?.setStreamHandler(this)
   }
 

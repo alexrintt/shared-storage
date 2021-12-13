@@ -20,6 +20,8 @@ class EnvironmentApi(plugin: SharedStoragePlugin) : MethodChannel.MethodCallHand
     const val GET_ROOT_DIRECTORY = "getRootDirectory"
 
     const val GET_EXTERNAL_STORAGE_DIRECTORY = "getExternalStorageDirectory"
+
+    const val CHANNEL = "environment"
   }
 
 
@@ -68,7 +70,7 @@ class EnvironmentApi(plugin: SharedStoragePlugin) : MethodChannel.MethodCallHand
       stopListening()
     }
 
-    channel = MethodChannel(binaryMessenger, "$ROOT_CHANNEL/environment")
+    channel = MethodChannel(binaryMessenger, "$ROOT_CHANNEL/$CHANNEL")
     channel?.setMethodCallHandler(this)
   }
 

@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.saf
+package io.lakscastro.sharedstorage.saf.utils
 
 import android.database.Cursor
 import android.os.Build

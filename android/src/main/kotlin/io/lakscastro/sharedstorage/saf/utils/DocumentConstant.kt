@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.saf
+package io.lakscastro.sharedstorage.saf.utils
 
 /// Storage Access Framework Exceptions
 const val EXCEPTION_PARENT_DOCUMENT_MUST_BE_DIRECTORY =
@@ -25,6 +25,7 @@ const val DELETE = "delete"
 const val FIND_FILE = "findFile"
 const val LAST_MODIFIED = "lastModified"
 const val GET_DOCUMENT_THUMBNAIL = "getDocumentThumbnail"
+
 
 /// Available Event Channels APIs
 const val LIST_FILES_AS_STREAM = "listFilesAsStream"

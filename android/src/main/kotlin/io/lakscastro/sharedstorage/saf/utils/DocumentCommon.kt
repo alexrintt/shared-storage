@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.saf
+package io.lakscastro.sharedstorage.saf.utils
 
 import android.content.ContentResolver
 import android.content.Context
@@ -56,22 +56,28 @@ fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
 /// }
 /// ```
 @RequiresApi(Build.VERSION_CODES.KITKAT)
-fun createCursorRowMap(data: Map<String, Any>?): Map<String, Any>? {
+fun createCursorRowMap(rootUri: Uri, parentUri: Uri, data: Map<String, Any>?): Map<String, Any>? {
   if (data == null) return null
 
   val values = DocumentFileColumn.values()
 
-  val formattedMap = mutableMapOf<String, Any>()
+  val formattedData = mutableMapOf<String, Any>()
 
   for (value in values) {
     val key = parseDocumentFileColumn(value)!!
 
     if (data[key] != null) {
-      formattedMap[documentFileColumnToRawString(value)!!] = data[key]!!
+      formattedData[documentFileColumnToRawString(value)!!] = data[key]!!
     }
   }
 
-  return formattedMap
+  return mapOf(
+    "data" to formattedData,
+    "metadata" to mapOf(
+      "parentUri" to "$parentUri",
+      "rootUri" to "$rootUri"
+    )
+  )
 }
 
 /// Util method to close a closeable
@@ -89,21 +95,21 @@ fun closeQuietly(closeable: Closeable?) {
 @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun traverseDirectoryEntries(
   contentResolver: ContentResolver,
-  rootUri: Uri?,
+  rootUri: Uri,
   columns: Array<String>,
   rootOnly: Boolean,
   block: (data: Map<String, Any>) -> Unit
 ) {
-  var childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
+  val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
     rootUri,
     DocumentsContract.getTreeDocumentId(rootUri)
   )
 
   // Keep track of our directory hierarchy
-  val dirNodes: MutableList<Uri> = mutableListOf(childrenUri)
+  val dirNodes = mutableListOf<Pair<Uri, Uri>>(Pair(rootUri, childrenUri))
 
   while (dirNodes.isNotEmpty()) {
-    childrenUri = dirNodes.removeAt(0)
+    val (parent, children) = dirNodes.removeAt(0)
 
     val requiredColumns = if (rootOnly) emptyArray() else arrayOf(
       DocumentsContract.Document.COLUMN_MIME_TYPE,
@@ -113,7 +119,7 @@ fun traverseDirectoryEntries(
     val projection = arrayOf(*columns, *requiredColumns).toSet().toTypedArray()
 
     val cursor = contentResolver.query(
-      childrenUri,
+      children,
       projection,
       /// TODO: Add support for `selection`, `selectionArgs` and `sortOrder`
       null,
@@ -132,16 +138,18 @@ fun traverseDirectoryEntries(
           )
         }
 
-        block(createCursorRowMap(data)!!)
+        block(createCursorRowMap(rootUri, parent, data)!!)
 
         val mimeType = data[DocumentsContract.Document.COLUMN_MIME_TYPE] as String?
-        val id = data[DocumentsContract.Document.COLUMN_DOCUMENT_ID] as String
+        val id = data[DocumentsContract.Document.COLUMN_DOCUMENT_ID] as String as String?
 
         if (!rootOnly) {
           if (isDirectory(mimeType)) {
-            val newNode =
-              DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
-            dirNodes.add(newNode)
+            val nextChildren = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
+            val nextParent = DocumentsContract.buildDocumentUri(rootUri.authority, id)
+            val nextNode = Pair(nextParent, nextChildren)
+
+            dirNodes.add(nextNode)
           }
         }
       }

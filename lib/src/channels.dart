@@ -14,6 +14,10 @@ const kMediaStoreChannel = MethodChannel('$kRootChannel/mediastore');
 /// Target [DocumentFile] from `SAF` Android API (New Android API's use it)
 const kDocumentFileChannel = MethodChannel('$kRootChannel/documentfile');
 
+/// Target [DocumentsContract] from `SAF` Android API (New Android API's use it)
+const kDocumentsContractChannel =
+    MethodChannel('$kRootChannel/documentscontract');
+
 /// Event Channels of this plugin
 const kDocumentFileEventChannel =
     EventChannel('$kRootChannel/event/documentfile');

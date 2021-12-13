@@ -16,9 +16,9 @@ class ListFiles extends StatefulWidget {
 }
 
 class _ListFilesState extends State<ListFiles> {
-  List<Map<DocumentFileColumn, dynamic>>? _files;
+  List<PartialDocumentFile>? _files;
 
-  StreamSubscription<Map<DocumentFileColumn, dynamic>>? _listener;
+  StreamSubscription<PartialDocumentFile>? _listener;
 
   Widget _buildFileList() {
     if (_files!.isEmpty) {
@@ -39,15 +39,15 @@ class _ListFilesState extends State<ListFiles> {
           children: [
             KeyValueText(
               entries: {
-                'name': '${file[DocumentFileColumn.displayName]}',
-                'type': '${file[DocumentFileColumn.mimeType]}',
-                'size': '${file[DocumentFileColumn.size]}',
+                'name': '${file.data?[DocumentFileColumn.displayName]}',
+                'type': '${file.data?[DocumentFileColumn.mimeType]}',
+                'size': '${file.data?[DocumentFileColumn.size]}',
                 'lastModified': '${(() {
-                  if (file[DocumentFileColumn.lastModified] == null) {
+                  if (file.data?[DocumentFileColumn.lastModified] == null) {
                     return null;
                   }
                   final millisecondsSinceEpoch =
-                      file[DocumentFileColumn.lastModified]! ~/ 100;
+                      file.data?[DocumentFileColumn.lastModified]! ~/ 100;
 
                   final date = DateTime.fromMillisecondsSinceEpoch(
                     millisecondsSinceEpoch,
@@ -55,8 +55,8 @@ class _ListFilesState extends State<ListFiles> {
 
                   return date.toIso8601String();
                 })()}',
-                'summary': '${file[DocumentFileColumn.summary]}',
-                'id': '${file[DocumentFileColumn.id]}',
+                'summary': '${file.data?[DocumentFileColumn.summary]}',
+                'id': '${file.data?[DocumentFileColumn.id]}',
               },
             ),
           ],

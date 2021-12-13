@@ -1,5 +1,6 @@
 import 'package:shared_storage/src/channels.dart';
 import 'package:shared_storage/src/storage_access_framework/document_file_column.dart';
+import 'package:shared_storage/src/storage_access_framework/partial_document_file.dart';
 
 extension UriDocumentFileUtils on Uri {
   Future<DocumentFile?> toDocumentFile() => DocumentFile.fromTreeUri(this);
@@ -72,7 +73,7 @@ class DocumentFile {
   /// Emits a new event instead returning a single List as `listFiles`
   ///
   /// Great for large data file sets
-  Stream<Map<DocumentFileColumn, dynamic>> listFilesAsStream(
+  Stream<PartialDocumentFile> listFilesAsStream(
       List<DocumentFileColumn> columns) {
     const kListFilesAsStream = 'listFilesAsStream';
 
@@ -89,18 +90,9 @@ class DocumentFile {
     final onCursorRowResult =
         kDocumentFileEventChannel.receiveBroadcastStream(args);
 
-    Map<DocumentFileColumn, dynamic> mapper(e) {
-      final mappedColumns = <DocumentFileColumn, dynamic>{
-        for (final value in DocumentFileColumn.values)
-          if (e['$value'] != null) value: e['$value']
-      };
-
-      return mappedColumns;
-    }
-
     return onCursorRowResult
-        .map(mapper)
-        .cast<Map<DocumentFileColumn, dynamic>>();
+        .map((e) => PartialDocumentFile.fromMap(Map.from(e)))
+        .cast<PartialDocumentFile>();
   }
 
   Future<bool?> exists() async {
