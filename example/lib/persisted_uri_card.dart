@@ -19,11 +19,10 @@ class PersistedUriCard extends StatefulWidget {
 
 class _PersistedUriCardState extends State<PersistedUriCard> {
   void _appendSampleFile(Uri parentUri) async {
-    /// Create a new file inside the folder [parentUri]
-    ///
+    /// Create a new file inside the `parentUri`
     final documentFile = await parentUri.toDocumentFile();
 
-    documentFile?.createFile(
+    documentFile?.createFileAsString(
       mimeType: 'text/plain',
       content: 'Sample File Content',
       displayName: 'File created by Shared Storage Sample App',

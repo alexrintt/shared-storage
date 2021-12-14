@@ -1,12 +1,17 @@
+import 'dart:typed_data';
+
 import 'package:shared_storage/shared_storage.dart';
-import 'package:shared_storage/src/channels.dart';
 import 'package:shared_storage/src/storage_access_framework/document_file_column.dart';
 import 'package:shared_storage/src/storage_access_framework/saf.dart' as saf;
 
 extension UriDocumentFileUtils on Uri {
+  /// Same as `DocumentFile.fromTreeUri(this)`
   Future<DocumentFile?> toDocumentFile() => DocumentFile.fromTreeUri(this);
 }
 
+/// Equivalent to Android `DocumentFile` class
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile)
 class DocumentFile {
   final String name;
   final String? type;
@@ -23,153 +28,48 @@ class DocumentFile {
       required this.isFile,
       required this.isVirtual});
 
-  static Future<DocumentFile?> fromTreeUri(Uri uri) async {
-    const kFromTreeUri = 'fromTreeUri';
-
-    const kUri = 'uri';
-
-    final documentFile = await kDocumentFileChannel
-        .invokeMapMethod<String, dynamic>(kFromTreeUri, {kUri: '$uri'});
-
-    if (documentFile == null) return null;
-
-    return DocumentFile.fromMap(documentFile);
-  }
-
-  Map<String, String> get uriArgs => <String, String>{'uri': '$uri'};
+  /// Same as `uri.toDocumentFile` where `uri` is of type `Uri`
+  static Future<DocumentFile?> fromTreeUri(Uri uri) => saf.fromTreeUri(uri);
 
   Future<bool?> canRead() async => saf.canWrite(uri);
 
   Future<bool?> canWrite() async => saf.canWrite(uri);
 
   Stream<PartialDocumentFile> listFiles(List<DocumentFileColumn> columns) =>
-      saf.listFiles(uri: uri, columns: columns);
+      saf.listFiles(uri, columns: columns);
 
   Future<bool?> exists() => saf.exists(uri);
 
-  /// Returns true if deleted successfully
-  Future<bool?> delete() async {
-    const kDelete = 'delete';
+  Future<bool?> delete() => saf.delete(uri);
 
-    return await kDocumentFileChannel.invokeMethod<bool>(kDelete, {...uriArgs});
-  }
+  Future<DocumentFile?> createDirectory(String displayName) =>
+      saf.createDirectory(uri, displayName);
 
-  Future<DocumentFile?> createDirectory(String displayName) async {
-    const kCreateDirectory = 'createDirectory';
+  Future<DocumentFile?> createFileAsBytes(
+          {required String mimeType,
+          required String displayName,
+          required Uint8List content}) =>
+      saf.createFileAsBytes(uri,
+          mimeType: mimeType, displayName: displayName, content: content);
 
-    const kDisplayNameArg = 'displayName';
+  Future<DocumentFile?> createFileAsString(
+          {required String mimeType,
+          required String displayName,
+          required String content}) =>
+      saf.createFileAsString(uri,
+          mimeType: mimeType, displayName: displayName, content: content);
 
-    final args = <String, String>{
-      ...uriArgs,
-      kDisplayNameArg: displayName,
-    };
+  Future<int?> get length => saf.getDocumentLength(uri);
 
-    final createdDocumentFile = await kDocumentFileChannel
-        .invokeMapMethod<String, dynamic>(kCreateDirectory, args);
+  Future<DateTime?> get lastModified => saf.lastModified(uri);
 
-    if (createdDocumentFile == null) return null;
+  Future<DocumentFile?> findFile(String displayName) =>
+      saf.findFile(uri, displayName);
 
-    return DocumentFile.fromMap(createdDocumentFile);
-  }
+  Future<DocumentFile?> renameTo(String displayName) =>
+      saf.renameTo(uri, displayName);
 
-  Future<DocumentFile?> createFile(
-      {required String mimeType,
-      required String displayName,
-      required String content}) async {
-    const kCreateFile = 'createFile';
-
-    const kMimeTypeArg = 'mimeType';
-    const kContentArg = 'content';
-    const kDisplayNameArg = 'displayName';
-    const kDirectoryUriArg = 'directoryUri';
-
-    final directoryUri = '$uri';
-
-    final args = <String, String>{
-      kMimeTypeArg: mimeType,
-      kContentArg: content,
-      kDisplayNameArg: displayName,
-      kDirectoryUriArg: directoryUri,
-    };
-
-    final createdDocumentFile = await kDocumentFileChannel
-        .invokeMapMethod<String, dynamic>(kCreateFile, args);
-
-    if (createdDocumentFile == null) return null;
-
-    return DocumentFile.fromMap(createdDocumentFile);
-  }
-
-  /// Length in bytes of [this] `DocumentFile`
-  Future<int?> get length async {
-    const kLength = 'length';
-
-    final length =
-        await kDocumentFileChannel.invokeMethod<int>(kLength, {...uriArgs});
-
-    return length;
-  }
-
-  Future<DateTime?> get lastModified async {
-    const kLastModified = 'lastModified';
-
-    final inMillisecondsSinceEpoch = await kDocumentFileChannel
-        .invokeMethod<int>(kLastModified, {...uriArgs});
-
-    if (inMillisecondsSinceEpoch == null) return null;
-
-    return DateTime.fromMillisecondsSinceEpoch(inMillisecondsSinceEpoch);
-  }
-
-  Future<DocumentFile?> findFile(String displayName) async {
-    const kFindFile = 'findFile';
-
-    const kDisplayNameArg = 'displayName';
-
-    final args = <String, String>{
-      ...uriArgs,
-      kDisplayNameArg: displayName,
-    };
-
-    final matchedDocumentFile = await kDocumentFileChannel
-        .invokeMapMethod<String, dynamic>(kFindFile, args);
-
-    if (matchedDocumentFile == null) return null;
-
-    return DocumentFile.fromMap(matchedDocumentFile);
-  }
-
-  /// Return the updated `DocumentFile` to reflect name changes
-  ///
-  /// `this` shouldn't be used anymore
-  Future<DocumentFile?> renameTo(String displayName) async {
-    const kRenameTo = 'renameTo';
-
-    const kDisplayNameArg = 'displayName';
-
-    final args = <String, String>{
-      ...uriArgs,
-      kDisplayNameArg: displayName,
-    };
-
-    final updatedDocumentFile = await kDocumentFileChannel
-        .invokeMapMethod<String, dynamic>(kRenameTo, args);
-
-    if (updatedDocumentFile == null) return null;
-
-    return DocumentFile.fromMap(updatedDocumentFile);
-  }
-
-  Future<DocumentFile?> parentFile() async {
-    const kParentFile = 'parentFile';
-
-    final parent = await kDocumentFileChannel
-        .invokeMapMethod<String, dynamic>(kParentFile, {...uriArgs});
-
-    if (parent == null) return null;
-
-    return DocumentFile.fromMap(parent);
-  }
+  Future<DocumentFile?> parentFile() => saf.parentFile(uri);
 
   static DocumentFile fromMap(Map<String, dynamic> map) {
     return DocumentFile(

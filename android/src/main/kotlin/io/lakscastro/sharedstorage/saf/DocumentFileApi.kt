@@ -10,8 +10,7 @@ import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
 import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.ActivityListener
-import io.lakscastro.sharedstorage.plugin.Listenable
+import io.lakscastro.sharedstorage.plugin.*
 import io.lakscastro.sharedstorage.saf.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +32,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     private const val CHANNEL = "documentfile"
   }
 
+  @RequiresApi(Build.VERSION_CODES.N)
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     when (call.method) {
       OPEN_DOCUMENT_TREE ->
@@ -43,10 +43,10 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
           createFile(
             result,
-            call.argument<String?>("mimeType") as String,
-            call.argument<String?>("displayName") as String,
-            call.argument<String?>("directoryUri") as String,
-            call.argument<String?>("content") as String
+            call.argument<String>("mimeType")!!,
+            call.argument<String>("displayName")!!,
+            call.argument<String>("directoryUri")!!,
+            call.argument<ByteArray>("content")!!
           )
         }
       PERSISTED_URI_PERMISSIONS ->
@@ -184,7 +184,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   }
 
 
-  @RequiresApi(Build.VERSION_CODES.O)
+  @RequiresApi(Build.VERSION_CODES.N)
   private fun openDocumentTree(call: MethodCall, result: MethodChannel.Result) {
     val grantWritePermission = call.argument<Boolean>("grantWritePermission")!!
     val initialUri = call.argument<String>("initialUri")
@@ -194,7 +194,9 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         addFlags(if (grantWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION else Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
         if (initialUri != null) {
-          putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(initialUri))
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(initialUri))
+          }
         }
       }
 
@@ -208,13 +210,13 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     )
   }
 
-  @RequiresApi(Build.VERSION_CODES.KITKAT)
+  @RequiresApi(Build.VERSION_CODES.N)
   private fun createFile(
     result: MethodChannel.Result,
     mimeType: String,
     displayName: String,
     directory: String,
-    content: String
+    content: ByteArray
   ) {
     val documentFile =
       documentFromTreeUri(plugin.context, directory)
@@ -232,7 +234,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
     createdFile?.uri?.apply {
       plugin.context.contentResolver.openOutputStream(this)?.apply {
-        write(content.toByteArray())
+        write(content)
         flush()
 
         val createdFileDocument =
@@ -257,8 +259,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             "persistedTime" to it.persistedTime,
             "uri" to "${it.uri}"
           )
-        }
-        .toList()
+        }.toList()
     )
   }
 
@@ -349,27 +350,48 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       LIST_FILES -> {
         if (eventSink == null) return
 
-        val document = documentFromTreeUri(plugin.context, args["uri"] as String) ?: return
-        val columns = args["columns"] as List<*>
-
-        if (!document.canRead()) {
-          val error = "You cannot read a URI that you don't have read permissions"
-
-          Log.d("NO PERMISSION!!!", error)
-
-          eventSink?.error(EXCEPTION_MISSING_PERMISSIONS, error, mapOf("uri" to args["uri"]))
+        val document = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          documentFromTreeUri(plugin.context, args["uri"] as String) ?: return
         } else {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CoroutineScope(Dispatchers.Default).launch {
-              traverseDirectoryEntries(
-                plugin.context.contentResolver,
-                rootOnly = true,
-                rootUri = document.uri,
-                columns = columns.map { parseDocumentFileColumn(parseDocumentFileColumn(it as String)!!)!! }
-                  .toTypedArray()
-              ) { data ->
-                launch(Dispatchers.Main) {
-                  eventSink?.success(data)
+          null
+        }
+
+        if (document == null) {
+          eventSink?.error(
+            EXCEPTION_NOT_SUPPORTED,
+            "Android SDK must be greater or equal than [Build.VERSION_CODES.N]",
+            "Got (Build.VERSION.SDK_INT): ${Build.VERSION.SDK_INT}"
+          )
+        } else {
+          val columns = args["columns"] as List<*>
+
+          if (!document.canRead()) {
+            val error =
+              "You cannot read a URI that you don't have read permissions"
+
+            Log.d("NO PERMISSION!!!", error)
+
+            eventSink?.error(
+              EXCEPTION_MISSING_PERMISSIONS,
+              error,
+              mapOf("uri" to args["uri"])
+            )
+          } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+              CoroutineScope(Dispatchers.Default).launch {
+                traverseDirectoryEntries(
+                  plugin.context.contentResolver,
+                  rootOnly = true,
+                  rootUri = document.uri,
+                  columns = columns.map {
+                    parseDocumentFileColumn(
+                      parseDocumentFileColumn(it as String)!!
+                    )!!
+                  }.toTypedArray()
+                ) { data ->
+                  launch(Dispatchers.Main) {
+                    eventSink?.success(data)
+                  }
                 }
               }
             }

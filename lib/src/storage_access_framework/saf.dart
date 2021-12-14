@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:shared_storage/shared_storage.dart';
 import 'package:shared_storage/src/channels.dart';
 import 'package:shared_storage/src/storage_access_framework/document_bitmap.dart';
@@ -148,8 +150,10 @@ Future<DocumentBitmap?> getDocumentThumbnail({
 ///   print('$documentId was added to state');
 /// });
 /// ```
-Stream<PartialDocumentFile> listFiles(
-    {required Uri uri, required List<DocumentFileColumn> columns}) {
+///
+/// [Refer to details](https://stackoverflow.com/questions/41096332/issues-traversing-through-directory-hierarchy-with-android-storage-access-framew)
+Stream<PartialDocumentFile> listFiles(Uri uri,
+    {required List<DocumentFileColumn> columns}) {
   const kListFiles = 'listFiles';
 
   const kUri = 'uri';
@@ -183,7 +187,7 @@ Future<bool?> exists(Uri uri) async {
 
 /// Equivalent to `DocumentsContract.buildDocumentUriUsingTree`
 ///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUriUsingTree(android.net.Uri,%20java.lang.String))
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUriUsingTree%28android.net.Uri,%20java.lang.String%29)
 Future<Uri?> buildDocumentUriUsingTree(Uri treeUri, String documentId) async {
   const kBuildDocumentUriUsingTree = 'buildDocumentUriUsingTree';
 
@@ -205,7 +209,7 @@ Future<Uri?> buildDocumentUriUsingTree(Uri treeUri, String documentId) async {
 
 /// Equivalent to `DocumentsContract.buildDocumentUri`
 ///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri(java.lang.String,%20java.lang.String))
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29)
 Future<Uri?> buildDocumentUri(String authority, String documentId) async {
   const kBuildDocumentUri = 'buildDocumentUri';
 
@@ -227,7 +231,7 @@ Future<Uri?> buildDocumentUri(String authority, String documentId) async {
 
 /// Equivalent to `DocumentsContract.buildDocumentUri`
 ///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri(java.lang.String,%20java.lang.String))
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29)
 Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
   const kBuildTreeDocumentUri = 'buildTreeDocumentUri';
 
@@ -245,4 +249,212 @@ Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
   if (uri == null) return null;
 
   return Uri.parse(uri);
+}
+
+/// Equivalent to `DocumentFile.delete`
+///
+/// Returns `true` if deleted successfully
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#delete%28%29)
+Future<bool?> delete(Uri uri) async {
+  const kDelete = 'delete';
+
+  return await kDocumentFileChannel
+      .invokeMethod<bool>(kDelete, <String, String>{'uri': '$uri'});
+}
+
+/// Create a direct child document tree named `displayName` given a parent `parentUri`
+///
+/// Equivalent to `DocumentFile.createDirectory`
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createDirectory%28java.lang.String%29)
+Future<DocumentFile?> createDirectory(Uri parentUri, String displayName) async {
+  const kCreateDirectory = 'createDirectory';
+
+  const kDisplayNameArg = 'displayName';
+  const kUri = 'uri';
+
+  final args = <String, String>{
+    kUri: '$parentUri',
+    kDisplayNameArg: displayName,
+  };
+
+  final createdDocumentFile = await kDocumentFileChannel
+      .invokeMapMethod<String, dynamic>(kCreateDirectory, args);
+
+  if (createdDocumentFile == null) return null;
+
+  return DocumentFile.fromMap(createdDocumentFile);
+}
+
+/// Create a direct child document of `parentUri`
+/// - `mimeType` is the type of document following [this specs](https://www.iana.org/assignments/media-types/media-types.xhtml)
+/// - `displayName` is the name of the documnt, must be a valid file name
+/// - `content` is the content of the document as a list of bytes `Uint8List`
+///
+/// Returns the created file as a `DocumentFile`
+Future<DocumentFile?> createFileAsBytes(Uri parentUri,
+    {required String mimeType,
+    required String displayName,
+    required Uint8List content}) async {
+  const kCreateFile = 'createFile';
+
+  const kMimeTypeArg = 'mimeType';
+  const kContentArg = 'content';
+  const kDisplayNameArg = 'displayName';
+  const kDirectoryUriArg = 'directoryUri';
+
+  final directoryUri = '$parentUri';
+
+  final args = <String, dynamic>{
+    kMimeTypeArg: mimeType,
+    kContentArg: content,
+    kDisplayNameArg: displayName,
+    kDirectoryUriArg: directoryUri,
+  };
+
+  final createdDocumentFile = await kDocumentFileChannel
+      .invokeMapMethod<String, dynamic>(kCreateFile, args);
+
+  if (createdDocumentFile == null) return null;
+
+  return DocumentFile.fromMap(createdDocumentFile);
+}
+
+/// Convenient method to create a file
+/// using `content` as String instead Uint8List
+Future<DocumentFile?> createFileAsString(Uri parentUri,
+    {required String mimeType,
+    required String displayName,
+    required String content}) {
+  return createFileAsBytes(
+    parentUri,
+    displayName: displayName,
+    mimeType: mimeType,
+    content: Uint8List.fromList(content.codeUnits),
+  );
+}
+
+/// Equivalent to `DocumentFile.length`
+///
+/// Returns the size of a given document `uri` in bytes
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#length%28%29)
+Future<int?> getDocumentLength(Uri uri) async {
+  const kLength = 'length';
+
+  const kUri = 'uri';
+
+  final args = <String, String>{kUri: '$uri'};
+
+  final length = await kDocumentFileChannel.invokeMethod<int>(kLength, args);
+
+  return length;
+}
+
+/// Equivalent to `DocumentFile.lastModified`
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#lastModified%28%29)
+Future<DateTime?> lastModified(Uri uri) async {
+  const kLastModified = 'lastModified';
+
+  const kUri = 'uri';
+
+  final args = <String, String>{kUri: '$uri'};
+
+  final inMillisecondsSinceEpoch =
+      await kDocumentFileChannel.invokeMethod<int>(kLastModified, args);
+
+  if (inMillisecondsSinceEpoch == null) return null;
+
+  return DateTime.fromMillisecondsSinceEpoch(inMillisecondsSinceEpoch);
+}
+
+/// Equivalent to `DocumentFile.findFile`
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#findFile%28java.lang.String%29)
+Future<DocumentFile?> findFile(Uri directoryUri, String displayName) async {
+  const kFindFile = 'findFile';
+
+  const kDisplayNameArg = 'displayName';
+  const kUri = 'uri';
+
+  final args = <String, String>{
+    kUri: '$directoryUri',
+    kDisplayNameArg: displayName,
+  };
+
+  final matchedDocumentFile = await kDocumentFileChannel
+      .invokeMapMethod<String, dynamic>(kFindFile, args);
+
+  if (matchedDocumentFile == null) return null;
+
+  return DocumentFile.fromMap(matchedDocumentFile);
+}
+
+/// Rename the current document `uri` to a new `displayName`
+///
+/// **Note: after using this method `uri` is not longer valid,
+/// use the returned document instead**
+///
+/// Returns the updated document
+///
+/// Equivalent to `DocumentFile.renameTo`
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#renameTo%28java.lang.String%29)
+Future<DocumentFile?> renameTo(Uri uri, String displayName) async {
+  const kRenameTo = 'renameTo';
+
+  const kDisplayNameArg = 'displayName';
+  const kUri = 'uri';
+
+  final args = <String, String>{
+    kUri: '$uri',
+    kDisplayNameArg: displayName,
+  };
+
+  final updatedDocumentFile = await kDocumentFileChannel
+      .invokeMapMethod<String, dynamic>(kRenameTo, args);
+
+  if (updatedDocumentFile == null) return null;
+
+  return DocumentFile.fromMap(updatedDocumentFile);
+}
+
+/// Create a new `DocumentFile` instance given `uri`
+///
+/// Equivalent to `DocumentFile.fromTreeUri`
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29)
+Future<DocumentFile?> fromTreeUri(Uri uri) async {
+  const kFromTreeUri = 'fromTreeUri';
+
+  const kUri = 'uri';
+
+  final documentFile = await kDocumentFileChannel
+      .invokeMapMethod<String, dynamic>(kFromTreeUri, {kUri: '$uri'});
+
+  if (documentFile == null) return null;
+
+  return DocumentFile.fromMap(documentFile);
+}
+
+/// Get the parent file of the given `uri`
+///
+/// Equivalent to `DocumentFile.getParentFile`
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#getParentFile%28%29)
+Future<DocumentFile?> parentFile(Uri uri) async {
+  const kParentFile = 'parentFile';
+
+  const kUri = 'uri';
+
+  final args = <String, String>{kUri: '$uri'};
+
+  final parent = await kDocumentFileChannel.invokeMapMethod<String, dynamic>(
+      kParentFile, args);
+
+  if (parent == null) return null;
+
+  return DocumentFile.fromMap(parent);
 }
