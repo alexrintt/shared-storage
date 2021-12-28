@@ -10,7 +10,10 @@ import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
 import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.*
+import io.lakscastro.sharedstorage.plugin.API_21
+import io.lakscastro.sharedstorage.plugin.ActivityListener
+import io.lakscastro.sharedstorage.plugin.EXCEPTION_NOT_SUPPORTED
+import io.lakscastro.sharedstorage.plugin.Listenable
 import io.lakscastro.sharedstorage.saf.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +39,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     when (call.method) {
       OPEN_DOCUMENT_TREE ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           openDocumentTree(call, result)
         }
       CREATE_FILE ->
@@ -77,8 +80,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             documentFromTreeUri(
               plugin.context,
               call.argument<String?>("uri") as String
-            )
-              ?.canWrite()
+            )?.canWrite()
           )
         }
       CAN_READ ->
@@ -172,7 +174,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       }
       PARENT_FILE -> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-          val uri = call.argument<String?>("uri") as String
+          val uri = call.argument<String>("uri")!!
           val parent = documentFromTreeUri(plugin.context, uri)?.parentFile
 
           if (parent != null)
@@ -183,8 +185,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     }
   }
 
-
-  @RequiresApi(Build.VERSION_CODES.N)
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
   private fun openDocumentTree(call: MethodCall, result: MethodChannel.Result) {
     val grantWritePermission = call.argument<Boolean>("grantWritePermission")!!
     val initialUri = call.argument<String>("initialUri")
@@ -210,7 +211,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     )
   }
 
-  @RequiresApi(Build.VERSION_CODES.N)
   private fun createFile(
     result: MethodChannel.Result,
     mimeType: String,
@@ -276,7 +276,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     result.success(null)
   }
 
-  @RequiresApi(Build.VERSION_CODES.Q)
+  @RequiresApi(Build.VERSION_CODES.KITKAT)
   override fun onActivityResult(
     requestCode: Int,
     resultCode: Int,

@@ -9,11 +9,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
 import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.ActivityListener
-import io.lakscastro.sharedstorage.plugin.Listenable
+import io.lakscastro.sharedstorage.plugin.*
 import io.lakscastro.sharedstorage.saf.utils.*
-import io.lakscastro.sharedstorage.saf.utils.GET_DOCUMENT_THUMBNAIL
-import io.lakscastro.sharedstorage.saf.utils.bitmapToBase64
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,13 +28,14 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     when (call.method) {
       GET_DOCUMENT_THUMBNAIL -> {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           val rootUri = Uri.parse(call.argument("rootUri"))
           val documentId = call.argument<String>("documentId")
           val width = call.argument<Int>("width")!!
           val height = call.argument<Int>("height")!!
 
-          val uri = DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
+          val uri =
+            DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
 
           val bitmap = DocumentsContract.getDocumentThumbnail(
             plugin.context.contentResolver,
@@ -64,14 +62,17 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
               }
             }
           }
+        } else {
+          result.notSupported(call.method, API_21)
         }
       }
       BUILD_DOCUMENT_URI_USING_TREE -> {
         val treeUri = Uri.parse(call.argument<String>("treeUri"))
         val documentId = call.argument<String>("documentId")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-          val documentUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, documentId)
+        if (Build.VERSION.SDK_INT >= API_21) {
+          val documentUri =
+            DocumentsContract.buildDocumentUriUsingTree(treeUri, documentId)
 
           result.success("$documentUri")
         } else {
@@ -95,7 +96,8 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
         val documentId = call.argument<String>("documentId")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-          val treeDocumentUri = DocumentsContract.buildTreeDocumentUri(authority, documentId)
+          val treeDocumentUri =
+            DocumentsContract.buildTreeDocumentUri(authority, documentId)
 
           result.success("$treeDocumentUri")
         } else {
@@ -104,6 +106,7 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
       }
     }
   }
+
 
   override fun startListening(binaryMessenger: BinaryMessenger) {
     if (channel != null) stopListening()

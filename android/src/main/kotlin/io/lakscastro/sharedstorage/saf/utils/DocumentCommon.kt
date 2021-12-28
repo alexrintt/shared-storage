@@ -9,27 +9,43 @@ import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
+import io.lakscastro.sharedstorage.plugin.API_21
+import io.lakscastro.sharedstorage.plugin.API_24
+import io.lakscastro.sharedstorage.plugin.API_26
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 
 
 /// Generate the `DocumentFile` reference from string `uri`
-@RequiresApi(Build.VERSION_CODES.N)
+@RequiresApi(API_21)
 fun documentFromTreeUri(context: Context, uri: String): DocumentFile? =
   documentFromTreeUri(context, Uri.parse(uri))
 
 /// Generate the `DocumentFile` reference from URI `uri`
-@RequiresApi(Build.VERSION_CODES.N)
-fun documentFromTreeUri(context: Context, uri: Uri): DocumentFile? =
-  DocumentFile.fromTreeUri(
-    context,
-    if (DocumentsContract.isTreeUri(uri))
-      uri
-    else DocumentsContract.buildDocumentUriUsingTree(
+@RequiresApi(API_21)
+fun documentFromTreeUri(context: Context, uri: Uri): DocumentFile? {
+  /// Trick to verify if is a tree URi even not in API 26+
+  fun isTreeUri(uri: Uri): Boolean {
+    if (Build.VERSION.SDK_INT >= API_24) {
+      return DocumentsContract.isTreeUri(uri)
+    }
+
+    val paths = uri.pathSegments
+
+    return paths.size >= 2 && "tree" == paths[0]
+  }
+
+  val treeUri = if (isTreeUri(uri)) {
+    uri
+  } else {
+    DocumentsContract.buildDocumentUriUsingTree(
       uri,
       DocumentsContract.getDocumentId(uri)
     )
-  )
+  }
+
+  return DocumentFile.fromTreeUri(context, treeUri)
+}
 
 /// Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
 /// from plugin results, like:
@@ -186,11 +202,11 @@ private fun isDirectory(mimeType: String): Boolean {
 }
 
 fun bitmapToBase64(bitmap: Bitmap): String {
-  val outputStream = ByteArrayOutputStream();
+  val outputStream = ByteArrayOutputStream()
 
   val fullQuality = 100
 
-  bitmap.compress(Bitmap.CompressFormat.PNG, fullQuality, outputStream);
+  bitmap.compress(Bitmap.CompressFormat.PNG, fullQuality, outputStream)
 
-  return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP);
+  return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
 }

@@ -116,7 +116,7 @@ Future<DocumentBitmap?> getDocumentThumbnail({
   const kWidth = 'width';
   const kHeight = 'height';
 
-  final args = {
+  final args = <String, dynamic>{
     kRootUri: '$rootUri',
     kDocumentId: documentId,
     kWidth: width,
@@ -180,7 +180,7 @@ Future<bool?> exists(Uri uri) async {
 
   const kUri = 'uri';
 
-  final args = {kUri: uri};
+  final args = <String, String>{kUri: '$uri'};
 
   return await kDocumentFileChannel.invokeMethod<bool>(kExists, args);
 }
@@ -259,8 +259,11 @@ Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
 Future<bool?> delete(Uri uri) async {
   const kDelete = 'delete';
 
-  return await kDocumentFileChannel
-      .invokeMethod<bool>(kDelete, <String, String>{'uri': '$uri'});
+  const kUri = 'uri';
+
+  final args = <String, String>{kUri: '$uri'};
+
+  return await kDocumentFileChannel.invokeMethod<bool>(kDelete, args);
 }
 
 /// Create a direct child document tree named `displayName` given a parent `parentUri`
