@@ -7,8 +7,9 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
 import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.EXCEPTION_NOT_SUPPORTED
+import io.lakscastro.sharedstorage.plugin.API_30
 import io.lakscastro.sharedstorage.plugin.Listenable
+import io.lakscastro.sharedstorage.plugin.notSupported
 import java.io.File
 
 class EnvironmentApi(val plugin: SharedStoragePlugin) : MethodChannel.MethodCallHandler,
@@ -54,14 +55,10 @@ class EnvironmentApi(val plugin: SharedStoragePlugin) : MethodChannel.MethodCall
     result.success(Environment.getDataDirectory().absolutePath)
 
   private fun getStorageDirectory(result: MethodChannel.Result) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    if (Build.VERSION.SDK_INT >= API_30) {
       result.success(Environment.getStorageDirectory().absolutePath)
     } else {
-      result.error(
-        EXCEPTION_NOT_SUPPORTED,
-        "`Environment.getStorageDirectory()` requires API level `Build.VERSION_CODES.R`",
-        "Got (Build.VERSION.SDK_INT): ${Build.VERSION.SDK_INT}"
-      )
+      result.notSupported("getStorageDirectory", API_30)
     }
   }
 

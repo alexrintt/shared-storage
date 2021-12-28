@@ -32,7 +32,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     private const val CHANNEL = "documentfile"
   }
 
-  @RequiresApi(Build.VERSION_CODES.N)
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     when (call.method) {
       OPEN_DOCUMENT_TREE ->
@@ -40,7 +39,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           openDocumentTree(call, result)
         }
       CREATE_FILE ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           createFile(
             result,
             call.argument<String>("mimeType")!!,
@@ -61,7 +60,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       FROM_TREE_URI ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
             createDocumentFileMap(
               documentFromTreeUri(
@@ -72,7 +71,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       CAN_WRITE ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
             documentFromTreeUri(
               plugin.context,
@@ -81,7 +80,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       CAN_READ ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
             documentFromTreeUri(
               plugin.context,
@@ -90,7 +89,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       LENGTH ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
             documentFromTreeUri(
               plugin.context,
@@ -99,7 +98,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       EXISTS ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
             documentFromTreeUri(
               plugin.context,
@@ -108,7 +107,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       DELETE ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
             documentFromTreeUri(
               plugin.context,
@@ -117,7 +116,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       LAST_MODIFIED ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
             documentFromTreeUri(
               plugin.context,
@@ -126,7 +125,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       CREATE_DIRECTORY -> {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           val uri = call.argument<String?>("uri") as String
           val displayName =
             call.argument<String?>("displayName") as String
@@ -138,7 +137,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         }
       }
       FIND_FILE -> {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           val uri = call.argument<String?>("uri") as String
           val displayName =
             call.argument<String?>("displayName") as String
@@ -151,7 +150,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         }
       }
       RENAME_TO -> {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           val uri = call.argument<String?>("uri") as String
           val displayName =
             call.argument<String?>("displayName") as String
@@ -170,7 +169,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         }
       }
       PARENT_FILE -> {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           val uri = call.argument<String>("uri")!!
           val parent = documentFromTreeUri(plugin.context, uri)?.parentFile
 
@@ -182,7 +181,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     }
   }
 
-  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+  @RequiresApi(API_21)
   private fun openDocumentTree(call: MethodCall, result: MethodChannel.Result) {
     val grantWritePermission = call.argument<Boolean>("grantWritePermission")!!
     val initialUri = call.argument<String>("initialUri")
@@ -261,7 +260,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     )
   }
 
-  @RequiresApi(Build.VERSION_CODES.KITKAT)
+  @RequiresApi(API_19)
   private fun releasePersistableUriPermission(
     result: MethodChannel.Result,
     directoryUri: String
@@ -274,7 +273,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     result.success(null)
   }
 
-  @RequiresApi(Build.VERSION_CODES.KITKAT)
+  @RequiresApi(API_19)
   override fun onActivityResult(
     requestCode: Int,
     resultCode: Int,

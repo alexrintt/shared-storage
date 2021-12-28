@@ -6,6 +6,7 @@ import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
+import io.lakscastro.sharedstorage.plugin.API_19
 
 private const val PREFIX = "DocumentFileColumn"
 
@@ -36,7 +37,6 @@ fun parseDocumentFileColumn(column: String): DocumentFileColumn? {
   return values[column]
 }
 
-
 fun documentFileColumnToRawString(column: DocumentFileColumn): String? {
   val values = mapOf(
     DocumentFileColumn.ID to "$PREFIX.COLUMN_DOCUMENT_ID",
@@ -50,7 +50,6 @@ fun documentFileColumnToRawString(column: DocumentFileColumn): String? {
   return values[column]
 }
 
-@RequiresApi(Build.VERSION_CODES.KITKAT)
 fun parseDocumentFileColumn(column: DocumentFileColumn): String? {
   val values = mapOf(
     DocumentFileColumn.ID to DocumentsContract.Document.COLUMN_DOCUMENT_ID,
@@ -65,7 +64,6 @@ fun parseDocumentFileColumn(column: DocumentFileColumn): String? {
 }
 
 /// `column` must be a constant String from `DocumentsContract.Document.COLUMN*`
-@RequiresApi(Build.VERSION_CODES.KITKAT)
 fun typeOfColumn(column: String): DocumentFileColumnType? {
   val values = mapOf(
     DocumentsContract.Document.COLUMN_DOCUMENT_ID to DocumentFileColumnType.STRING,

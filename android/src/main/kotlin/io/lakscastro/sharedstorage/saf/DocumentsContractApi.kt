@@ -83,25 +83,25 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
         val authority = call.argument<String>("authority")
         val documentId = call.argument<String>("documentId")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           val documentUri = DocumentsContract.buildDocumentUri(authority,documentId)
 
           result.success("$documentUri")
         } else {
-          result.notImplemented()
+          result.notSupported(call.method, API_21)
         }
       }
       BUILD_TREE_DOCUMENT_URI -> {
         val authority = call.argument<String>("authority")
         val documentId = call.argument<String>("documentId")
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= API_21) {
           val treeDocumentUri =
             DocumentsContract.buildTreeDocumentUri(authority, documentId)
 
           result.success("$treeDocumentUri")
         } else {
-          result.notImplemented()
+          result.notSupported(call.method, API_21)
         }
       }
     }

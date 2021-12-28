@@ -9,6 +9,7 @@ import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
+import io.lakscastro.sharedstorage.plugin.API_19
 import io.lakscastro.sharedstorage.plugin.API_21
 import io.lakscastro.sharedstorage.plugin.API_24
 import io.lakscastro.sharedstorage.plugin.API_26
@@ -85,7 +86,6 @@ fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
 ///   "displayName": "MyFile"
 /// }
 /// ```
-@RequiresApi(Build.VERSION_CODES.KITKAT)
 fun createCursorRowMap(
   rootUri: Uri,
   parentUri: Uri,
@@ -128,7 +128,7 @@ fun closeQuietly(closeable: Closeable?) {
   }
 }
 
-@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+@RequiresApi(API_21)
 fun traverseDirectoryEntries(
   contentResolver: ContentResolver,
   rootUri: Uri,
@@ -196,7 +196,7 @@ fun traverseDirectoryEntries(
   }
 }
 
-@RequiresApi(Build.VERSION_CODES.KITKAT)
+@RequiresApi(API_19)
 private fun isDirectory(mimeType: String): Boolean {
   return DocumentsContract.Document.MIME_TYPE_DIR == mimeType
 }
