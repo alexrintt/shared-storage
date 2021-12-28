@@ -10,10 +10,7 @@ import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
 import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.API_21
-import io.lakscastro.sharedstorage.plugin.ActivityListener
-import io.lakscastro.sharedstorage.plugin.EXCEPTION_NOT_SUPPORTED
-import io.lakscastro.sharedstorage.plugin.Listenable
+import io.lakscastro.sharedstorage.plugin.*
 import io.lakscastro.sharedstorage.saf.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -211,6 +208,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     )
   }
 
+  @RequiresApi(API_21)
   private fun createFile(
     result: MethodChannel.Result,
     mimeType: String,
@@ -245,7 +243,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     }
   }
 
-  @RequiresApi(Build.VERSION_CODES.KITKAT)
+  @RequiresApi(API_19)
   private fun persistedUriPermissions(result: MethodChannel.Result) {
     val persistedUriPermissions =
       plugin.context.contentResolver.persistedUriPermissions
