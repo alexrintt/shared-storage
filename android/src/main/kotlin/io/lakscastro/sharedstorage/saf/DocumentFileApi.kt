@@ -6,7 +6,6 @@ import android.os.Build
 import android.provider.DocumentsContract
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.documentfile.provider.DocumentFile
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
@@ -16,7 +15,8 @@ import io.lakscastro.sharedstorage.saf.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.File
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   MethodChannel.MethodCallHandler,
@@ -149,6 +149,29 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               documentFromTreeUri(plugin.context, uri)?.findFile(displayName)
             )
           )
+        }
+      }
+      COPY -> {
+        if (Build.VERSION.SDK_INT >= API_21) {
+          val content = StringBuilder()
+          val destinationTree = call.argument<String>("destination")!!
+          val document = documentFromTreeUri(
+            plugin.context,
+            Uri.parse(call.argument<String>("uri")!!)
+          ) ?: return
+
+          readDocumentContent(document.uri) {
+            onSuccess = { content.append(this) }
+            onEnd = {
+              createFile(
+                result,
+                document.type!!,
+                document.name!!,
+                destinationTree,
+                "$content".toByteArray()
+              )
+            }
+          }
         }
       }
       RENAME_TO -> {
@@ -396,10 +419,42 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           }
         }
       }
+      GET_DOCUMENT_CONTENT -> {
+        val uri = Uri.parse(args["uri"] as String)
+
+        readDocumentContent(uri) {
+          onSuccess = { eventSink?.success(this) }
+          onEnd = { eventSink?.endOfStream() }
+        }
+      }
     }
+  }
+
+  private fun readDocumentContent(
+    uri: Uri,
+    handler: CallbackHandler<String>.() -> Unit
+  ) {
+    val callbacks = CallbackHandler<String>().apply { handler(this) }
+
+    plugin.context.contentResolver.openInputStream(uri)
+      ?.use { inputStream ->
+        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+          var line = reader.readLine()
+
+          while (line != null) {
+            callbacks.onSuccess?.invoke(line)
+
+            line = reader.readLine()
+          }
+
+          callbacks.onEnd?.invoke()
+        }
+      }
   }
 
   override fun onCancel(arguments: Any?) {
     eventSink = null
   }
 }
+
+

@@ -21,11 +21,13 @@ const val PARENT_FILE = "parentFile"
 const val CREATE_DIRECTORY = "createDirectory"
 const val DELETE = "delete"
 const val FIND_FILE = "findFile"
+const val COPY = "copy"
 const val LAST_MODIFIED = "lastModified"
 const val GET_DOCUMENT_THUMBNAIL = "getDocumentThumbnail"
 const val BUILD_DOCUMENT_URI_USING_TREE = "buildDocumentUriUsingTree"
 const val BUILD_DOCUMENT_URI = "buildDocumentUri"
 const val BUILD_TREE_DOCUMENT_URI = "buildTreeDocumentUri"
+const val GET_DOCUMENT_CONTENT = "getDocumentContent"
 
 /// Available Event Channels APIs
 const val LIST_FILES = "listFiles"

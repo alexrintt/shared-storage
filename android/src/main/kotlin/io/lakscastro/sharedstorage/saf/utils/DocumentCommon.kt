@@ -12,30 +12,49 @@ import androidx.documentfile.provider.DocumentFile
 import io.lakscastro.sharedstorage.plugin.API_19
 import io.lakscastro.sharedstorage.plugin.API_21
 import io.lakscastro.sharedstorage.plugin.API_24
-import io.lakscastro.sharedstorage.plugin.API_26
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 
+/*
+ * Helper class to make more easy to handle callbacks using Kotlin syntax
+ */
+data class CallbackHandler<T>(
+  var onSuccess: (T.() -> Unit)? = null,
+  var onEnd: (() -> Unit)? = null
+)
 
-/// Generate the `DocumentFile` reference from string `uri`
+/*
+ * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
+ */
+@RequiresApi(API_21)
+fun documentFromSingleUri(context: Context, uri: String): DocumentFile? =
+  documentFromSingleUri(context, Uri.parse(uri))
+
+/*
+ * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
+ */
+@RequiresApi(API_21)
+fun documentFromSingleUri(context: Context, uri: Uri): DocumentFile? {
+  val documentUri = DocumentsContract.buildDocumentUri(
+    uri.authority,
+    DocumentsContract.getDocumentId(uri)
+  )
+
+  return DocumentFile.fromSingleUri(context, documentUri)
+}
+
+/*
+ * Generate the `DocumentFile` reference from string `uri`
+ */
 @RequiresApi(API_21)
 fun documentFromTreeUri(context: Context, uri: String): DocumentFile? =
   documentFromTreeUri(context, Uri.parse(uri))
 
-/// Generate the `DocumentFile` reference from URI `uri`
+/*
+ * Generate the `DocumentFile` reference from URI `uri`
+ */
 @RequiresApi(API_21)
 fun documentFromTreeUri(context: Context, uri: Uri): DocumentFile? {
-  /// Trick to verify if is a tree URi even not in API 26+
-  fun isTreeUri(uri: Uri): Boolean {
-    if (Build.VERSION.SDK_INT >= API_24) {
-      return DocumentsContract.isTreeUri(uri)
-    }
-
-    val paths = uri.pathSegments
-
-    return paths.size >= 2 && "tree" == paths[0]
-  }
-
   val treeUri = if (isTreeUri(uri)) {
     uri
   } else {
@@ -48,11 +67,13 @@ fun documentFromTreeUri(context: Context, uri: Uri): DocumentFile? {
   return DocumentFile.fromTreeUri(context, treeUri)
 }
 
-/// Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
-/// from plugin results, like:
-/// ```dart
-/// result.success(createDocumentFileMap(documentFile))
-/// ```
+/*
+ * Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
+ * from plugin results, like:
+ * ```dart
+ * result.success(createDocumentFileMap(documentFile))
+ * ```
+ */
 fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
   if (documentFile == null) return null
 
@@ -67,25 +88,28 @@ fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
   )
 }
 
-/// Standard map encoding of a row result of a `DocumentFile`
-/// ```dart
-/// result.success(createDocumentFileMap(documentFile))
-/// ```
-/// Example:
-/// ```py
-/// input = {
-///   "last_modified": 2939496, /// Key from DocumentsContract.Document.COLUMN_LAST_MODIFIED
-///   "_display_name": "MyFile" /// Key from DocumentsContract.Document.COLUMN_DISPLAY_NAME
-/// }
-///
-/// output = createCursorRowMap(input)
-///
-/// print(output)
-/// {
-///   "lastModified": 2939496,
-///   "displayName": "MyFile"
-/// }
-/// ```
+
+/*
+ * Standard map encoding of a row result of a `DocumentFile`
+ * ```dart
+ * result.success(createDocumentFileMap(documentFile))
+ * ```
+ * Example:
+ * ```py
+ * input = {
+ *   "last_modified": 2939496, /// Key from DocumentsContract.Document.COLUMN_LAST_MODIFIED
+ *   "_display_name": "MyFile" /// Key from DocumentsContract.Document.COLUMN_DISPLAY_NAME
+ * }
+ *
+ * output = createCursorRowMap(input)
+ *
+ * print(output)
+ * {
+ *   "lastModified": 2939496,
+ *   "displayName": "MyFile"
+ * }
+ * ```
+ */
 fun createCursorRowMap(
   rootUri: Uri,
   parentUri: Uri,
@@ -116,7 +140,9 @@ fun createCursorRowMap(
   )
 }
 
-/// Util method to close a closeable
+/*
+ * Util method to close a closeable
+ */
 fun closeQuietly(closeable: Closeable?) {
   if (closeable != null) {
     try {
@@ -141,7 +167,7 @@ fun traverseDirectoryEntries(
     DocumentsContract.getTreeDocumentId(rootUri)
   )
 
-  // Keep track of our directory hierarchy
+  /// Keep track of our directory hierarchy
   val dirNodes = mutableListOf<Pair<Uri, Uri>>(Pair(rootUri, childrenUri))
 
   while (dirNodes.isNotEmpty()) {
@@ -209,4 +235,17 @@ fun bitmapToBase64(bitmap: Bitmap): String {
   bitmap.compress(Bitmap.CompressFormat.PNG, fullQuality, outputStream)
 
   return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
+}
+
+/*
+ * Trick to verify if is a tree URi even not in API 26+
+ */
+fun isTreeUri(uri: Uri): Boolean {
+  if (Build.VERSION.SDK_INT >= API_24) {
+    return DocumentsContract.isTreeUri(uri)
+  }
+
+  val paths = uri.pathSegments
+
+  return paths.size >= 2 && "tree" == paths[0]
 }
