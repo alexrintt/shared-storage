@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_storage/shared_storage.dart';
 import 'package:shared_storage_example/persisted_uri_card.dart';
 
@@ -39,9 +40,13 @@ class _AppState extends State<App> {
   }
 
   Future<void> _loadPersistedUriPermissions() async {
-    persistedPermissionUris = await persistedUriPermissions();
+    final status = await Permission.storage.request();
 
-    setState(() => {});
+    if (status.isGranted) {
+      persistedPermissionUris = await persistedUriPermissions();
+
+      setState(() => {});
+    }
   }
 
   void _openDocumentTree() async {

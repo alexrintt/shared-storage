@@ -34,7 +34,9 @@ class MediaStoreApi(val plugin: SharedStoragePlugin) : MethodChannel.MethodCallH
     collection: String
   ) = result.success(mediaStoreOf(collection))
 
-  /// Returns the [EXTERNAL_CONTENT_URI] of [MediaStore.<MEDIA>] equivalent to [collection]
+  /**
+   * Returns the [EXTERNAL_CONTENT_URI] of [MediaStore.<MEDIA>] equivalent to [collection]
+   */
   private fun mediaStoreOf(collection: String): String? {
     val mapper = mutableMapOf(
       "MediaStoreCollection.Audio" to MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.path,

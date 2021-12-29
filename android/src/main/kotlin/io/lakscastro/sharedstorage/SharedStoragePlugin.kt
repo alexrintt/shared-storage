@@ -12,15 +12,23 @@ import io.lakscastro.sharedstorage.saf.StorageAccessFramework
 
 const val ROOT_CHANNEL = "io.lakscastro.plugins/sharedstorage"
 
-/** SharedStoragePlugin */
+/**
+ * Flutter plugin Kotlin implementation `SharedStoragePlugin`
+ */
 class SharedStoragePlugin : FlutterPlugin, ActivityAware {
-  /// `Environment` API channel
+  /**
+   * `Environment` API channel
+   */
   private val environmentApi = EnvironmentApi(this)
 
-  /// `MediaStore` API channel
+  /**
+   * `MediaStore` API channel
+   */
   private val mediaStoreApi = MediaStoreApi(this)
 
-  /// `DocumentFile` API channel
+  /**
+   * `DocumentFile` API channel
+   */
   private val storageAccessFrameworkApi = StorageAccessFramework(this)
 
   lateinit var context: Context
@@ -29,13 +37,13 @@ class SharedStoragePlugin : FlutterPlugin, ActivityAware {
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPluginBinding) {
     context = flutterPluginBinding.applicationContext
 
-    /// Setup `Environment` API
+    /** Setup `Environment` API */
     environmentApi.startListening(flutterPluginBinding.binaryMessenger)
 
-    /// Setup `MediaStore` API
+    /** Setup `MediaStore` API */
     mediaStoreApi.startListening(flutterPluginBinding.binaryMessenger)
 
-    /// Setup `StorageAccessFramework` API
+    /** Setup `StorageAccessFramework` API */
     storageAccessFrameworkApi.startListening(flutterPluginBinding.binaryMessenger)
   }
 

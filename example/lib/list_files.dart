@@ -123,7 +123,7 @@ class _FileTileState extends State<FileTile> {
   }
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
 
     _loadThumbnailIfAvailable();
@@ -140,7 +140,19 @@ class _FileTileState extends State<FileTile> {
   @override
   Widget build(BuildContext context) {
     return SimpleCard(
-      onTap: () {},
+      onTap: () async {
+        if (file.metadata?.isDirectory == false) {
+          final document = await file.metadata!.uri!.toDocumentFile();
+
+          print(document!.uri.toString());
+
+          final onNewLine = getDocumentContent(file.metadata!.uri!);
+
+          onNewLine.listen((newLine) {
+            print('New line: $newLine');
+          });
+        }
+      },
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 12),
@@ -180,6 +192,7 @@ class _FileTileState extends State<FileTile> {
             'id': '${file.data?[DocumentFileColumn.id]}',
             'parentUri': '${file.metadata?.parentUri}',
             'rootUri': '${file.metadata?.rootUri}',
+            'uri': '${file.metadata?.uri}',
           },
         ),
         if (file.metadata?.isDirectory ?? false)

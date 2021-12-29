@@ -11,6 +11,10 @@ environment:
   flutter: ">=2.5.0"
 
 dependencies:
+  permission_handler: ^8.1.6
+  shared_storage:
+    git: https://github.com/lakscastro/shared-storage
+    ref: fd55674d5e210cb24dd7d4f360229f6304280110
   flutter:
     sdk: flutter
 

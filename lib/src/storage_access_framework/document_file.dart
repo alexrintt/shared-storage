@@ -42,6 +42,10 @@ class DocumentFile {
 
   Future<bool?> delete() => saf.delete(uri);
 
+  Future<DocumentFile?> copy(Uri destination) => saf.copy(uri, destination);
+
+  Stream<String> getContent(Uri destination) => saf.getDocumentContent(uri);
+
   Future<DocumentFile?> createDirectory(String displayName) =>
       saf.createDirectory(uri, displayName);
 

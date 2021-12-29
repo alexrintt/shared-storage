@@ -45,7 +45,9 @@ class EnvironmentApi(val plugin: SharedStoragePlugin) : MethodChannel.MethodCall
     }
   }
 
-  /// Deprecated Android API, use only if you know exactly what you need
+  /**
+   * Deprecated Android API, use only if you know exactly what you need
+   */
   private fun getExternalStoragePublicDirectory(
     result: MethodChannel.Result,
     directory: String
@@ -65,7 +67,9 @@ class EnvironmentApi(val plugin: SharedStoragePlugin) : MethodChannel.MethodCall
   private fun getDownloadCacheDirectory(result: MethodChannel.Result) =
     result.success(Environment.getDownloadCacheDirectory().absolutePath)
 
-  /// Deprecated Android API, use only if you know exactly what you need
+  /**
+   * Deprecated Android API, use only if you know exactly what you need
+   */
   private fun getExternalStorageDirectory(result: MethodChannel.Result) =
     result.success(Environment.getExternalStorageDirectory().absolutePath)
 

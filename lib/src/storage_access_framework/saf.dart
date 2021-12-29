@@ -465,3 +465,40 @@ Future<DocumentFile?> parentFile(Uri uri) async {
 
   return DocumentFile.fromMap(parent);
 }
+
+/// Copy a document `uri` to the `destination`
+///
+/// This API uses the `createFile` and `readDocumentContent` API's behind the scenes
+Future<DocumentFile?> copy(Uri uri, Uri destination) async {
+  const kCopy = 'copy';
+
+  const kUri = 'uri';
+  const kDestination = 'destination';
+
+  final args = <String, String>{kUri: '$uri', kDestination: '$destination'};
+
+  final duplicatedFile =
+      await kDocumentFileChannel.invokeMapMethod<String, dynamic>(kCopy, args);
+
+  if (duplicatedFile == null) return null;
+
+  return DocumentFile.fromMap(duplicatedFile);
+}
+
+/// Get content of a given document `uri`
+///
+/// Equivalent to `contentDescriptor` usage
+///
+/// [Refer to details](https://developer.android.com/training/data-storage/shared/documents-files#input_stream)
+Stream<String> getDocumentContent(Uri uri) {
+  const kGetDocumentContent = 'getDocumentContent';
+
+  const kUri = 'uri';
+  const kEvent = 'event';
+
+  final args = <String, String>{kUri: '$uri', kEvent: kGetDocumentContent};
+
+  final onNewLine = kDocumentFileEventChannel.receiveBroadcastStream(args);
+
+  return onNewLine.map<String>((event) => event as String);
+}

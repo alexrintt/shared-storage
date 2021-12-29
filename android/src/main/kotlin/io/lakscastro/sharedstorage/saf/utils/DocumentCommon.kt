@@ -15,7 +15,7 @@ import io.lakscastro.sharedstorage.plugin.API_24
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 
-/*
+/**
  * Helper class to make more easy to handle callbacks using Kotlin syntax
  */
 data class CallbackHandler<T>(
@@ -23,14 +23,14 @@ data class CallbackHandler<T>(
   var onEnd: (() -> Unit)? = null
 )
 
-/*
+/**
  * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
  */
 @RequiresApi(API_21)
 fun documentFromSingleUri(context: Context, uri: String): DocumentFile? =
   documentFromSingleUri(context, Uri.parse(uri))
 
-/*
+/**
  * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
  */
 @RequiresApi(API_21)
@@ -43,14 +43,14 @@ fun documentFromSingleUri(context: Context, uri: Uri): DocumentFile? {
   return DocumentFile.fromSingleUri(context, documentUri)
 }
 
-/*
+/**
  * Generate the `DocumentFile` reference from string `uri`
  */
 @RequiresApi(API_21)
 fun documentFromTreeUri(context: Context, uri: String): DocumentFile? =
   documentFromTreeUri(context, Uri.parse(uri))
 
-/*
+/**
  * Generate the `DocumentFile` reference from URI `uri`
  */
 @RequiresApi(API_21)
@@ -67,7 +67,7 @@ fun documentFromTreeUri(context: Context, uri: Uri): DocumentFile? {
   return DocumentFile.fromTreeUri(context, treeUri)
 }
 
-/*
+/**
  * Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
  * from plugin results, like:
  * ```dart
@@ -89,7 +89,7 @@ fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
 }
 
 
-/*
+/**
  * Standard map encoding of a row result of a `DocumentFile`
  * ```dart
  * result.success(createDocumentFileMap(documentFile))
@@ -140,7 +140,7 @@ fun createCursorRowMap(
   )
 }
 
-/*
+/**
  * Util method to close a closeable
  */
 fun closeQuietly(closeable: Closeable?) {
@@ -205,7 +205,12 @@ fun traverseDirectoryEntries(
 
         val isDirectory = if (mimeType != null) isDirectory(mimeType) else null
 
-        val uri = DocumentsContract.buildDocumentUri(rootUri.authority, id)
+        val uri = DocumentsContract.buildDocumentUriUsingTree(
+          parent,
+          DocumentsContract.getDocumentId(parent)
+        )
+
+        Uri.Builder().scheme(uri.scheme)
 
         block(createCursorRowMap(rootUri, parent, uri, data, isDirectory = isDirectory))
 
@@ -237,7 +242,7 @@ fun bitmapToBase64(bitmap: Bitmap): String {
   return Base64.encodeToString(outputStream.toByteArray(), Base64.NO_WRAP)
 }
 
-/*
+/**
  * Trick to verify if is a tree URi even not in API 26+
  */
 fun isTreeUri(uri: Uri): Boolean {

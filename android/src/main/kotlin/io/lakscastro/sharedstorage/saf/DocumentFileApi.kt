@@ -6,6 +6,7 @@ import android.os.Build
 import android.provider.DocumentsContract
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.documentfile.provider.DocumentFile
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
@@ -16,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
+import java.io.FileInputStream
 import java.io.InputStreamReader
 
 internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
@@ -420,23 +422,32 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         }
       }
       GET_DOCUMENT_CONTENT -> {
-        val uri = Uri.parse(args["uri"] as String)
+        if (Build.VERSION.SDK_INT >= API_21) {
+          val uri = Uri.parse(args["uri"] as String)
 
-        readDocumentContent(uri) {
-          onSuccess = { eventSink?.success(this) }
-          onEnd = { eventSink?.endOfStream() }
+          readDocumentContent(uri) {
+            onSuccess = { eventSink?.success(this) }
+            onEnd = { eventSink?.endOfStream() }
+          }
+        } else {
+          eventSink?.endOfStream()
         }
       }
     }
   }
 
+  @RequiresApi(API_21)
   private fun readDocumentContent(
     uri: Uri,
     handler: CallbackHandler<String>.() -> Unit
   ) {
     val callbacks = CallbackHandler<String>().apply { handler(this) }
 
-    plugin.context.contentResolver.openInputStream(uri)
+    val document = documentFromTreeUri(plugin.context, uri)!!
+
+    val file = document?.createFile("text/plain", "File created by Shared Storage Sample App") ?: return
+
+    plugin.context.contentResolver.openInputStream(file.uri)
       ?.use { inputStream ->
         BufferedReader(InputStreamReader(inputStream)).use { reader ->
           var line = reader.readLine()
