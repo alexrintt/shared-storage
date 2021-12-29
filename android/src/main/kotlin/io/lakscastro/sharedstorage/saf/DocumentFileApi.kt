@@ -6,6 +6,7 @@ import android.os.Build
 import android.provider.DocumentsContract
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.documentfile.provider.DocumentFile
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
@@ -15,6 +16,7 @@ import io.lakscastro.sharedstorage.saf.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 
 internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   MethodChannel.MethodCallHandler,
@@ -173,8 +175,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           val uri = call.argument<String>("uri")!!
           val parent = documentFromTreeUri(plugin.context, uri)?.parentFile
 
-          if (parent != null)
-            result.success(createDocumentFileMap(parent))
+          result.success(if (parent != null) createDocumentFileMap(parent) else null)
         }
       }
       else -> result.notImplemented()

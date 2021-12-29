@@ -117,7 +117,7 @@ class _FileTileState extends State<FileTile> {
       height: _size.height,
     );
 
-    if (bitmap == null) return;
+    if (bitmap == null || !mounted) return;
 
     setState(() => imageBytes = bitmap.bytes);
   }

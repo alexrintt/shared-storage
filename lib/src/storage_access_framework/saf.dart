@@ -12,14 +12,18 @@ import 'package:shared_storage/src/storage_access_framework/uri_permission.dart'
 ///
 /// [Refer to details](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT_TREE)
 ///
-/// TODO: Implement [initialDir] param to
 /// support the initial directory of the directory picker
-Future<Uri?> openDocumentTree({bool grantWritePermission = true}) async {
+Future<Uri?> openDocumentTree(
+    {bool grantWritePermission = true, Uri? initialUri}) async {
   const kOpenDocumentTree = 'openDocumentTree';
 
   const kGrantWritePermission = 'grantWritePermission';
+  const kInitialUri = 'initialUri';
 
-  final args = <String, dynamic>{kGrantWritePermission: grantWritePermission};
+  final args = <String, dynamic>{
+    kGrantWritePermission: grantWritePermission,
+    kInitialUri: '$initialUri'
+  };
 
   final selectedDirectoryUri =
       await kDocumentFileChannel.invokeMethod<String?>(kOpenDocumentTree, args);
