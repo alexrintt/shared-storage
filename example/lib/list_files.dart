@@ -123,7 +123,7 @@ class _FileTileState extends State<FileTile> {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
 
     _loadThumbnailIfAvailable();
