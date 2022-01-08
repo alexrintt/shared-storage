@@ -17,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
-import java.io.FileInputStream
 import java.io.InputStreamReader
 
 internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
@@ -67,7 +66,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
             createDocumentFileMap(
-              documentFromTreeUri(
+              documentFromUri(
                 plugin.context,
                 call.argument<String?>("uri") as String
               )
@@ -77,7 +76,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       CAN_WRITE ->
         if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
-            documentFromTreeUri(
+            documentFromUri(
               plugin.context,
               call.argument<String?>("uri") as String
             )?.canWrite()
@@ -86,7 +85,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       CAN_READ ->
         if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
-            documentFromTreeUri(
+            documentFromUri(
               plugin.context,
               call.argument<String?>("uri") as String
             )?.canRead()
@@ -95,7 +94,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       LENGTH ->
         if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
-            documentFromTreeUri(
+            documentFromUri(
               plugin.context,
               call.argument<String?>("uri") as String
             )?.length()
@@ -104,7 +103,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       EXISTS ->
         if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
-            documentFromTreeUri(
+            documentFromUri(
               plugin.context,
               call.argument<String?>("uri") as String
             )?.exists()
@@ -113,7 +112,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       DELETE ->
         if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
-            documentFromTreeUri(
+            documentFromUri(
               plugin.context,
               call.argument<String?>("uri") as String
             )?.delete()
@@ -122,7 +121,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       LAST_MODIFIED ->
         if (Build.VERSION.SDK_INT >= API_21) {
           result.success(
-            documentFromTreeUri(
+            documentFromUri(
               plugin.context,
               call.argument<String?>("uri") as String
             )?.lastModified()
@@ -135,7 +134,8 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             call.argument<String?>("displayName") as String
 
           val createdDirectory =
-            documentFromTreeUri(plugin.context, uri)?.createDirectory(displayName) ?: return
+            documentFromUri(plugin.context, uri)?.createDirectory(displayName)
+              ?: return
 
           result.success(createDocumentFileMap(createdDirectory))
         }
@@ -148,30 +148,39 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
           result.success(
             createDocumentFileMap(
-              documentFromTreeUri(plugin.context, uri)?.findFile(displayName)
+              documentFromUri(plugin.context, uri)?.findFile(displayName)
             )
           )
         }
       }
       COPY -> {
         if (Build.VERSION.SDK_INT >= API_21) {
-          val content = StringBuilder()
-          val destinationTree = call.argument<String>("destination")!!
-          val document = documentFromTreeUri(
-            plugin.context,
-            Uri.parse(call.argument<String>("uri")!!)
-          ) ?: return
+          val destination = Uri.parse(call.argument<String>("destination")!!)
+          val uri = Uri.parse(call.argument<String>("uri")!!)
 
-          readDocumentContent(document.uri) {
-            onSuccess = { content.append(this) }
-            onEnd = {
-              createFile(
-                result,
-                document.type!!,
-                document.name!!,
-                destinationTree,
-                "$content".toByteArray()
-              )
+          if (Build.VERSION.SDK_INT >= API_24) {
+            DocumentsContract.copyDocument(
+              plugin.context.contentResolver,
+              uri,
+              destination
+            )
+          } else {
+            val content = StringBuilder()
+
+            readDocumentContent(uri) {
+              onEnd = {
+                val uriDocument = documentFromUri(plugin.context, uri)!!
+
+                createFile(
+                  destination,
+                  uriDocument.type!!,
+                  uriDocument.name!!,
+                  content.toString().toByteArray()
+                ) {
+                  result.success(createDocumentFileMap(this))
+                }
+              }
+              onSuccess = { content.append(this) }
             }
           }
         }
@@ -182,13 +191,13 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           val displayName =
             call.argument<String?>("displayName") as String
 
-          documentFromTreeUri(plugin.context, uri)?.apply {
+          documentFromUri(plugin.context, uri)?.apply {
             val success = renameTo(displayName)
 
             result.success(
               if (success)
                 createDocumentFileMap(
-                  documentFromTreeUri(plugin.context, this.uri)!!
+                  documentFromUri(plugin.context, this.uri)!!
                 )
               else null
             )
@@ -198,7 +207,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       PARENT_FILE -> {
         if (Build.VERSION.SDK_INT >= API_21) {
           val uri = call.argument<String>("uri")!!
-          val parent = documentFromTreeUri(plugin.context, uri)?.parentFile
+          val parent = documentFromUri(plugin.context, uri)?.parentFile
 
           result.success(if (parent != null) createDocumentFileMap(parent) else null)
         }
@@ -241,19 +250,29 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     directory: String,
     content: ByteArray
   ) {
-    val documentFile =
-      documentFromTreeUri(plugin.context, directory)
-        ?: return result.error(
-          EXCEPTION_PARENT_DOCUMENT_MUST_BE_DIRECTORY,
-          "You can't create a file inside another file! You can call `createFile` method only on directory documents",
-          mapOf(
-            "invalidParentDirectory" to directory,
-            "displayName" to displayName,
-            "mimeType" to mimeType
-          )
-        )
+    createFile(
+      Uri.parse(directory),
+      mimeType,
+      displayName,
+      content
+    ) {
+      result.success(createDocumentFileMap(this))
+    }
+  }
 
-    val createdFile = documentFile.createFile(mimeType, displayName)
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+  private fun createFile(
+    treeUri: Uri,
+    mimeType: String,
+    displayName: String,
+    content: ByteArray,
+    block: DocumentFile?.() -> Unit
+  ) {
+
+    val createdFile = documentFromUri(plugin.context, treeUri)!!.createFile(
+      mimeType,
+      displayName
+    )
 
     createdFile?.uri?.apply {
       plugin.context.contentResolver.openOutputStream(this)?.apply {
@@ -261,9 +280,9 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         flush()
 
         val createdFileDocument =
-          documentFromTreeUri(plugin.context, createdFile.uri)
+          documentFromUri(plugin.context, createdFile.uri)
 
-        result.success(createDocumentFileMap(createdFileDocument))
+        block(createdFileDocument)
       }
     }
   }
@@ -374,7 +393,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         if (eventSink == null) return
 
         val document = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          documentFromTreeUri(plugin.context, args["uri"] as String) ?: return
+          documentFromUri(plugin.context, args["uri"] as String) ?: return
         } else {
           null
         }
@@ -443,11 +462,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   ) {
     val callbacks = CallbackHandler<String>().apply { handler(this) }
 
-    val document = documentFromTreeUri(plugin.context, uri)!!
-
-    val file = document?.createFile("text/plain", "File created by Shared Storage Sample App") ?: return
-
-    plugin.context.contentResolver.openInputStream(file.uri)
+    plugin.context.contentResolver.openInputStream(uri)
       ?.use { inputStream ->
         BufferedReader(InputStreamReader(inputStream)).use { reader ->
           var line = reader.readLine()

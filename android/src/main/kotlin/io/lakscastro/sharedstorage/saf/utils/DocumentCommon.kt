@@ -47,24 +47,25 @@ fun documentFromSingleUri(context: Context, uri: Uri): DocumentFile? {
  * Generate the `DocumentFile` reference from string `uri`
  */
 @RequiresApi(API_21)
-fun documentFromTreeUri(context: Context, uri: String): DocumentFile? =
-  documentFromTreeUri(context, Uri.parse(uri))
+fun documentFromUri(context: Context, uri: String): DocumentFile? =
+  documentFromUri(context, Uri.parse(uri))
 
 /**
  * Generate the `DocumentFile` reference from URI `uri`
  */
 @RequiresApi(API_21)
-fun documentFromTreeUri(context: Context, uri: Uri): DocumentFile? {
-  val treeUri = if (isTreeUri(uri)) {
-    uri
+fun documentFromUri(context: Context, uri: Uri): DocumentFile? {
+  return if (isTreeUri(uri)) {
+    DocumentFile.fromTreeUri(context, uri)
   } else {
-    DocumentsContract.buildDocumentUriUsingTree(
-      uri,
-      DocumentsContract.getDocumentId(uri)
+    DocumentFile.fromSingleUri(
+      context,
+      DocumentsContract.buildDocumentUriUsingTree(
+        uri,
+        DocumentsContract.getDocumentId(uri)
+      )
     )
   }
-
-  return DocumentFile.fromTreeUri(context, treeUri)
 }
 
 /**
@@ -207,10 +208,10 @@ fun traverseDirectoryEntries(
 
         val uri = DocumentsContract.buildDocumentUriUsingTree(
           parent,
-          DocumentsContract.getDocumentId(parent)
+          DocumentsContract.getDocumentId(
+            DocumentsContract.buildDocumentUri(parent.authority, id)
+          )
         )
-
-        Uri.Builder().scheme(uri.scheme)
 
         block(createCursorRowMap(rootUri, parent, uri, data, isDirectory = isDirectory))
 
