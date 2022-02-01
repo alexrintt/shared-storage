@@ -342,9 +342,9 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               )
 
             pendingResult.second.success("$uri")
-
             return true
           }
+          pendingResult.second.success(null)
         } finally {
           pendingResults.remove(OPEN_DOCUMENT_TREE_CODE)
         }
