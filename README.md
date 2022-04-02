@@ -1,4 +1,4 @@
-ext/plai## Shared Storage Flutter Plugin
+## Shared Storage Flutter Plugin
 
 [![pub package](https://img.shields.io/pub/v/shared_storage.svg)](https://pub.dartlang.org/packages/shared_storage)
 
