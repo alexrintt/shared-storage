@@ -1,24 +1,25 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_storage/shared_storage.dart';
-import 'package:shared_storage_example/key_value_text.dart';
-import 'package:shared_storage_example/list_files.dart';
-import 'package:shared_storage_example/simple_card.dart';
+import 'key_value_text.dart';
+import 'list_files.dart';
+import 'simple_card.dart';
 
 class PersistedUriCard extends StatefulWidget {
+  const PersistedUriCard({
+    Key? key,
+    required this.permissionUri,
+    required this.onChange,
+  }) : super(key: key);
+
   final UriPermission permissionUri;
   final VoidCallback onChange;
-
-  const PersistedUriCard(
-      {Key? key, required this.permissionUri, required this.onChange})
-      : super(key: key);
 
   @override
   _PersistedUriCardState createState() => _PersistedUriCardState();
 }
 
 class _PersistedUriCardState extends State<PersistedUriCard> {
-  void _appendSampleFile(Uri parentUri) async {
+  Future<void> _appendSampleFile(Uri parentUri) async {
     /// Create a new file inside the `parentUri`
     final documentFile = await parentUri.toDocumentFile();
 
@@ -29,7 +30,7 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
     );
   }
 
-  void _revokeUri(Uri uri) async {
+  Future<void> _revokeUri(Uri uri) async {
     await releasePersistableUriPermission(uri);
 
     widget.onChange();
@@ -43,8 +44,11 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
     );
   }
 
-  Widget _buildActionButton(String text,
-      {required VoidCallback onTap, Color? color}) {
+  Widget _buildActionButton(
+    String text, {
+    required VoidCallback onTap,
+    Color? color,
+  }) {
     return TextButton(
       style: TextButton.styleFrom(primary: color),
       onPressed: onTap,

@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_storage/shared_storage.dart';
-import 'package:shared_storage_example/key_value_text.dart';
-import 'package:shared_storage_example/simple_card.dart';
+import 'key_value_text.dart';
+import 'simple_card.dart';
 
 class ListFiles extends StatefulWidget {
-  final Uri uri;
-
   const ListFiles({Key? key, required this.uri}) : super(key: key);
+
+  final Uri uri;
 
   @override
   _ListFilesState createState() => _ListFilesState();
@@ -26,7 +25,7 @@ class _ListFilesState extends State<ListFiles> {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: Text("Empty Folder"),
+          child: Text('Empty Folder'),
         ),
       );
     }
@@ -55,7 +54,7 @@ class _ListFilesState extends State<ListFiles> {
     super.dispose();
   }
 
-  void _loadFiles() async {
+  Future<void> _loadFiles() async {
     final documentUri = await widget.uri.toDocumentFile();
 
     final columns = [
@@ -89,9 +88,9 @@ class _ListFilesState extends State<ListFiles> {
 }
 
 class FileTile extends StatefulWidget {
-  final PartialDocumentFile partialFile;
-
   const FileTile({Key? key, required this.partialFile}) : super(key: key);
+
+  final PartialDocumentFile partialFile;
 
   @override
   _FileTileState createState() => _FileTileState();
@@ -104,9 +103,9 @@ class _FileTileState extends State<FileTile> {
 
   Uint8List? imageBytes;
 
-  void _loadThumbnailIfAvailable() async {
+  Future<void> _loadThumbnailIfAvailable() async {
     final rootUri = file.metadata?.rootUri;
-    final documentId = file.data?[DocumentFileColumn.id];
+    final documentId = file.data?[DocumentFileColumn.id] as String?;
 
     if (rootUri == null || documentId == null) return;
 
@@ -180,11 +179,10 @@ class _FileTileState extends State<FileTile> {
               }
 
               final millisecondsSinceEpoch =
-                  file.data?[DocumentFileColumn.lastModified]!;
+                  file.data?[DocumentFileColumn.lastModified] as int;
 
-              final date = DateTime.fromMillisecondsSinceEpoch(
-                millisecondsSinceEpoch,
-              );
+              final date =
+                  DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
 
               return date.toIso8601String();
             })()}',
@@ -201,7 +199,7 @@ class _FileTileState extends State<FileTile> {
               if (file.metadata?.isDirectory ?? false) {
                 final uri = await buildTreeDocumentUri(
                   file.metadata!.rootUri!.authority,
-                  file.data![DocumentFileColumn.id]!,
+                  file.data![DocumentFileColumn.id] as String,
                 );
 
                 _openListFilesPage(uri!);

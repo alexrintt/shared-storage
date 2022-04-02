@@ -2,9 +2,9 @@
 ///
 /// [Refer to details](https://developer.android.com/reference/android/provider/MediaStore#summary)
 class MediaStoreCollection {
-  final String id;
-
   const MediaStoreCollection._(this.id);
+
+  final String id;
 
   static const _kPrefix = 'MediaStoreCollection';
 

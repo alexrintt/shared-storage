@@ -1,4 +1,4 @@
-## Shared Storage Flutter Plugin
+ext/plai## Shared Storage Flutter Plugin
 
 [![pub package](https://img.shields.io/pub/v/shared_storage.svg)](https://pub.dartlang.org/packages/shared_storage)
 
@@ -50,7 +50,7 @@ print(selectedUriDir);
 ```dart
 /// Create a new file using the `SAF` API
 final newDocumentFile = await createDocumentFile(
-  mimeType: '	text/plain',
+  mimeType: 'text/plain',
   content: 'My Plain Text Comment Created by shared_storage plugin',
   displayName: 'CreatedBySharedStorageFlutterPlugin',
   directory: anySelectedUriByTheOpenDocumentTreeAPI,

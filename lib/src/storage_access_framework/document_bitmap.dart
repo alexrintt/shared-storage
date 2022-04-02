@@ -2,37 +2,38 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 class DocumentBitmap {
+  const DocumentBitmap({
+    required this.base64,
+    required this.uri,
+    required this.width,
+    required this.height,
+    required this.byteCount,
+    required this.density,
+  });
+
+  factory DocumentBitmap.fromMap(Map<String, dynamic> map) {
+    return DocumentBitmap(
+      uri: (() {
+        final uri = map['uri'] as String?;
+
+        if (uri == null) return null;
+
+        return Uri.parse(uri);
+      })(),
+      width: map['width'] as int?,
+      height: map['height'] as int?,
+      base64: map['base64'] as String?,
+      byteCount: map['byteCount'] as int?,
+      density: map['density'] as int?,
+    );
+  }
+
   final String? base64;
   final Uri? uri;
   final int? width;
   final int? height;
   final int? byteCount;
   final int? density;
-
-  const DocumentBitmap(
-      {required this.base64,
-      required this.uri,
-      required this.width,
-      required this.height,
-      required this.byteCount,
-      required this.density});
-
-  static DocumentBitmap fromMap(Map<String, dynamic> map) {
-    return DocumentBitmap(
-      uri: (() {
-        final uri = map['uri'];
-
-        if (uri == null) return null;
-
-        return Uri.parse(uri);
-      })(),
-      width: map['width'],
-      height: map['height'],
-      base64: map['base64'],
-      byteCount: map['byteCount'],
-      density: map['density'],
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

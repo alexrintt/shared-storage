@@ -1,8 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:shared_storage/shared_storage.dart';
-import 'package:shared_storage/src/storage_access_framework/document_file_column.dart';
-import 'package:shared_storage/src/storage_access_framework/saf.dart' as saf;
+import '../../shared_storage.dart';
+import 'saf.dart' as saf;
 
 extension UriDocumentFileUtils on Uri {
   /// Same as `DocumentFile.fromTreeUri(this)`
@@ -13,20 +12,32 @@ extension UriDocumentFileUtils on Uri {
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile)
 class DocumentFile {
+  const DocumentFile({
+    required this.name,
+    required this.type,
+    required this.uri,
+    required this.isDirectory,
+    required this.isFile,
+    required this.isVirtual,
+  });
+
+  factory DocumentFile.fromMap(Map<String, dynamic> map) {
+    return DocumentFile(
+      isDirectory: map['isDirectory'] as bool,
+      isFile: map['isFile'] as bool,
+      isVirtual: map['isVirtual'] as bool,
+      name: map['name'] as String,
+      type: map['type'] as String?,
+      uri: Uri.parse(map['uri'] as String),
+    );
+  }
+
   final String name;
   final String? type;
   final Uri uri;
   final bool isDirectory;
   final bool isFile;
   final bool isVirtual;
-
-  const DocumentFile(
-      {required this.name,
-      required this.type,
-      required this.uri,
-      required this.isDirectory,
-      required this.isFile,
-      required this.isVirtual});
 
   /// Same as `uri.toDocumentFile` where `uri` is of type `Uri`
   static Future<DocumentFile?> fromTreeUri(Uri uri) => saf.fromTreeUri(uri);
@@ -49,19 +60,29 @@ class DocumentFile {
   Future<DocumentFile?> createDirectory(String displayName) =>
       saf.createDirectory(uri, displayName);
 
-  Future<DocumentFile?> createFileAsBytes(
-          {required String mimeType,
-          required String displayName,
-          required Uint8List content}) =>
-      saf.createFileAsBytes(uri,
-          mimeType: mimeType, displayName: displayName, content: content);
+  Future<DocumentFile?> createFileAsBytes({
+    required String mimeType,
+    required String displayName,
+    required Uint8List content,
+  }) =>
+      saf.createFileAsBytes(
+        uri,
+        mimeType: mimeType,
+        displayName: displayName,
+        content: content,
+      );
 
-  Future<DocumentFile?> createFileAsString(
-          {required String mimeType,
-          required String displayName,
-          required String content}) =>
-      saf.createFileAsString(uri,
-          mimeType: mimeType, displayName: displayName, content: content);
+  Future<DocumentFile?> createFileAsString({
+    required String mimeType,
+    required String displayName,
+    required String content,
+  }) =>
+      saf.createFileAsString(
+        uri,
+        mimeType: mimeType,
+        displayName: displayName,
+        content: content,
+      );
 
   Future<int?> get length => saf.getDocumentLength(uri);
 
@@ -74,17 +95,6 @@ class DocumentFile {
       saf.renameTo(uri, displayName);
 
   Future<DocumentFile?> parentFile() => saf.parentFile(uri);
-
-  static DocumentFile fromMap(Map<String, dynamic> map) {
-    return DocumentFile(
-      isDirectory: map['isDirectory'],
-      isFile: map['isFile'],
-      isVirtual: map['isVirtual'],
-      name: map['name'],
-      type: map['type'],
-      uri: Uri.parse(map['uri']),
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {

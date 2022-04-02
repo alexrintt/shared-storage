@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_storage/shared_storage.dart';
-import 'package:shared_storage_example/persisted_uri_card.dart';
+import 'persisted_uri_card.dart';
 
 /// TODO: Add examples using [Environment] and [MediaStore] API
 void main() => runApp(const Root());
@@ -49,7 +49,7 @@ class _AppState extends State<App> {
     }
   }
 
-  void _openDocumentTree() async {
+  Future<void> _openDocumentTree() async {
     /// Prompt user with a folder picker (Available for Android 5.0+)
     await openDocumentTree();
 

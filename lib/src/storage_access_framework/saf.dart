@@ -1,9 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:shared_storage/shared_storage.dart';
-import 'package:shared_storage/src/channels.dart';
-import 'package:shared_storage/src/storage_access_framework/document_bitmap.dart';
-import 'package:shared_storage/src/storage_access_framework/uri_permission.dart';
+import '../../shared_storage.dart';
+import '../channels.dart';
 
 /// Start Activity Action: Allow the user to pick a directory subtree.
 /// When invoked, the system will display the various `DocumentsProvider`
@@ -13,8 +11,10 @@ import 'package:shared_storage/src/storage_access_framework/uri_permission.dart'
 /// [Refer to details](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT_TREE)
 ///
 /// support the initial directory of the directory picker
-Future<Uri?> openDocumentTree(
-    {bool grantWritePermission = true, Uri? initialUri}) async {
+Future<Uri?> openDocumentTree({
+  bool grantWritePermission = true,
+  Uri? initialUri,
+}) async {
   const kOpenDocumentTree = 'openDocumentTree';
 
   const kGrantWritePermission = 'grantWritePermission';
@@ -46,7 +46,7 @@ Future<List<UriPermission>?> persistedUriPermissions() async {
   if (persistedUriPermissions == null) return null;
 
   return persistedUriPermissions
-      .map((e) => UriPermission.fromMap(Map.from(e)))
+      .map((e) => UriPermission.fromMap(Map.from(e as Map)))
       .toList();
 }
 
@@ -64,7 +64,9 @@ Future<void> releasePersistableUriPermission(Uri directory) async {
   final args = <String, String>{kUri: '$directory'};
 
   await kDocumentFileChannel.invokeMethod(
-      kReleasePersistableUriPermission, args);
+    kReleasePersistableUriPermission,
+    args,
+  );
 }
 
 /// Convenient method to verify if a given [uri]
@@ -88,7 +90,7 @@ Future<bool?> canRead(Uri uri) async {
 
   final args = {kUri: '$uri'};
 
-  return await kDocumentFileChannel.invokeMethod<bool>(kCanRead, args);
+  return kDocumentFileChannel.invokeMethod<bool>(kCanRead, args);
 }
 
 /// Equivalent to `DocumentFile.canWrite`
@@ -101,7 +103,7 @@ Future<bool?> canWrite(Uri uri) async {
 
   final args = {kUri: '$uri'};
 
-  return await kDocumentFileChannel.invokeMethod<bool>(kCanWrite, args);
+  return kDocumentFileChannel.invokeMethod<bool>(kCanWrite, args);
 }
 
 /// Equivalent to `DocumentsContract.getDocumentThumbnail`
@@ -156,8 +158,10 @@ Future<DocumentBitmap?> getDocumentThumbnail({
 /// ```
 ///
 /// [Refer to details](https://stackoverflow.com/questions/41096332/issues-traversing-through-directory-hierarchy-with-android-storage-access-framew)
-Stream<PartialDocumentFile> listFiles(Uri uri,
-    {required List<DocumentFileColumn> columns}) {
+Stream<PartialDocumentFile> listFiles(
+  Uri uri, {
+  required List<DocumentFileColumn> columns,
+}) {
   const kListFiles = 'listFiles';
 
   const kUri = 'uri';
@@ -174,7 +178,7 @@ Stream<PartialDocumentFile> listFiles(Uri uri,
       kDocumentFileEventChannel.receiveBroadcastStream(args);
 
   return onCursorRowResult
-      .map((e) => PartialDocumentFile.fromMap(Map.from(e)))
+      .map((e) => PartialDocumentFile.fromMap(Map.from(e as Map)))
       .cast<PartialDocumentFile>();
 }
 
@@ -186,7 +190,7 @@ Future<bool?> exists(Uri uri) async {
 
   final args = <String, String>{kUri: '$uri'};
 
-  return await kDocumentFileChannel.invokeMethod<bool>(kExists, args);
+  return kDocumentFileChannel.invokeMethod<bool>(kExists, args);
 }
 
 /// Equivalent to `DocumentsContract.buildDocumentUriUsingTree`
@@ -204,7 +208,9 @@ Future<Uri?> buildDocumentUriUsingTree(Uri treeUri, String documentId) async {
   };
 
   final uri = await kDocumentsContractChannel.invokeMethod<String>(
-      kBuildDocumentUriUsingTree, args);
+    kBuildDocumentUriUsingTree,
+    args,
+  );
 
   if (uri == null) return null;
 
@@ -226,7 +232,9 @@ Future<Uri?> buildDocumentUri(String authority, String documentId) async {
   };
 
   final uri = await kDocumentsContractChannel.invokeMethod<String>(
-      kBuildDocumentUri, args);
+    kBuildDocumentUri,
+    args,
+  );
 
   if (uri == null) return null;
 
@@ -248,7 +256,9 @@ Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
   };
 
   final uri = await kDocumentsContractChannel.invokeMethod<String>(
-      kBuildTreeDocumentUri, args);
+    kBuildTreeDocumentUri,
+    args,
+  );
 
   if (uri == null) return null;
 
@@ -267,7 +277,7 @@ Future<bool?> delete(Uri uri) async {
 
   final args = <String, String>{kUri: '$uri'};
 
-  return await kDocumentFileChannel.invokeMethod<bool>(kDelete, args);
+  return kDocumentFileChannel.invokeMethod<bool>(kDelete, args);
 }
 
 /// Create a direct child document tree named `displayName` given a parent `parentUri`
@@ -300,10 +310,12 @@ Future<DocumentFile?> createDirectory(Uri parentUri, String displayName) async {
 /// - `content` is the content of the document as a list of bytes `Uint8List`
 ///
 /// Returns the created file as a `DocumentFile`
-Future<DocumentFile?> createFileAsBytes(Uri parentUri,
-    {required String mimeType,
-    required String displayName,
-    required Uint8List content}) async {
+Future<DocumentFile?> createFileAsBytes(
+  Uri parentUri, {
+  required String mimeType,
+  required String displayName,
+  required Uint8List content,
+}) async {
   const kCreateFile = 'createFile';
 
   const kMimeTypeArg = 'mimeType';
@@ -330,10 +342,12 @@ Future<DocumentFile?> createFileAsBytes(Uri parentUri,
 
 /// Convenient method to create a file
 /// using `content` as String instead Uint8List
-Future<DocumentFile?> createFileAsString(Uri parentUri,
-    {required String mimeType,
-    required String displayName,
-    required String content}) {
+Future<DocumentFile?> createFileAsString(
+  Uri parentUri, {
+  required String mimeType,
+  required String displayName,
+  required String content,
+}) {
   return createFileAsBytes(
     parentUri,
     displayName: displayName,
@@ -459,7 +473,9 @@ Future<DocumentFile?> parentFile(Uri uri) async {
   final args = <String, String>{kUri: '$uri'};
 
   final parent = await kDocumentFileChannel.invokeMapMethod<String, dynamic>(
-      kParentFile, args);
+    kParentFile,
+    args,
+  );
 
   if (parent == null) return null;
 

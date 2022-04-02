@@ -7,18 +7,17 @@ issue_tracker: https://github.com/lakscastro/shared-storage/issues
 documentation: https://github.com/lakscastro/shared-storage
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
+  sdk: ">=2.16.0 <3.0.0"
   flutter: ">=2.5.0"
 
 dependencies:
-  permission_handler: ^8.1.6
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  flutter_lints: ^1.0.4
   flutter_test:
     sdk: flutter
+  lint: ^1.8.2
 
 flutter:
   plugin:

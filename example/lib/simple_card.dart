@@ -1,12 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SimpleCard extends StatefulWidget {
-  final VoidCallback onTap;
-  final List<Widget> children;
-
   const SimpleCard({Key? key, required this.onTap, required this.children})
       : super(key: key);
+
+  final VoidCallback onTap;
+  final List<Widget> children;
 
   @override
   _SimpleCardState createState() => _SimpleCardState();

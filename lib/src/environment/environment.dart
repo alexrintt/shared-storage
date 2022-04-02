@@ -1,8 +1,7 @@
 import 'dart:io';
 
-import 'package:shared_storage/src/environment/common.dart';
-
 import '../channels.dart';
+import 'common.dart';
 import 'environment_directory.dart';
 
 /// Equivalent to `Environment.getRootDirectory`
@@ -22,7 +21,8 @@ Future<Directory?> getRootDirectory() async {
 ///
 /// [Refer to details](https://developer.android.com/reference/android/os/Environment#getExternalStoragePublicDirectory%28java.lang.String%29)
 Future<Directory?> getExternalStoragePublicDirectory(
-    EnvironmentDirectory directory) async {
+  EnvironmentDirectory directory,
+) async {
   const kGetExternalStoragePublicDirectory =
       'getExternalStoragePublicDirectory';
   const kDirectoryArg = 'directory';
@@ -30,7 +30,9 @@ Future<Directory?> getExternalStoragePublicDirectory(
   final args = <String, String>{kDirectoryArg: '$directory'};
 
   final publicDir = await kEnvironmentChannel.invokeMethod<String?>(
-      kGetExternalStoragePublicDirectory, args);
+    kGetExternalStoragePublicDirectory,
+    args,
+  );
 
   if (publicDir == null) return null;
 

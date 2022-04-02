@@ -1,4 +1,4 @@
-import 'package:shared_storage/shared_storage.dart';
+import '../../shared_storage.dart';
 
 /// Represent the same entity as `DocumentFile` but will be lazily loaded
 /// by `listFilesAsStream` method with dynamic
@@ -6,15 +6,12 @@ import 'package:shared_storage/shared_storage.dart';
 ///
 /// _Note: Can't be instantiated_
 class PartialDocumentFile {
-  final Map<DocumentFileColumn, dynamic>? data;
-  final QueryMetadata? metadata;
-
   const PartialDocumentFile._({required this.data, required this.metadata});
 
-  static PartialDocumentFile fromMap(Map<String, dynamic> map) {
+  factory PartialDocumentFile.fromMap(Map<String, dynamic> map) {
     return PartialDocumentFile._(
       data: (() {
-        final data = map['data'];
+        final data = map['data'] as Map?;
 
         if (data == null) return null;
 
@@ -23,9 +20,12 @@ class PartialDocumentFile {
             if (data['$value'] != null) value: data['$value'],
         };
       })(),
-      metadata: QueryMetadata.fromMap(Map.from(map['metadata'])),
+      metadata: QueryMetadata.fromMap(Map.from(map['metadata'] as Map)),
     );
   }
+
+  final Map<DocumentFileColumn, dynamic>? data;
+  final QueryMetadata? metadata;
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -50,30 +50,31 @@ class PartialDocumentFile {
 ///
 /// _Note: Can't be instantiated_
 class QueryMetadata {
+  const QueryMetadata._({
+    required this.parentUri,
+    required this.rootUri,
+    required this.isDirectory,
+    required this.uri,
+  });
+
+  factory QueryMetadata.fromMap(Map<String, dynamic> map) {
+    return QueryMetadata._(
+      parentUri: _parseUri(map['parentUri'] as String?),
+      rootUri: _parseUri(map['rootUri'] as String?),
+      isDirectory: map['isDirectory'] as bool?,
+      uri: _parseUri(map['uri'] as String?),
+    );
+  }
+
   final Uri? parentUri;
   final Uri? rootUri;
   final bool? isDirectory;
   final Uri? uri;
 
-  const QueryMetadata._(
-      {required this.parentUri,
-      required this.rootUri,
-      required this.isDirectory,
-      required this.uri});
-
   static Uri? _parseUri(String? uri) {
     if (uri == null) return null;
 
     return Uri.parse(uri);
-  }
-
-  static QueryMetadata fromMap(Map<String, dynamic> map) {
-    return QueryMetadata._(
-      parentUri: _parseUri(map['parentUri']),
-      rootUri: _parseUri(map['rootUri']),
-      isDirectory: map['isDirectory'],
-      uri: _parseUri(map['uri']),
-    );
   }
 
   Map<String, dynamic> toMap() {

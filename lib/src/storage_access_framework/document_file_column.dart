@@ -2,9 +2,9 @@
 ///
 /// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract.Document)
 class DocumentFileColumn {
-  final String _id;
-
   const DocumentFileColumn._(this._id);
+
+  final String _id;
 
   static const _kPrefix = 'DocumentFileColumn';
 

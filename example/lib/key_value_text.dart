@@ -1,9 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class KeyValueText extends StatefulWidget {
-  final Map<String, String> entries;
-
   const KeyValueText({Key? key, required this.entries}) : super(key: key);
+
+  final Map<String, String> entries;
 
   @override
   _KeyValueTextState createState() => _KeyValueTextState();
