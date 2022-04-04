@@ -9,7 +9,10 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
 import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.*
+import io.lakscastro.sharedstorage.plugin.API_21
+import io.lakscastro.sharedstorage.plugin.ActivityListener
+import io.lakscastro.sharedstorage.plugin.Listenable
+import io.lakscastro.sharedstorage.plugin.notSupported
 import io.lakscastro.sharedstorage.saf.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -84,7 +87,8 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
         val documentId = call.argument<String>("documentId")
 
         if (Build.VERSION.SDK_INT >= API_21) {
-          val documentUri = DocumentsContract.buildDocumentUri(authority,documentId)
+          val documentUri =
+            DocumentsContract.buildDocumentUri(authority, documentId)
 
           result.success("$documentUri")
         } else {
@@ -123,10 +127,14 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
   }
 
   override fun startListeningToActivity() {
-    /// Implement if needed
+    /**
+     * Implement if needed
+     */
   }
 
   override fun stopListeningToActivity() {
-    /// Implement if needed
+    /**
+     * Implement if needed
+     */
   }
 }

@@ -12,8 +12,7 @@ const val EXCEPTION_MISSING_PERMISSIONS = "EXCEPTION_MISSING_PERMISSIONS"
  */
 const val OPEN_DOCUMENT_TREE = "openDocumentTree"
 const val PERSISTED_URI_PERMISSIONS = "persistedUriPermissions"
-const val RELEASE_PERSISTABLE_URI_PERMISSION =
-  "releasePersistableUriPermission"
+const val RELEASE_PERSISTABLE_URI_PERMISSION = "releasePersistableUriPermission"
 const val CREATE_FILE = "createFile"
 const val FROM_TREE_URI = "fromTreeUri"
 const val CAN_WRITE = "canWrite"

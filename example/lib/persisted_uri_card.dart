@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_storage/shared_storage.dart';
+import 'package:shared_storage/saf.dart';
+import 'buttons.dart';
 import 'key_value_text.dart';
 import 'list_files.dart';
 import 'simple_card.dart';
+import 'spacing.dart';
 
 class PersistedUriCard extends StatefulWidget {
   const PersistedUriCard({
@@ -44,18 +46,6 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
     );
   }
 
-  Widget _buildActionButton(
-    String text, {
-    required VoidCallback onTap,
-    Color? color,
-  }) {
-    return TextButton(
-      style: TextButton.styleFrom(primary: color),
-      onPressed: onTap,
-      child: Text(text),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return SimpleCard(
@@ -71,19 +61,23 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
         ),
         Row(
           children: [
-            _buildActionButton(
+            ActionButton(
               'Create Sample File',
               onTap: () => _appendSampleFile(
                 widget.permissionUri.uri,
               ),
             ),
-            const Padding(padding: EdgeInsets.all(4)),
-            _buildActionButton(
+            ActionButton(
+              'Open Tree Here',
+              onTap: () =>
+                  openDocumentTree(initialUri: widget.permissionUri.uri),
+            ),
+            Padding(padding: k2dp.all),
+            DangerButton(
               'Revoke',
               onTap: () => _revokeUri(
                 widget.permissionUri.uri,
               ),
-              color: Colors.red,
             ),
           ],
         ),

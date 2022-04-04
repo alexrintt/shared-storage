@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_storage/shared_storage.dart';
+import 'package:shared_storage/saf.dart';
+import 'light_text.dart';
 import 'persisted_uri_card.dart';
+import 'spacing.dart';
 
 /// TODO: Add examples using [Environment] and [MediaStore] API
 void main() => runApp(const Root());
@@ -51,7 +53,11 @@ class _AppState extends State<App> {
 
   Future<void> _openDocumentTree() async {
     /// Prompt user with a folder picker (Available for Android 5.0+)
-    await openDocumentTree();
+
+    const kWppStatusFolder =
+        'content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fmedia/document/primary%3AAndroid%2Fmedia%2Fcom.whatsapp%2FWhatsApp%2FMedia%2F.Statuses%2FMedia';
+
+    await openDocumentTree(initialUri: Uri.parse(kWppStatusFolder));
 
     /// TODO: Add broadcast listener to be aware when a Uri permission changes
     await _loadPersistedUriPermissions();
@@ -59,14 +65,9 @@ class _AppState extends State<App> {
 
   Widget _buildNoFolderAllowedYetWarning() {
     return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Center(
-        child: Text(
-          'No folders allowed yet',
-          style: TextStyle(
-            color: const Color(0xFF000000).withOpacity(.2),
-          ),
-        ),
+      padding: k8dp.all,
+      child: const Center(
+        child: LightText('No folders allowed yet'),
       ),
     );
   }
@@ -75,14 +76,14 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SharedStorage Sample'),
+        title: const Text('Shared Storage Sample'),
       ),
       body: RefreshIndicator(
         onRefresh: _loadPersistedUriPermissions,
         child: CustomScrollView(
           slivers: [
             SliverPadding(
-              padding: const EdgeInsets.all(12),
+              padding: k6dp.all,
               sliver: SliverList(
                 delegate: SliverChildListDelegate(
                   [

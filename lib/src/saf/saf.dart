@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:typed_data';
 
-import '../../shared_storage.dart';
+import '../../saf.dart';
 import '../channels.dart';
+import 'common.dart';
 
 /// Start Activity Action: Allow the user to pick a directory subtree.
 /// When invoked, the system will display the various `DocumentsProvider`
@@ -137,6 +139,8 @@ Future<DocumentBitmap?> getDocumentThumbnail({
   return DocumentBitmap.fromMap(bitmap);
 }
 
+/// **Important**: Ensure you have read permission by calling `canRead` before calling `listFiles`
+///
 /// Emits a new event for each child document file
 ///
 /// Works with small and large data file sets
@@ -304,9 +308,42 @@ Future<DocumentFile?> createDirectory(Uri parentUri, String displayName) async {
   return DocumentFile.fromMap(createdDocumentFile);
 }
 
+/// Convenient method to create files using either String or raw bytes
+///
+/// Under the hood this method calls `createFileAsString` or `createFileAsBytes`
+/// depending on which argument is passed
+///
+/// If both (bytes and content) are passed, the bytes will be used and the content will be ignored
+Future<DocumentFile?> createFile(
+  Uri parentUri, {
+  required String mimeType,
+  required String displayName,
+  Uint8List? bytes,
+  String? content,
+}) {
+  assert(
+    bytes != null || content != null,
+    '''Either [bytes] or [content] should be provided''',
+  );
+
+  return bytes != null
+      ? createFileAsBytes(
+          parentUri,
+          mimeType: mimeType,
+          displayName: displayName,
+          content: bytes,
+        )
+      : createFileAsString(
+          parentUri,
+          mimeType: mimeType,
+          displayName: displayName,
+          content: content!,
+        );
+}
+
 /// Create a direct child document of `parentUri`
 /// - `mimeType` is the type of document following [this specs](https://www.iana.org/assignments/media-types/media-types.xhtml)
-/// - `displayName` is the name of the documnt, must be a valid file name
+/// - `displayName` is the name of the document, must be a valid file name
 /// - `content` is the content of the document as a list of bytes `Uint8List`
 ///
 /// Returns the created file as a `DocumentFile`
@@ -332,12 +369,7 @@ Future<DocumentFile?> createFileAsBytes(
     kDirectoryUriArg: directoryUri,
   };
 
-  final createdDocumentFile = await kDocumentFileChannel
-      .invokeMapMethod<String, dynamic>(kCreateFile, args);
-
-  if (createdDocumentFile == null) return null;
-
-  return DocumentFile.fromMap(createdDocumentFile);
+  return invokeMapMethod(kCreateFile, args);
 }
 
 /// Convenient method to create a file
@@ -361,16 +393,14 @@ Future<DocumentFile?> createFileAsString(
 /// Returns the size of a given document `uri` in bytes
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#length%28%29)
-Future<int?> getDocumentLength(Uri uri) async {
+Future<int?> documentLength(Uri uri) async {
   const kLength = 'length';
 
   const kUri = 'uri';
 
   final args = <String, String>{kUri: '$uri'};
 
-  final length = await kDocumentFileChannel.invokeMethod<int>(kLength, args);
-
-  return length;
+  return kDocumentFileChannel.invokeMethod<int>(kLength, args);
 }
 
 /// Equivalent to `DocumentFile.lastModified`
@@ -405,12 +435,7 @@ Future<DocumentFile?> findFile(Uri directoryUri, String displayName) async {
     kDisplayNameArg: displayName,
   };
 
-  final matchedDocumentFile = await kDocumentFileChannel
-      .invokeMapMethod<String, dynamic>(kFindFile, args);
-
-  if (matchedDocumentFile == null) return null;
-
-  return DocumentFile.fromMap(matchedDocumentFile);
+  return invokeMapMethod(kFindFile, args);
 }
 
 /// Rename the current document `uri` to a new `displayName`
@@ -429,17 +454,9 @@ Future<DocumentFile?> renameTo(Uri uri, String displayName) async {
   const kDisplayNameArg = 'displayName';
   const kUri = 'uri';
 
-  final args = <String, String>{
-    kUri: '$uri',
-    kDisplayNameArg: displayName,
-  };
+  final args = <String, String>{kUri: '$uri', kDisplayNameArg: displayName};
 
-  final updatedDocumentFile = await kDocumentFileChannel
-      .invokeMapMethod<String, dynamic>(kRenameTo, args);
-
-  if (updatedDocumentFile == null) return null;
-
-  return DocumentFile.fromMap(updatedDocumentFile);
+  return invokeMapMethod(kRenameTo, args);
 }
 
 /// Create a new `DocumentFile` instance given `uri`
@@ -452,12 +469,7 @@ Future<DocumentFile?> fromTreeUri(Uri uri) async {
 
   const kUri = 'uri';
 
-  final documentFile = await kDocumentFileChannel
-      .invokeMapMethod<String, dynamic>(kFromTreeUri, {kUri: '$uri'});
-
-  if (documentFile == null) return null;
-
-  return DocumentFile.fromMap(documentFile);
+  return invokeMapMethod(kFromTreeUri, {kUri: '$uri'});
 }
 
 /// Get the parent file of the given `uri`
@@ -472,14 +484,7 @@ Future<DocumentFile?> parentFile(Uri uri) async {
 
   final args = <String, String>{kUri: '$uri'};
 
-  final parent = await kDocumentFileChannel.invokeMapMethod<String, dynamic>(
-    kParentFile,
-    args,
-  );
-
-  if (parent == null) return null;
-
-  return DocumentFile.fromMap(parent);
+  return invokeMapMethod(kParentFile, args);
 }
 
 /// Copy a document `uri` to the `destination`
@@ -493,12 +498,7 @@ Future<DocumentFile?> copy(Uri uri, Uri destination) async {
 
   final args = <String, String>{kUri: '$uri', kDestination: '$destination'};
 
-  final duplicatedFile =
-      await kDocumentFileChannel.invokeMapMethod<String, dynamic>(kCopy, args);
-
-  if (duplicatedFile == null) return null;
-
-  return DocumentFile.fromMap(duplicatedFile);
+  return invokeMapMethod(kCopy, args);
 }
 
 /// Get content of a given document `uri`
@@ -506,15 +506,28 @@ Future<DocumentFile?> copy(Uri uri, Uri destination) async {
 /// Equivalent to `contentDescriptor` usage
 ///
 /// [Refer to details](https://developer.android.com/training/data-storage/shared/documents-files#input_stream)
-Stream<String> getDocumentContent(Uri uri) {
+Future<Uint8List?> getDocumentContent(Uri uri) async {
   const kGetDocumentContent = 'getDocumentContent';
 
   const kUri = 'uri';
-  const kEvent = 'event';
 
-  final args = <String, String>{kUri: '$uri', kEvent: kGetDocumentContent};
+  final args = <String, String>{kUri: '$uri'};
 
-  final onNewLine = kDocumentFileEventChannel.receiveBroadcastStream(args);
+  return kDocumentFileChannel.invokeMethod<Uint8List>(
+    kGetDocumentContent,
+    args,
+  );
+}
 
-  return onNewLine.map<String>((line) => line as String);
+/// Helper method to read document using
+/// `getDocumentContent` and get the content as String instead as `Uint8List`
+Future<String?> getDocumentContentAsString(
+  Uri uri, {
+  bool throwIfError = false,
+}) async {
+  final bytes = await getDocumentContent(uri);
+
+  if (bytes == null) return null;
+
+  return String.fromCharCodes(bytes);
 }

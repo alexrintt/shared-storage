@@ -16,8 +16,10 @@ import io.lakscastro.sharedstorage.saf.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 
 internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   MethodChannel.MethodCallHandler,
@@ -37,6 +39,21 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     when (call.method) {
+      GET_DOCUMENT_CONTENT -> {
+        val uri = Uri.parse(call.argument<String>("uri")!!)
+
+        if (Build.VERSION.SDK_INT >= API_21) {
+          CoroutineScope(Dispatchers.IO).launch {
+            val content = readDocumentContent(uri)
+
+            launch(Dispatchers.Main) {
+              result.success(content)
+            }
+          }
+        } else {
+          result.notSupported(call.method, API_21)
+        }
+      }
       OPEN_DOCUMENT_TREE ->
         if (Build.VERSION.SDK_INT >= API_21) {
           openDocumentTree(call, result)
@@ -84,11 +101,10 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         }
       CAN_READ ->
         if (Build.VERSION.SDK_INT >= API_21) {
+          val uri = call.argument<String?>("uri") as String
+
           result.success(
-            documentFromUri(
-              plugin.context,
-              call.argument<String?>("uri") as String
-            )?.canRead()
+            documentFromUri(plugin.context, uri)?.canRead()
           )
         }
       LENGTH ->
@@ -134,10 +150,13 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             call.argument<String?>("displayName") as String
 
           val createdDirectory =
-            documentFromUri(plugin.context, uri)?.createDirectory(displayName)
-              ?: return
+            documentFromUri(plugin.context, uri)?.createDirectory(
+              displayName
+            ) ?: return
 
           result.success(createDocumentFileMap(createdDirectory))
+        } else {
+          result.notSupported(call.method, API_21)
         }
       }
       FIND_FILE -> {
@@ -155,7 +174,9 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       }
       COPY -> {
         if (Build.VERSION.SDK_INT >= API_21) {
-          val destination = Uri.parse(call.argument<String>("destination")!!)
+          val destination =
+            Uri.parse(call.argument<String>("destination")!!)
+
           val uri = Uri.parse(call.argument<String>("uri")!!)
 
           if (Build.VERSION.SDK_INT >= API_24) {
@@ -165,22 +186,11 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               destination
             )
           } else {
-            val content = StringBuilder()
+            val inputStream = openInputStream(uri)
+            val outputStream = openOutputStream(destination)
 
-            readDocumentContent(uri) {
-              onEnd = {
-                val uriDocument = documentFromUri(plugin.context, uri)!!
-
-                createFile(
-                  destination,
-                  uriDocument.type!!,
-                  uriDocument.name!!,
-                  content.toString().toByteArray()
-                ) {
-                  result.success(createDocumentFileMap(this))
-                }
-              }
-              onSuccess = { content.append(this) }
+            outputStream?.let {
+              inputStream?.copyTo(it)
             }
           }
         }
@@ -209,7 +219,12 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           val uri = call.argument<String>("uri")!!
           val parent = documentFromUri(plugin.context, uri)?.parentFile
 
-          result.success(if (parent != null) createDocumentFileMap(parent) else null)
+          result.success(
+            if (parent != null)
+              createDocumentFileMap(parent)
+            else
+              null
+          )
         }
       }
       else -> result.notImplemented()
@@ -218,16 +233,29 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
   @RequiresApi(API_21)
   private fun openDocumentTree(call: MethodCall, result: MethodChannel.Result) {
-    val grantWritePermission = call.argument<Boolean>("grantWritePermission")!!
+    val grantWritePermission =
+      call.argument<Boolean>("grantWritePermission")!!
+
     val initialUri = call.argument<String>("initialUri")
 
     val intent =
       Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-        addFlags(if (grantWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION else Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        addFlags(
+          if (grantWritePermission)
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+          else
+            Intent.FLAG_GRANT_READ_URI_PERMISSION
+        )
 
         if (initialUri != null) {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            putExtra(DocumentsContract.EXTRA_INITIAL_URI, Uri.parse(initialUri))
+          val tree =
+            DocumentFile.fromTreeUri(plugin.context, Uri.parse(initialUri))
+
+          if (Build.VERSION.SDK_INT >= API_26) {
+            putExtra(
+              DocumentsContract.EXTRA_INITIAL_URI,
+              tree?.uri
+            )
           }
         }
       }
@@ -326,7 +354,11 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   ): Boolean {
     when (requestCode) {
       OPEN_DOCUMENT_TREE_CODE -> {
-        val pendingResult = pendingResults[OPEN_DOCUMENT_TREE_CODE] ?: return false
+        val pendingResult =
+          pendingResults[OPEN_DOCUMENT_TREE_CODE] ?: return false
+
+        val grantWritePermission =
+          pendingResult.first.argument<Boolean>("grantWritePermission")!!
 
         try {
           val uri = data?.data
@@ -335,15 +367,17 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             plugin.context.contentResolver
               .takePersistableUriPermission(
                 uri,
-                if (pendingResult.first.argument<Boolean>("grantWritePermission")!!)
+                if (grantWritePermission)
                   Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 else
                   Intent.FLAG_GRANT_READ_URI_PERMISSION
               )
 
             pendingResult.second.success("$uri")
+
             return true
           }
+
           pendingResult.second.success(null)
         } finally {
           pendingResults.remove(OPEN_DOCUMENT_TREE_CODE)
@@ -389,98 +423,115 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     eventSink = events
 
     when (args["event"]) {
-      LIST_FILES -> {
-        if (eventSink == null) return
+      LIST_FILES -> listFilesEvent(eventSink, args)
+    }
+  }
 
-        val document = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-          documentFromUri(plugin.context, args["uri"] as String) ?: return
-        } else {
-          null
-        }
+  /**
+   * Read files of a given `uri` and dispatches all files under it through
+   * the `eventSink` and closes the stream after the last record
+   *
+   * Useful to read files under a `uri` with a large set of children
+   */
+  private fun listFilesEvent(
+    eventSink: EventChannel.EventSink?,
+    args: Map<*, *>
+  ) {
+    if (eventSink == null) return
 
-        if (document == null) {
-          eventSink?.error(
-            EXCEPTION_NOT_SUPPORTED,
-            "Android SDK must be greater or equal than [Build.VERSION_CODES.N]",
-            "Got (Build.VERSION.SDK_INT): ${Build.VERSION.SDK_INT}"
-          )
-        } else {
-          val columns = args["columns"] as List<*>
+    val document = if (Build.VERSION.SDK_INT >= API_24) {
+      documentFromUri(plugin.context, args["uri"] as String) ?: return
+    } else {
+      null
+    }
 
-          if (!document.canRead()) {
-            val error =
-              "You cannot read a URI that you don't have read permissions"
+    if (document == null) {
+      eventSink.error(
+        EXCEPTION_NOT_SUPPORTED,
+        "Android SDK must be greater or equal than [Build.VERSION_CODES.N]",
+        "Got (Build.VERSION.SDK_INT): ${Build.VERSION.SDK_INT}"
+      )
+    } else {
+      val columns = args["columns"] as List<*>
 
-            Log.d("NO PERMISSION!!!", error)
+      if (!document.canRead()) {
+        val error =
+          "You cannot read a URI that you don't have read permissions"
 
-            eventSink?.error(
-              EXCEPTION_MISSING_PERMISSIONS,
-              error,
-              mapOf("uri" to args["uri"])
-            )
-          } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-              CoroutineScope(Dispatchers.Default).launch {
-                traverseDirectoryEntries(
-                  plugin.context.contentResolver,
-                  rootOnly = true,
-                  rootUri = document.uri,
-                  columns = columns.map {
-                    parseDocumentFileColumn(
-                      parseDocumentFileColumn(it as String)!!
-                    )!!
-                  }.toTypedArray()
-                ) { data ->
-                  launch(Dispatchers.Main) {
-                    eventSink?.success(data)
-                  }
+        Log.d("NO PERMISSION!!!", error)
+
+        eventSink.error(
+          EXCEPTION_MISSING_PERMISSIONS,
+          error,
+          mapOf("uri" to args["uri"])
+        )
+
+        eventSink.endOfStream()
+      } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+          CoroutineScope(Dispatchers.IO).launch {
+            try {
+              traverseDirectoryEntries(
+                plugin.context.contentResolver,
+                rootOnly = true,
+                rootUri = document.uri,
+                columns = columns.map {
+                  parseDocumentFileColumn(
+                    parseDocumentFileColumn(it as String)!!
+                  )
+                }.toTypedArray()
+              ) { data, _ ->
+                launch(Dispatchers.Main) {
+                  eventSink.success(data)
                 }
+              }
+            } finally {
+              launch(Dispatchers.Main) {
+                eventSink.endOfStream()
               }
             }
           }
         }
       }
-      GET_DOCUMENT_CONTENT -> {
-        if (Build.VERSION.SDK_INT >= API_21) {
-          val uri = Uri.parse(args["uri"] as String)
-
-          readDocumentContent(uri) {
-            onSuccess = { eventSink?.success(this) }
-            onEnd = { eventSink?.endOfStream() }
-          }
-        } else {
-          eventSink?.endOfStream()
-        }
-      }
     }
   }
 
+  /**
+   * Alias for `plugin.context.contentResolver.openOutputStream(uri)`
+   */
+  private fun openOutputStream(uri: Uri): OutputStream? {
+    return plugin.context.contentResolver.openOutputStream(uri)
+  }
+
+  /**
+   * Alias for `plugin.context.contentResolver.openInputStream(uri)`
+   */
+  private fun openInputStream(uri: Uri): InputStream? {
+    return plugin.context.contentResolver.openInputStream(uri)
+  }
+
+  /**
+   * Get a document content as `ByteArray` equivalent to `Uint8List` in Dart
+   */
   @RequiresApi(API_21)
-  private fun readDocumentContent(
-    uri: Uri,
-    handler: CallbackHandler<String>.() -> Unit
-  ) {
-    val callbacks = CallbackHandler<String>().apply { handler(this) }
+  private fun readDocumentContent(uri: Uri): ByteArray? {
+    return try {
+      val inputStream = openInputStream(uri)
 
-    plugin.context.contentResolver.openInputStream(uri)
-      ?.use { inputStream ->
-        BufferedReader(InputStreamReader(inputStream)).use { reader ->
-          var line = reader.readLine()
+      val bytes = inputStream?.readBytes()
 
-          while (line != null) {
-            callbacks.onSuccess?.invoke(line)
+      inputStream?.close()
 
-            line = reader.readLine()
-          }
-
-          callbacks.onEnd?.invoke()
-        }
-      }
+      bytes
+    } catch (e: FileNotFoundException) {
+      null
+    } catch (e: IOException) {
+      null
+    }
   }
 
   override fun onCancel(arguments: Any?) {
     eventSink = null
   }
 }
-
-

@@ -50,7 +50,7 @@ fun documentFileColumnToRawString(column: DocumentFileColumn): String? {
   return values[column]
 }
 
-fun parseDocumentFileColumn(column: DocumentFileColumn): String? {
+fun parseDocumentFileColumn(column: DocumentFileColumn): String {
   val values = mapOf(
     DocumentFileColumn.ID to DocumentsContract.Document.COLUMN_DOCUMENT_ID,
     DocumentFileColumn.DISPLAY_NAME to DocumentsContract.Document.COLUMN_DISPLAY_NAME,
@@ -60,7 +60,7 @@ fun parseDocumentFileColumn(column: DocumentFileColumn): String? {
     DocumentFileColumn.LAST_MODIFIED to DocumentsContract.Document.COLUMN_LAST_MODIFIED
   )
 
-  return values[column]
+  return values[column]!!
 }
 
 /// `column` must be a constant String from `DocumentsContract.Document.COLUMN*`

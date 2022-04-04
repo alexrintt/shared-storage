@@ -1,4 +1,4 @@
-import '../../shared_storage.dart';
+import '../../saf.dart';
 
 /// Represent the same entity as `DocumentFile` but will be lazily loaded
 /// by `listFilesAsStream` method with dynamic
