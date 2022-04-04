@@ -24,7 +24,7 @@ Future<Uri?> openDocumentTree({
 
   final args = <String, dynamic>{
     kGrantWritePermission: grantWritePermission,
-    kInitialUri: '$initialUri'
+    if (initialUri != null) kInitialUri: '$initialUri',
   };
 
   final selectedDirectoryUri =
@@ -489,7 +489,7 @@ Future<DocumentFile?> parentFile(Uri uri) async {
 
 /// Copy a document `uri` to the `destination`
 ///
-/// This API uses the `createFile` and `readDocumentContent` API's behind the scenes
+/// This API uses the `createFile` and `getDocumentContent` API's behind the scenes
 Future<DocumentFile?> copy(Uri uri, Uri destination) async {
   const kCopy = 'copy';
 

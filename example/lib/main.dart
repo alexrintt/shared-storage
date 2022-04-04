@@ -51,12 +51,13 @@ class _AppState extends State<App> {
     }
   }
 
+  /// Prompt user with a folder picker (Available for Android 5.0+)
   Future<void> _openDocumentTree() async {
-    /// Prompt user with a folder picker (Available for Android 5.0+)
-
+    /// Sample initial directory (WhatsApp status directory)
     const kWppStatusFolder =
-        'content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fmedia/document/primary%3AAndroid%2Fmedia%2Fcom.whatsapp%2FWhatsApp%2FMedia%2F.Statuses%2FMedia';
+        'content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fmedia/document/primary%3AAndroid%2Fmedia%2Fcom.whatsapp%2FWhatsApp%2FMedia%2F.Statuses';
 
+    /// If the folder don't exist, the OS will ignore the initial directory
     await openDocumentTree(initialUri: Uri.parse(kWppStatusFolder));
 
     /// TODO: Add broadcast listener to be aware when a Uri permission changes
