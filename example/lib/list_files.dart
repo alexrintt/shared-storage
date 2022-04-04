@@ -276,12 +276,6 @@ class _FileTileState extends State<FileTile> {
           final mimeType =
               file.data![DocumentFileColumn.mimeType] as String? ?? '';
 
-          // file.data?[DocumentFileColumn.mimeType] = content;
-
-          print(
-            'DocumentFileColumn.mimeType: ${file.data?[DocumentFileColumn.mimeType]}',
-          );
-
           if (content != null) {
             final isImage = mimeType.startsWith('image/');
 
