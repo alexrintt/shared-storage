@@ -1,6 +1,28 @@
-## Shared Storage Flutter Plugin
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/51419598/161439601-fc228a0d-d09d-4dbb-b5a3-ebc5dbcf9f46.png">
+</p>
 
-[![pub package](https://img.shields.io/pub/v/shared_storage.svg)](https://pub.dartlang.org/packages/shared_storage)
+<h6 align="center"><samp>#flutter, #package, #android, #saf, #storage</samp></h6>
+<samp><h1 align="center">Shared Storage</h1></samp>
+
+<h6 align="center">
+    <samp>
+      Access Android <kbd>Storage Access Framework</kbd>, <kbd>Media Store</kbd> and <kbd>Environment</kbd> APIs through your Flutter Apps
+    </samp>
+</h6>
+
+<p align="center">
+  <a href="https://pub.dev/packages/shared_storage"><img src="https://img.shields.io/pub/v/shared_storage.svg?style=for-the-badge&color=22272E&showLabel=false&labelColor=15191f&logo=dart&logoColor=blue"></a>
+  <img src="https://img.shields.io/badge/Kotlin-22272E?&style=for-the-badge&logo=kotlin&logoColor=9966FF">
+  <img src="https://img.shields.io/badge/Dart-22272E?style=for-the-badge&logo=dart&logoColor=2BB7F6">
+  <img src="https://img.shields.io/badge/Flutter-22272E?style=for-the-badge&logo=flutter&logoColor=66B1F1">
+</p>
+
+<a href="https://pub.dev/packages/shared_storage"><h4 align="center"><samp>Install It</samp></h4></a>
+
+<br>
+
+## Shared Storage Flutter Plugin
 
 Plugin to fetch Android shared storage/folders info
 
