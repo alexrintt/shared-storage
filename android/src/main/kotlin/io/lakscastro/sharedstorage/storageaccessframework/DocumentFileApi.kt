@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.saf
+package io.lakscastro.sharedstorage.storageaccessframework
 
 import android.content.Intent
 import android.net.Uri
@@ -7,12 +7,13 @@ import android.provider.DocumentsContract
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
+import com.anggrayudi.storage.file.child
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.lakscastro.sharedstorage.ROOT_CHANNEL
 import io.lakscastro.sharedstorage.SharedStoragePlugin
 import io.lakscastro.sharedstorage.plugin.*
-import io.lakscastro.sharedstorage.saf.utils.*
+import io.lakscastro.sharedstorage.storageaccessframework.lib.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +22,13 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
+/**
+ * Aimed to implement strictly only the APIs already available from the
+ * native and original `DocumentFile` API
+ *
+ * Basically, this is just an adapter of the native `DocumentFile` class
+ * to a Flutter Plugin class, without any modifications or abstractions
+ */
 internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   MethodChannel.MethodCallHandler,
   PluginRegistry.ActivityResultListener,
@@ -173,12 +181,11 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         }
       }
       COPY -> {
+        val uri = Uri.parse(call.argument<String>("uri")!!)
+        val destination =
+          Uri.parse(call.argument<String>("destination")!!)
+
         if (Build.VERSION.SDK_INT >= API_21) {
-          val destination =
-            Uri.parse(call.argument<String>("destination")!!)
-
-          val uri = Uri.parse(call.argument<String>("uri")!!)
-
           if (Build.VERSION.SDK_INT >= API_24) {
             DocumentsContract.copyDocument(
               plugin.context.contentResolver,
@@ -193,14 +200,23 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               inputStream?.copyTo(it)
             }
           }
+        } else {
+          result.notSupported(
+            RENAME_TO,
+            API_21,
+            mapOf(
+              "uri" to "$uri",
+              "destination" to "$destination"
+            )
+          )
         }
       }
       RENAME_TO -> {
-        if (Build.VERSION.SDK_INT >= API_21) {
-          val uri = call.argument<String?>("uri") as String
-          val displayName =
-            call.argument<String?>("displayName") as String
+        val uri = call.argument<String?>("uri") as String
+        val displayName =
+          call.argument<String?>("displayName") as String
 
+        if (Build.VERSION.SDK_INT >= API_21) {
           documentFromUri(plugin.context, uri)?.apply {
             val success = renameTo(displayName)
 
@@ -212,11 +228,21 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               else null
             )
           }
+        } else {
+          result.notSupported(
+            RENAME_TO,
+            API_21,
+            mapOf(
+              "uri" to uri,
+              "displayName" to displayName
+            )
+          )
         }
       }
       PARENT_FILE -> {
+        val uri = call.argument<String>("uri")!!
+
         if (Build.VERSION.SDK_INT >= API_21) {
-          val uri = call.argument<String>("uri")!!
           val parent = documentFromUri(plugin.context, uri)?.parentFile
 
           result.success(
@@ -225,6 +251,24 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             else
               null
           )
+        } else {
+          result.notSupported(PARENT_FILE, API_21, mapOf("uri" to uri))
+        }
+      }
+      CHILD -> {
+        val uri = call.argument<String>("uri")!!
+        val path = call.argument<String>("path")!!
+        val requiresWriteAccess =
+          call.argument<Boolean>("requiresWriteAccess")?: false
+
+        if (Build.VERSION.SDK_INT >= API_21) {
+          val document = documentFromUri(plugin.context, uri)
+          val childDocument =
+            document?.child(plugin.context, path, requiresWriteAccess)
+
+          result.success(createDocumentFileMap(childDocument))
+        } else {
+          result.notSupported(CHILD, API_21, mapOf("uri" to uri))
         }
       }
       else -> result.notImplemented()
@@ -253,7 +297,10 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
           if (Build.VERSION.SDK_INT >= API_26) {
             putExtra(
-              DocumentsContract.EXTRA_INITIAL_URI,
+              if (Build.VERSION.SDK_INT >= API_26)
+                DocumentsContract.EXTRA_INITIAL_URI
+              else
+                DOCUMENTS_CONTRACT_EXTRA_INITIAL_URI,
               tree?.uri
             )
           }
@@ -296,7 +343,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     content: ByteArray,
     block: DocumentFile?.() -> Unit
   ) {
-
     val createdFile = documentFromUri(plugin.context, treeUri)!!.createFile(
       mimeType,
       displayName

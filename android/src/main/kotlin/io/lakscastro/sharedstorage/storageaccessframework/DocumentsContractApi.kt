@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.saf
+package io.lakscastro.sharedstorage.storageaccessframework
 
 import android.graphics.Point
 import android.net.Uri
@@ -13,7 +13,7 @@ import io.lakscastro.sharedstorage.plugin.API_21
 import io.lakscastro.sharedstorage.plugin.ActivityListener
 import io.lakscastro.sharedstorage.plugin.Listenable
 import io.lakscastro.sharedstorage.plugin.notSupported
-import io.lakscastro.sharedstorage.saf.utils.*
+import io.lakscastro.sharedstorage.storageaccessframework.lib.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.saf.utils
+package io.lakscastro.sharedstorage.storageaccessframework.lib
 
 import android.content.ContentResolver
 import android.content.Context

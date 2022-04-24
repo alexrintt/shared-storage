@@ -1,11 +1,18 @@
 import 'dart:typed_data';
 
-import '../../saf.dart';
+import 'document_file_column.dart';
+import 'partial_document_file.dart';
 import 'saf.dart' as saf;
 
 extension UriDocumentFileUtils on Uri {
-  /// Same as `DocumentFile.fromTreeUri(this)`
+  /// {@macro sharedstorage.saf.fromTreeUri}
   Future<DocumentFile?> toDocumentFile() => DocumentFile.fromTreeUri(this);
+
+  /// {@macro sharedstorage.saf.openDocumentFile}
+  Future<void> open() => saf.openDocumentFile(this);
+
+  /// {@macro sharedstorage.saf.openDocumentFile}
+  Future<void> openDocumentFile() => open();
 }
 
 /// Equivalent to Android `DocumentFile` class
@@ -50,42 +57,55 @@ class DocumentFile {
   /// Whether this document is a virtual file or not
   final bool isVirtual;
 
-  /// Same as `uri.toDocumentFile` where `uri` is of type `Uri`
+  /// {@macro sharedstorage.saf.fromTreeUri}
   static Future<DocumentFile?> fromTreeUri(Uri uri) => saf.fromTreeUri(uri);
 
-  /// Same as `canRead`
+  /// {@macro sharedstorage.saf.child}
+  Future<DocumentFile?> child(
+    String path, {
+    bool requiresWriteAccess = false,
+  }) =>
+      saf.child(uri, path, requiresWriteAccess: requiresWriteAccess);
+
+  /// {@macro sharedstorage.saf.openDocumentFile}
+  Future<bool?> openDocumentFile() => saf.openDocumentFile(uri);
+
+  /// {@macro sharedstorage.saf.openDocumentFile}
+  ///
+  /// Alias/shortname for [openDocumentFile]
+  Future<bool?> open() => openDocumentFile();
+
+  /// {@macro sharedstorage.saf.canWrite}
   Future<bool?> canRead() async => saf.canWrite(uri);
 
-  /// Same as `canWrite`
+  /// {@macro sharedstorage.saf.canWrite}
   Future<bool?> canWrite() async => saf.canWrite(uri);
 
-  /// Same as `listFiles`
+  /// {@macro sharedstorage.saf.listFiles}
   Stream<PartialDocumentFile> listFiles(List<DocumentFileColumn> columns) =>
       saf.listFiles(uri, columns: columns);
 
-  /// Same as `exists`
+  /// {@macro sharedstorage.saf.exists}
   Future<bool?> exists() => saf.exists(uri);
 
-  /// Same as `delete`
+  /// {@macro sharedstorage.saf.delete}
   Future<bool?> delete() => saf.delete(uri);
 
-  /// Same as `copy`
+  /// {@macro sharedstorage.saf.copy}
   Future<DocumentFile?> copy(Uri destination) => saf.copy(uri, destination);
 
-  /// Same as `getDocumentContent`
+  /// {@macro sharedstorage.saf.getDocumentContent}
   Future<Uint8List?> getContent(Uri destination) => saf.getDocumentContent(uri);
 
-  /// Same as `getDocumentContentAsString`
+  /// {@macro sharedstorage.saf.getContentAsString}
   Future<String?> getContentAsString(Uri destination) =>
       saf.getDocumentContentAsString(uri);
 
-  /// Same as `createDirectory`
+  /// {@macro sharedstorage.saf.createDirectory}
   Future<DocumentFile?> createDirectory(String displayName) =>
       saf.createDirectory(uri, displayName);
 
-  /// Same as `createFileAsBytes`
-  ///
-  /// Create a direct child document of `this` document
+  /// {@macro sharedstorage.saf.createFileAsBytes}
   Future<DocumentFile?> createFileAsBytes({
     required String mimeType,
     required String displayName,
@@ -98,9 +118,7 @@ class DocumentFile {
         bytes: bytes,
       );
 
-  /// Same as `createFile`
-  ///
-  /// Create a direct child document of `this` document
+  /// {@macro sharedstorage.saf.createFile}
   Future<DocumentFile?> createFile({
     required String mimeType,
     required String displayName,
@@ -115,9 +133,7 @@ class DocumentFile {
         bytes: bytes,
       );
 
-  /// Same as `createFileAsString`
-  ///
-  /// Create a direct child document of `this` document
+  /// Alias for [createFile] with [content] param
   Future<DocumentFile?> createFileAsString({
     required String mimeType,
     required String displayName,
@@ -130,21 +146,21 @@ class DocumentFile {
         content: content,
       );
 
-  /// Same as `documentLength`
+  /// {@macro sharedstorage.saf.length}
   Future<int?> get length => saf.documentLength(uri);
 
-  /// Same as `lastModified`
+  /// {@macro sharedstorage.saf.lastModified}
   Future<DateTime?> get lastModified => saf.lastModified(uri);
 
-  /// Same as `findFile`
+  /// {@macro sharedstorage.saf.findFile}
   Future<DocumentFile?> findFile(String displayName) =>
       saf.findFile(uri, displayName);
 
-  /// Same as `renameTo`
+  /// {@macro sharedstorage.saf.renameTo}
   Future<DocumentFile?> renameTo(String displayName) =>
       saf.renameTo(uri, displayName);
 
-  /// Same as `parentFile`
+  /// {@macro sharedstorage.saf.parentFile}
   Future<DocumentFile?> parentFile() => saf.parentFile(uri);
 
   Map<String, dynamic> toMap() {

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_storage/saf.dart';
 import 'buttons.dart';
 import 'key_value_text.dart';
@@ -358,6 +359,26 @@ class _FileTileState extends State<FileTile> {
                   }
                 },
               ),
+            Button(
+              'Open With',
+              onTap: () async {
+                final uri = widget.partialFile.metadata!.uri!;
+
+                try {
+                  final launched = await openDocumentFile(uri);
+
+                  if (launched ?? false) {
+                    print('Successfully opened $uri');
+                  } else {
+                    print('Failed to launch $uri');
+                  }
+                } on PlatformException {
+                  print(
+                    "There's no activity associated with the file type of this Uri: $uri",
+                  );
+                }
+              },
+            ),
             DangerButton(
               'Delete ${_isDirectory ? 'Directory' : 'File'}',
               onTap: () async {

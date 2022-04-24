@@ -1,12 +1,7 @@
-package io.lakscastro.sharedstorage.saf.utils
+package io.lakscastro.sharedstorage.storageaccessframework.lib
 
 import android.database.Cursor
-import android.os.Build
 import android.provider.DocumentsContract
-import android.provider.DocumentsProvider
-import androidx.annotation.RequiresApi
-import androidx.documentfile.provider.DocumentFile
-import io.lakscastro.sharedstorage.plugin.API_19
 
 private const val PREFIX = "DocumentFileColumn"
 

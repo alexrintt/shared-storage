@@ -25,11 +25,19 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
     /// Create a new file inside the `parentUri`
     final documentFile = await parentUri.toDocumentFile();
 
-    documentFile?.createFileAsString(
-      mimeType: 'text/plain',
-      content: 'Sample File Content',
-      displayName: 'File created by Shared Storage Sample App',
-    );
+    const kFilename = 'Sample File';
+
+    final child = await documentFile?.child(kFilename);
+
+    if (child == null) {
+      documentFile?.createFileAsString(
+        mimeType: 'text/plain',
+        content: 'Sample File Content',
+        displayName: kFilename,
+      );
+    } else {
+      print('This File Already Exists');
+    }
   }
 
   Future<void> _revokeUri(Uri uri) async {
@@ -59,7 +67,7 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
             'uri': '${widget.permissionUri.uri}',
           },
         ),
-        Row(
+        Wrap(
           children: [
             ActionButton(
               'Create Sample File',
