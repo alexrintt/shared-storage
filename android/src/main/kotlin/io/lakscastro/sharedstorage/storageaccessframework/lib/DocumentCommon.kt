@@ -63,24 +63,6 @@ fun documentFromUri(
   } else {
     DocumentFile.fromSingleUri(context, uri)
   }
-
-//  return if (isTreeUri(uri)) {
-//    DocumentFile.fromTreeUri(
-//      context,
-//      DocumentsContract.buildTreeDocumentUri(
-//        uri.authority,
-//        DocumentsContract.getTreeDocumentId(uri)
-//      )
-//    )
-//  } else {
-//    DocumentFile.fromSingleUri(
-//      context,
-//      DocumentsContract.buildDocumentUri(
-//        uri.authority,
-//        DocumentsContract.getDocumentId(uri)
-//      )
-//    )
-//  }
 }
 
 /**
