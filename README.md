@@ -22,9 +22,23 @@
 
 <br>
 
-## Shared Storage Flutter Plugin
+## Support
 
-Plugin to fetch Android shared storage/folders info
+If you have ideas to share, bugs to report or need support, you can either open an issue or join our Discord server
+
+<a href="https://discord.gg/86GDERXZNS">
+  <kbd><img src="https://discordapp.com/api/guilds/771498135188799500/widget.png?style=banner2" alt="Discord Banner"/></kbd>
+</a>
+
+## Plugin
+
+Useful plugin to call native Android APIs from Storage Access Framework, Media Store and Environment
+
+Supported use-cases:
+
+```py
+# todo(@lakscastro): under-development
+```
 
 ### Notes
 
@@ -127,5 +141,5 @@ Most Flutter plugins uses Android API's under the hood. So this plugin do the sa
 </p>
 <p align="center">Shared Storage <a href="https://github.com/LaksCastro/shared-storage/blob/master/LICENSE.md">is MIT licensed 💖</a></p>
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/51419598/141711483-9b0f9f2b-a46d-4de1-a15f-c6c99b552ef4.png" width="35" />
+  <img src="https://user-images.githubusercontent.com/51419598/161439601-fc228a0d-d09d-4dbb-b5a3-ebc5dbcf9f46.png" width="35" />
 </p>
