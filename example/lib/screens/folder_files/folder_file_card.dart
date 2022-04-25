@@ -3,196 +3,17 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:open_file/open_file.dart';
 import 'package:shared_storage/saf.dart';
-import 'buttons.dart';
-import 'key_value_text.dart';
-import 'light_text.dart';
-import 'simple_card.dart';
-import 'spacing.dart';
 
-class ListFiles extends StatefulWidget {
-  const ListFiles({Key? key, required this.uri}) : super(key: key);
+import '../../theme/spacing.dart';
+import '../../widgets/buttons.dart';
+import '../../widgets/key_value_text.dart';
+import '../../widgets/simple_card.dart';
+import 'folder_file_list.dart';
 
-  final Uri uri;
-
-  @override
-  _ListFilesState createState() => _ListFilesState();
-}
-
-class _ListFilesState extends State<ListFiles> {
-  List<PartialDocumentFile>? _files;
-
-  late bool _hasPermission;
-
-  StreamSubscription<PartialDocumentFile>? _listener;
-
-  Future<void> _grantAccess() async {
-    final uri = await openDocumentTree(initialUri: widget.uri);
-
-    if (uri == null) return;
-
-    _files = null;
-
-    _loadFiles();
-  }
-
-  Widget _buildFileList() {
-    return CustomScrollView(
-      slivers: [
-        if (!_hasPermission)
-          SliverPadding(
-            padding: k6dp.eb,
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  SimpleCard(
-                    onTap: () => {},
-                    children: [
-                      Center(
-                        child: LightText(
-                          'No permission granted to this folder\n\n${widget.uri}\n',
-                        ),
-                      ),
-                      Center(
-                        child: ActionButton(
-                          'Grant Access',
-                          onTap: _grantAccess,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          )
-        else ...[
-          SliverPadding(
-            padding: k6dp.eb,
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  Center(
-                    child: ActionButton(
-                      'Create a custom document',
-                      onTap: () => {},
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (_files!.isNotEmpty)
-            SliverPadding(
-              padding: k6dp.et,
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final file = _files![index];
-
-                    return FileTile(
-                      partialFile: file,
-                      didUpdateDocument: (document) {
-                        if (document == null) {
-                          _files?.removeWhere(
-                            (doc) =>
-                                doc.data?[DocumentFileColumn.id] ==
-                                file.data?[DocumentFileColumn.id],
-                          );
-
-                          if (mounted) setState(() {});
-                        }
-                      },
-                    );
-                  },
-                  childCount: _files!.length,
-                ),
-              ),
-            )
-          else
-            SliverPadding(
-              padding: k6dp.eb,
-              sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    SimpleCard(
-                      onTap: () => {},
-                      children: const [
-                        Center(
-                          child: LightText(
-                            'Empty folder',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
-        ]
-      ],
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    _loadFiles();
-  }
-
-  @override
-  void dispose() {
-    _listener?.cancel();
-
-    super.dispose();
-  }
-
-  Future<void> _loadFiles() async {
-    _hasPermission = await canRead(widget.uri) ?? false;
-
-    if (!_hasPermission) {
-      return setState(() => _files = []);
-    }
-
-    final documentUri = await widget.uri.toDocumentFile();
-
-    final columns = [
-      DocumentFileColumn.displayName,
-      DocumentFileColumn.size,
-      DocumentFileColumn.lastModified,
-      DocumentFileColumn.id,
-      DocumentFileColumn.mimeType,
-    ];
-
-    _listener = documentUri?.listFiles(columns).listen(
-      (file) {
-        /// Append new files to the current file list
-        _files = [...?_files, file];
-
-        /// Update the state only if the widget is currently showing
-        if (mounted) {
-          setState(() {});
-        } else {
-          _listener?.cancel();
-        }
-      },
-      onDone: () => setState(() => _files = [...?_files]),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Inside ${widget.uri.pathSegments.last}')),
-      body: _files == null
-          ? const Center(child: CircularProgressIndicator())
-          : _buildFileList(),
-    );
-  }
-}
-
-class FileTile extends StatefulWidget {
-  const FileTile({
+class FolderFileCard extends StatefulWidget {
+  const FolderFileCard({
     Key? key,
     required this.partialFile,
     required this.didUpdateDocument,
@@ -202,10 +23,10 @@ class FileTile extends StatefulWidget {
   final void Function(PartialDocumentFile?) didUpdateDocument;
 
   @override
-  _FileTileState createState() => _FileTileState();
+  _FolderFileCardState createState() => _FolderFileCardState();
 }
 
-class _FileTileState extends State<FileTile> {
+class _FolderFileCardState extends State<FolderFileCard> {
   PartialDocumentFile get file => widget.partialFile;
 
   static const _size = Size.square(150);
@@ -240,7 +61,7 @@ class _FileTileState extends State<FileTile> {
   }
 
   @override
-  void didUpdateWidget(covariant FileTile oldWidget) {
+  void didUpdateWidget(covariant FolderFileCard oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.partialFile.data?[DocumentFileColumn.id] !=
@@ -255,10 +76,10 @@ class _FileTileState extends State<FileTile> {
     super.dispose();
   }
 
-  void _openListFilesPage(Uri uri) {
+  void _openFolderFileListPage(Uri uri) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ListFiles(uri: uri),
+        builder: (context) => FolderFileList(uri: uri),
       ),
     );
   }
@@ -349,16 +170,17 @@ class _FileTileState extends State<FileTile> {
                       file.data![DocumentFileColumn.id] as String,
                     );
 
-                    _openListFilesPage(uri!);
+                    _openFolderFileListPage(uri!);
                   }
                 },
               ),
-            Button(
+            ActionButton(
               'Open With',
               onTap: () async {
                 final uri = widget.partialFile.metadata!.uri!;
 
                 try {
+                  // OpenFile.open('/sdcard/example.txt');
                   final launched = await openDocumentFile(uri);
 
                   if (launched ?? false) {

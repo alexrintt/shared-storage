@@ -9,6 +9,8 @@ const val EXCEPTION_MISSING_PERMISSIONS = "EXCEPTION_MISSING_PERMISSIONS"
 const val EXCEPTION_CANT_OPEN_DOCUMENT_FILE =
   "EXCEPTION_CANT_OPEN_DOCUMENT_FILE"
 const val EXCEPTION_ACTIVITY_NOT_FOUND = "EXCEPTION_ACTIVITY_NOT_FOUND"
+const val EXCEPTION_CANT_OPEN_FILE_DUE_SECURITY_POLICY =
+  "EXCEPTION_CANT_OPEN_FILE_DUE_SECURITY_POLICY"
 
 /**
  * Others
@@ -48,6 +50,7 @@ const val CHILD = "child"
  * Available DocumentFileHelper Method Channel APIs
  */
 const val OPEN_DOCUMENT_FILE = "openDocumentFile"
+const val GET_REAL_PATH_FROM_URI = "getRealPathFromUri"
 
 /**
  * Available Event Channels APIs

@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
-
 import '../../saf.dart';
 import '../channels.dart';
 import 'common.dart';
@@ -580,4 +578,18 @@ Future<String?> getDocumentContentAsString(
   if (bytes == null) return null;
 
   return String.fromCharCodes(bytes);
+}
+
+/// {@template sharedstorage.saf.getDocumentContentAsString}
+/// Helper method to generate the file path of the given `uri`
+///
+/// See [Get real path from URI, Android KitKat new storage access framework](https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175#20559175)
+/// for details
+/// {@endtemplate}
+Future<String?> getRealPathFromUri(Uri uri) async {
+  const kGetRealPathFromUri = 'getRealPathFromUri';
+
+  final args = <String, String>{'uri': '$uri'};
+
+  return kDocumentFileHelperChannel.invokeMethod(kGetRealPathFromUri, args);
 }

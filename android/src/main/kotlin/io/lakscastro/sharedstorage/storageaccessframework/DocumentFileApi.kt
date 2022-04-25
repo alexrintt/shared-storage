@@ -515,7 +515,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         eventSink.endOfStream()
       } else {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
           CoroutineScope(Dispatchers.IO).launch {
             try {
               traverseDirectoryEntries(
@@ -534,6 +533,10 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               }
             } finally {
               launch(Dispatchers.Main) {
+                Log.d(
+                  "BYLISTFILESAPI",
+                  document.listFiles().joinToString { "${it.uri}" }
+                )
                 eventSink.endOfStream()
               }
             }

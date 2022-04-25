@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_storage/saf.dart';
-import 'buttons.dart';
-import 'key_value_text.dart';
-import 'list_files.dart';
-import 'simple_card.dart';
-import 'spacing.dart';
+
+import '../../theme/spacing.dart';
+import '../../widgets/buttons.dart';
+import '../../widgets/key_value_text.dart';
+import '../../widgets/simple_card.dart';
+import '../folder_files/folder_file_list.dart';
 
 class PersistedUriCard extends StatefulWidget {
   const PersistedUriCard({
@@ -49,7 +50,7 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
   void _openListFilesPage() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ListFiles(uri: widget.permissionUri.uri),
+        builder: (context) => FolderFileList(uri: widget.permissionUri.uri),
       ),
     );
   }
