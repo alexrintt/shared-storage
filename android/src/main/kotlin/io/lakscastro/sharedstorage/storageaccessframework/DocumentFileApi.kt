@@ -533,10 +533,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               }
             } finally {
               launch(Dispatchers.Main) {
-                Log.d(
-                  "BYLISTFILESAPI",
-                  document.listFiles().joinToString { "${it.uri}" }
-                )
                 eventSink.endOfStream()
               }
             }
