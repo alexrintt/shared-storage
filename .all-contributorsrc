@@ -1,0 +1,27 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "lakscastro",
+      "name": "lask",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51419598?v=4",
+      "profile": "https://lakscastro.github.io",
+      "contributions": [
+        "code",
+        "doc",
+        "maintenance",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "shared-storage",
+  "projectOwner": "lakscastro",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
