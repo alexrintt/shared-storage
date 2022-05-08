@@ -85,6 +85,15 @@ Most Flutter plugins use Android API's under the hood. So this plugin does the s
 
 <br>
 
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 <h2 align="center">
   Open Source
 </h2>
