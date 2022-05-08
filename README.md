@@ -20,114 +20,60 @@
 
 <a href="https://pub.dev/packages/shared_storage"><h4 align="center"><samp>Install It</samp></h4></a>
 
+## Instalattion
+
+```
+flutter pub add shared_storage
+```
+
+or
+
+```yaml
+dependencies:
+  # ...other deps
+  shared_storage: ^latest # Pickup the latest version either from the pub.dev page or the badge in this README.md
+  # ...other deps
+```
+
+## Plugin
+
+This plugin include support for the following APIs:
+
+- [Partial Support for Environment API](https://github.com/lakscastro/shared-storage/wiki/Environment-API)
+
+```dart
+import 'package:shared_storage/environment.dart' as environment;
+```
+
+- [Partial Support for Media Store API](https://github.com/lakscastro/shared-storage/wiki/Media-Store-API)
+
+```dart
+import 'package:shared_storage/media_store.dart' as mediastore;
+```
+
+- [Partial Support for Storage Access Framework](https://github.com/lakscastro/shared-storage/wiki/Storage-Access-Framework-API)
+
+```dart
+import 'package:shared_storage/saf.dart' as saf;
+```
+
+All these APIs are module based, which means they are implemented separadely and so you need to import those you want use.
+
+**Please, be aware:** this is plugin is not intended for production usage yet, since the API is unstable and can change anytime.
+
+> To request support for some API that is not currently included open a issue explaining your usecase and the API you want to make available, the same applies for new methods or activities for the current APIs.
+
 <br>
 
 ## Support
 
-If you have ideas to share, bugs to report or need support, you can either open an issue or join our Discord server
+If you have ideas to share, bugs to report or need support, you can either open an issue or [join our Discord server.](https://discord.gg/86GDERXZNS)
 
-<a href="https://discord.gg/86GDERXZNS">
-  <kbd><img src="https://discordapp.com/api/guilds/771498135188799500/widget.png?style=banner2" alt="Discord Banner"/></kbd>
-</a>
+<br />
 
-## Plugin
+## Android APIs
 
-Useful plugin to call native Android APIs from Storage Access Framework, Media Store and Environment
-
-Supported use-cases:
-
-```py
-# todo(@lakscastro): under-development
-```
-
-### Notes
-
-- _**Android Only**_
-- _**Alpha version**_
-- _**Supports Android 4.1+ (API Level 16+)**_
-- _**The `targetSdk` should be set to `31`**_
-
-### Features
-
-- Get top-level external/shared folders path from [`Environment` Android API](https://developer.android.com/reference/android/os/Environment)
-
-This plugin allow us to get path of top-level shared folder (Downloads, DCIM, Videos, Audio) using the following Android API's
-
-```dart
-/// Get Android [downloads] top-level shared folder
-/// You can also create a reference to a custom directory as: `EnvironmentDirectory.custom('Custom Folder')`
-final sharedDirectory =
-    await getExternalStoragePublicDirectory(EnvironmentDirectory.downloads);
-
-print(sharedDirectory.path); /// `/storage/emulated/0/Download`
-```
-
-- Get external/shared folders path from [`MediaStore` Android API](https://developer.android.com/training/data-storage/shared/media)
-
-```dart
-/// Get Android [downloads] shared folder for Android 9+
-final sharedDirectory =
-    await getMediaStoreContentDirectory(MediaStoreCollection.downloads);
-
-print(sharedDirectory.path); /// `/external/downloads`
-```
-
-- Start `OPEN_DOCUMENT_TREE` activity to prompt user to select an folder to enable write and read access to be used by the `Storage Access Framework` API
-
-```dart
-/// Get permissions to manage an Android directory
-final selectedUriDir = await openDocumentTree();
-
-print(selectedUriDir);
-```
-
-- Create a new file using the `SAF` API
-
-```dart
-/// Create a new file using the `SAF` API
-final newDocumentFile = await createDocumentFile(
-  mimeType: 'text/plain',
-  content: 'My Plain Text Comment Created by shared_storage plugin',
-  displayName: 'CreatedBySharedStorageFlutterPlugin',
-  directory: anySelectedUriByTheOpenDocumentTreeAPI,
-);
-
-print(newDocumentFile);
-```
-
-- Get all persisted [URI]s by the `openDocumentTree` API, from `SAF` API
-
-```dart
-/// You have [write] and [read] access to all persisted [URI]s
-final listOfPersistedUris = await persistedUriPermissions();
-
-print(listOfPersistedUris);
-```
-
-- Revoke a current persisted [URI], from `SAF` API
-
-```dart
-/// Can be any [URI] returned by the `persistedUriPermissions`
-final uri = ...;
-
-/// After calling this, you no longer has access to the [uri]
-await releasePersistableUriPermission(uri);
-```
-
-- Convenient method to know if a given [uri] is a persisted `uri` ("persisted uri" means that you have `write` and `read` access to the `uri` even if devices reboot)
-
-```dart
-/// Can be any [URI], but the method will only return [true] if the [uri]
-/// is also present in the list returned by `persistedUriPermissions`
-final uri = ...;
-
-/// Verify if you have [write] and [read] access to a given [uri]
-final isPersisted = await isPersistedUri(uri);
-```
-
-### Android API's
-
-Most Flutter plugins uses Android API's under the hood. So this plugin do the same, and to retrieve Android shared folder paths the following API's are being used:
+Most Flutter plugins use Android API's under the hood. So this plugin does the same, and to call native Android storage APIs the following API's are being used:
 
 [`🔗android.os.Environment`](https://developer.android.com/reference/android/os/Environment#summary) [`🔗android.provider.MediaStore`](https://developer.android.com/reference/android/provider/MediaStore#summary) [`🔗android.provider.DocumentsProvider`](https://developer.android.com/guide/topics/providers/document-provider)
 
