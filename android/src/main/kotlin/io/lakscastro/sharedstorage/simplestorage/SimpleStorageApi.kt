@@ -5,9 +5,7 @@ import io.lakscastro.sharedstorage.SharedStoragePlugin
 import io.lakscastro.sharedstorage.plugin.ActivityListener
 import io.lakscastro.sharedstorage.plugin.Listenable
 
-class SimpleStorageApi(plugin: SharedStoragePlugin) :
-  Listenable,
-  ActivityListener {
+class SimpleStorageApi(plugin: SharedStoragePlugin) : Listenable, ActivityListener {
   private val documentFileCompatApi = DocumentFileCompatApi(plugin)
 
   override fun startListening(binaryMessenger: BinaryMessenger) {

@@ -21,13 +21,13 @@ import io.lakscastro.sharedstorage.storageaccessframework.lib.createDocumentFile
 import java.io.File
 
 internal class DocumentFileCompatApi(private val plugin: SharedStoragePlugin) :
-  MethodChannel.MethodCallHandler,
-  PluginRegistry.ActivityResultListener,
-  Listenable,
-  ActivityListener,
-  StreamHandler {
+    MethodChannel.MethodCallHandler,
+    PluginRegistry.ActivityResultListener,
+    Listenable,
+    ActivityListener,
+    StreamHandler {
   private val pendingResults: MutableMap<Int, Pair<MethodCall, MethodChannel.Result>> =
-    mutableMapOf()
+      mutableMapOf()
   private var channel: MethodChannel? = null
   private var eventChannel: EventChannel? = null
   private var eventSink: EventChannel.EventSink? = null
@@ -46,31 +46,28 @@ internal class DocumentFileCompatApi(private val plugin: SharedStoragePlugin) :
   }
 
   private fun fromSimplePath(call: MethodCall, result: MethodChannel.Result) {
-    val storageId =
-      call.argument<String>("storageId") ?: StorageId.PRIMARY
+    val storageId = call.argument<String>("storageId") ?: StorageId.PRIMARY
     val basePath = call.argument<String>("basePath") ?: ""
     val documentType = call.argument<String>("documentType")
     val documentTypeValue = valueOf<DocumentFileType>(documentType)
     val defaultDocumentTypeValue = documentTypeValue ?: DocumentFileType.ANY
-    val requiresWriteAccess =
-      call.argument<Boolean>("requiresWriteAccess") ?: false
-    val considerRawFile =
-      call.argument<Boolean>("considerRawFile") ?: true
+    val requiresWriteAccess = call.argument<Boolean>("requiresWriteAccess") ?: false
+    val considerRawFile = call.argument<Boolean>("considerRawFile") ?: true
 
     if (documentType != null && documentTypeValue == null) {
       throwInvalidDocumentType(result, documentType)
     } else {
       result.success(
-        createDocumentFileMap(
-          DocumentFileCompat.fromSimplePath(
-            plugin.context,
-            storageId = storageId,
-            basePath = basePath,
-            documentType = defaultDocumentTypeValue,
-            requiresWriteAccess = requiresWriteAccess,
-            considerRawFile = considerRawFile
+          createDocumentFileMap(
+              DocumentFileCompat.fromSimplePath(
+                  plugin.context,
+                  storageId = storageId,
+                  basePath = basePath,
+                  documentType = defaultDocumentTypeValue,
+                  requiresWriteAccess = requiresWriteAccess,
+                  considerRawFile = considerRawFile
+              )
           )
-        )
       )
     }
   }
@@ -80,24 +77,22 @@ internal class DocumentFileCompatApi(private val plugin: SharedStoragePlugin) :
     val documentType = call.argument<String>("documentType")
     val documentTypeValue = valueOf<DocumentFileType>(documentType)
     val defaultDocumentTypeValue = documentTypeValue ?: DocumentFileType.ANY
-    val requiresWriteAccess =
-      call.argument<Boolean>("requiresWriteAccess") ?: false
-    val considerRawFile =
-      call.argument<Boolean>("considerRawFile") ?: true
+    val requiresWriteAccess = call.argument<Boolean>("requiresWriteAccess") ?: false
+    val considerRawFile = call.argument<Boolean>("considerRawFile") ?: true
 
     if (documentType != null && documentTypeValue == null) {
       throwInvalidDocumentType(result, documentType)
     } else {
       result.success(
-        createDocumentFileMap(
-          DocumentFileCompat.fromFullPath(
-            plugin.context,
-            fullPath = fullPath,
-            documentType = defaultDocumentTypeValue,
-            requiresWriteAccess = requiresWriteAccess,
-            considerRawFile = considerRawFile
+          createDocumentFileMap(
+              DocumentFileCompat.fromFullPath(
+                  plugin.context,
+                  fullPath = fullPath,
+                  documentType = defaultDocumentTypeValue,
+                  requiresWriteAccess = requiresWriteAccess,
+                  considerRawFile = considerRawFile
+              )
           )
-        )
       )
     }
   }
@@ -107,49 +102,40 @@ internal class DocumentFileCompatApi(private val plugin: SharedStoragePlugin) :
     val documentType = call.argument<String>("documentType")
     val documentTypeValue = valueOf<DocumentFileType>(documentType)
     val defaultDocumentTypeValue = documentTypeValue ?: DocumentFileType.ANY
-    val requiresWriteAccess =
-      call.argument<Boolean>("requiresWriteAccess") ?: false
-    val considerRawFile =
-      call.argument<Boolean>("considerRawFile") ?: true
+    val requiresWriteAccess = call.argument<Boolean>("requiresWriteAccess") ?: false
+    val considerRawFile = call.argument<Boolean>("considerRawFile") ?: true
 
     if (documentType != null && documentTypeValue == null) {
       throwInvalidDocumentType(result, documentType)
     } else {
       result.success(
-        createDocumentFileMap(
-          DocumentFileCompat.fromFile(
-            plugin.context,
-            file = file,
-            documentType = defaultDocumentTypeValue,
-            requiresWriteAccess = requiresWriteAccess,
-            considerRawFile = considerRawFile
+          createDocumentFileMap(
+              DocumentFileCompat.fromFile(
+                  plugin.context,
+                  file = file,
+                  documentType = defaultDocumentTypeValue,
+                  requiresWriteAccess = requiresWriteAccess,
+                  considerRawFile = considerRawFile
+              )
           )
-        )
       )
     }
   }
 
-  private fun throwInvalidDocumentType(
-    result: MethodChannel.Result,
-    documentType: String
-  ) {
+  private fun throwInvalidDocumentType(result: MethodChannel.Result, documentType: String) {
     result.error(
-      EXCEPTION_INVALID_DOCUMENT_TYPE,
-      "You must provide a valid Document Type or null: ${
+        EXCEPTION_INVALID_DOCUMENT_TYPE,
+        "You must provide a valid Document Type or null: ${
         DocumentFileType.values().joinToString()
       }, got $documentType",
-      documentType
+        documentType
     )
   }
 
   @RequiresApi(API_19)
-  override fun onActivityResult(
-    requestCode: Int,
-    resultCode: Int,
-    data: Intent?
-  ): Boolean {
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
     when (requestCode) {
-      // TODO(@lakscastro): Implementation
+    // TODO(@lakscastro): Implementation
     }
 
     return false
@@ -161,8 +147,7 @@ internal class DocumentFileCompatApi(private val plugin: SharedStoragePlugin) :
     channel = MethodChannel(binaryMessenger, "$ROOT_CHANNEL/$CHANNEL")
     channel?.setMethodCallHandler(this)
 
-    eventChannel =
-      EventChannel(binaryMessenger, "$ROOT_CHANNEL/event/$CHANNEL")
+    eventChannel = EventChannel(binaryMessenger, "$ROOT_CHANNEL/event/$CHANNEL")
     eventChannel?.setStreamHandler(this)
   }
 
@@ -190,7 +175,7 @@ internal class DocumentFileCompatApi(private val plugin: SharedStoragePlugin) :
     eventSink = events
 
     when (args["event"]) {
-      // TODO(@lakscastro): Implementation
+    // TODO(@lakscastro): Implementation
     }
   }
 

@@ -5,9 +5,7 @@ import io.lakscastro.sharedstorage.SharedStoragePlugin
 import io.lakscastro.sharedstorage.plugin.ActivityListener
 import io.lakscastro.sharedstorage.plugin.Listenable
 
-class StorageAccessFrameworkApi(plugin: SharedStoragePlugin) :
-  Listenable,
-  ActivityListener {
+class StorageAccessFrameworkApi(plugin: SharedStoragePlugin) : Listenable, ActivityListener {
   private val documentFileApi = DocumentFileApi(plugin)
   private val documentsContractApi = DocumentsContractApi(plugin)
   private val documentFileHelperApi = DocumentFileHelperApi(plugin)
