@@ -15,7 +15,7 @@ class DocumentFileColumn {
   static const displayName =
       DocumentFileColumn._('$_kPrefix.COLUMN_DISPLAY_NAME');
 
-  /// Equivalent to [COLUMN_MIME_TYPE](https://developer.android.com/reference/android/provider/DocumentsContract.Document#COLUMN_MIME_TYPE)
+  /// Equivalent to [`COLUMN_MIME_TYPE`](https://developer.android.com/reference/android/provider/DocumentsContract.Document#COLUMN_MIME_TYPE)
   static const mimeType = DocumentFileColumn._('$_kPrefix.COLUMN_MIME_TYPE');
 
   /// Equivalent to [`COLUMN_LAST_MODIFIED`](https://developer.android.com/reference/android/provider/DocumentsContract.Document#COLUMN_LAST_MODIFIED)
