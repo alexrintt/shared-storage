@@ -20,7 +20,13 @@
 
 <a href="https://pub.dev/packages/shared_storage"><h4 align="center"><samp>Install It</samp></h4></a>
 
-## Instalattion
+## Stability
+
+The latest version is a **Beta** release, which means all these APIs can change over a short period of time without prior notice
+
+**So, please be aware that this is plugin is not intended for production usage yet, since the API is currently in development.**
+
+## Installation
 
 ```
 flutter pub add shared_storage
@@ -37,21 +43,27 @@ dependencies:
 
 ## Plugin
 
-This plugin include support for the following APIs:
+This plugin include **partial** support for the following APIs:
 
-- [Partial Support for Environment API](https://github.com/lakscastro/shared-storage/wiki/Environment-API)
+### Partial Support for [Environment API](https://github.com/lakscastro/shared-storage/wiki/Environment-API)
+
+Browse the [Wiki documentation for details](https://github.com/lakscastro/shared-storage/wiki/Environment-API)
 
 ```dart
 import 'package:shared_storage/environment.dart' as environment;
 ```
 
-- [Partial Support for Media Store API](https://github.com/lakscastro/shared-storage/wiki/Media-Store-API)
+### Partial Support for [Media Store API](https://github.com/lakscastro/shared-storage/wiki/Media-Store-API)
+
+Browse the [Wiki documentation for details](https://github.com/lakscastro/shared-storage/wiki/Media-Store-API)
 
 ```dart
 import 'package:shared_storage/media_store.dart' as mediastore;
 ```
 
-- [Partial Support for Storage Access Framework](https://github.com/lakscastro/shared-storage/wiki/Storage-Access-Framework-API)
+### Partial Support for [Storage Access Framework](https://github.com/lakscastro/shared-storage/wiki/Storage-Access-Framework-API)  
+
+Browse the [Wiki documentation for details](https://github.com/lakscastro/shared-storage/wiki/Storage-Access-Framework-API)
 
 ```dart
 import 'package:shared_storage/saf.dart' as saf;
@@ -59,17 +71,11 @@ import 'package:shared_storage/saf.dart' as saf;
 
 All these APIs are module based, which means they are implemented separadely and so you need to import those you want use.
 
-**Please, be aware:** this is plugin is not intended for production usage yet, since the API is unstable and can change anytime.
-
 > To request support for some API that is not currently included open a issue explaining your usecase and the API you want to make available, the same applies for new methods or activities for the current APIs.
-
-<br>
 
 ## Support
 
-If you have ideas to share, bugs to report or need support, you can either open an issue or [join our Discord server.](https://discord.gg/86GDERXZNS)
-
-<br />
+If you have ideas to share, bugs to report or need support, you can either open an issue or join our [Discord server](https://discord.gg/86GDERXZNS)
 
 ## Android APIs
 
