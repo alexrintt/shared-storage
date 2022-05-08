@@ -155,7 +155,7 @@ class _FolderFileListState extends State<FolderFileList> {
 
     final documentUri = await widget.uri.toDocumentFile();
 
-    final columns = [
+    const columns = [
       DocumentFileColumn.displayName,
       DocumentFileColumn.size,
       DocumentFileColumn.lastModified,

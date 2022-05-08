@@ -45,16 +45,33 @@ class DocumentFile {
   /// Mimetype of this document file, useful to determine how to display it
   final String? type;
 
-  /// Path, URI, location of this document, it can exists or not
+  /// Path, URI, location of this document, it can exists or not, you should check by using `exists()` API
   final Uri uri;
 
   /// Whether this document is a directory or not
+  ///
+  /// Since it's a [DocumentFile], it can represent a folder/directory rather than a file
   final bool isDirectory;
 
-  /// Whether this document is a file or not
+  /// Indicates if this [DocumentFile] represents a _file_.
+  ///
+  /// Be aware there are several differences between documents and traditional files:
+  /// - Documents express their display name and MIME type as separate fields, instead of relying on file extensions.
+  /// Some documents providers may still choose to append extensions to their display names, but that's an implementation detail.
+  /// - A single document may appear as the child of multiple directories, so it doesn't inherently know who its parent is.
+  /// That is, documents don't have a strong notion of path.
+  /// You can easily traverse a tree of documents from parent to child, but not from child to parent.
+  /// - Each document has a unique identifier within that provider.
+  /// This identifier is an opaque implementation detail of the provider, and as such it must not be parsed.
+  ///
+  /// [Android Reference](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#:~:text=androidx.documentfile.provider.DocumentFile,but%20it%20has%20substantial%20overhead.()
   final bool isFile;
 
-  /// Whether this document is a virtual file or not
+  /// Indicates if this file represents a virtual document.
+  ///
+  /// What is a virtual document?
+  /// - [Video answer](https://www.youtube.com/watch?v=4h7yCZt231Y)
+  /// - [Text docs answer](https://developer.android.com/about/versions/nougat/android-7.0#virtual_files)
   final bool isVirtual;
 
   /// {@macro sharedstorage.saf.fromTreeUri}

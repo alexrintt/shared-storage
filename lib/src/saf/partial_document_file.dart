@@ -1,7 +1,7 @@
 import '../../saf.dart';
 
 /// Represent the same entity as `DocumentFile` but will be lazily loaded
-/// by `listFilesAsStream` method with dynamic
+/// by `listFiles` method with dynamic
 /// properties and query metadata context
 ///
 /// _Note: Can't be instantiated_
