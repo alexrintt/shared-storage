@@ -17,10 +17,6 @@ const kDocumentFileChannel = MethodChannel('$kRootChannel/documentfile');
 const kDocumentsContractChannel =
     MethodChannel('$kRootChannel/documentscontract');
 
-/// Target [DocumentFileCompat] from `SimpleStore` Library (SAF Based)
-const kDocumentFileCompatChannel =
-    MethodChannel('$kRootChannel/documentfilecompat');
-
 /// Target [DocumentFileHelper] Shared Storage plugin class (SAF Based)
 const kDocumentFileHelperChannel =
     MethodChannel('$kRootChannel/documentfilehelper');
