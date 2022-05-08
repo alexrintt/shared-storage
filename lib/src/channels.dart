@@ -30,7 +30,3 @@ const kDocumentFileHelperChannel =
 /// Target [DocumentFile] from `SAF` Android API (New Android APIs use it)
 const kDocumentFileEventChannel =
     EventChannel('$kRootChannel/event/documentfile');
-
-/// Target [DocumentFileCompat] from `SimpleStorage` Android Library (`SAF` based library)
-const kDocumentFileCompatEventChannel =
-    EventChannel('$kRootChannel/event/documentfilecompact');
