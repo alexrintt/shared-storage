@@ -85,6 +85,10 @@ Most Flutter plugins use Android API's under the hood. So this plugin does the s
 
 <br>
 
+## Contributors
+
+These are the brilliant minds behind the development of this plugin!
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
