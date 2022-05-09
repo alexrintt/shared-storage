@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - release
+      - v0.3.0
 
 jobs:
   publish:
@@ -11,5 +12,10 @@ jobs:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
 
-      - name: Run Pub Publish
-        run: dart pub publish --force
+      - name: Publish
+        uses: sakebook/actions-flutter-pub-publisher@v1.3.1
+        with:
+          credential: ${{ secrets.PUB_CREDENTIALS }}
+          flutter_package: true
+          skip_test: true
+          dry_run: true
