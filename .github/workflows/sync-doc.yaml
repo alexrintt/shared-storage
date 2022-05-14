@@ -28,10 +28,13 @@ jobs:
       - name: Erase docs subfolder
         run: rm -r docs/
 
-      - name: Push latest changes
+      - name: Prepare for commit
         run: |
           git remote remove origin
           git remote add origin https://${{ github.token }}:${{ github.token }}@github.com/lakscastro/shared-storage.git
           git config --global user.email "<>"
           git config --global user.name "GitHub Actions"
+
+      - name: Push latest changes if any
+        run: |
           [ ! -z "$(git status --porcelain)" ] && git add . && git commit -m "(${{ github.ref }}) Triggered by @${{ github.actor }}" && git push origin documentation
