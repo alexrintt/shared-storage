@@ -6,6 +6,22 @@
   "imageSize": 100,
   "contributorsPerLine": 7,
   "contributorsSortAlphabetically": false,
-  "skipCi": "true",
-  "contributors": []
+  "skipCi": true,
+  "contributors": [
+    {
+      "login": "lakscastro",
+      "name": "lask",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51419598?v=4",
+      "profile": "https://lakscastro.github.io",
+      "contributions": [
+        "code",
+        "maintenance",
+        "doc"
+      ]
+    }
+  ],
+  "projectName": "shared-storage",
+  "projectOwner": "lakscastro",
+  "repoType": "github",
+  "repoHost": "https://github.com"
 }
