@@ -23,7 +23,7 @@ jobs:
         run: git checkout origin/v0.3.0 -- docs
 
       - name: Move all docs from subfolder to root
-        run: cp docs/* .
+        run: cp -r docs/* .
 
       - name: Erase docs subfolder
         run: rm -r docs/
