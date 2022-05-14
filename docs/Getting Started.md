@@ -6,13 +6,13 @@ So, please be aware that this is plugin is not intended for production usage yet
 
 ## Installation
 
-```
+```bash
 flutter pub add shared_storage
 ```
 
 or
 
-```
+```yaml
 dependencies:
   shared_storage: ^latest # Pickup the latest version either from the pub.dev page or the badge in this README.md
 ```
