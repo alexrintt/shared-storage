@@ -65,7 +65,7 @@ These are the brilliant minds behind the development of this plugin!
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
-<!-- markdownlint-dwwwisable -->
+<!-- markdownlint-disable -->
 
 <!-- DATA  ->
 <!-- markdownlint-restore -->
