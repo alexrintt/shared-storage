@@ -1,0 +1,36 @@
+on: 
+  push:
+    branches:
+      - v0.3.0 # TODO: Use release instead of v0.x.y
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Checkout to documentation branch
+        run: git checkout documentation
+
+      - name: Remove/Delete all current documentation files
+        run: rm -r ./*
+      
+      - name: Copy latest version from /docs of the target branch
+        run: git checkout origin/v0.3.0 -- docs
+
+      - name: Move all docs from subfolder to root
+        run: cp docs/* .
+
+      - name: Erase docs subfolder
+        run: rm -r docs/
+
+      - name: Push latest changes
+        run: |
+          git add .
+          git commit -m "(${{ github.ref }}) Triggered by @${{ github.actor }}"
+          git remote remove origin
+          git remote add origin https://${{ github.token }}:${{ github.token }}@github.com/lakscastro/shared-storage.git
+          git push origin documentation
+
