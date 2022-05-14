@@ -22,7 +22,31 @@
 
 ## Documentation
 
-See the website for [documentation](https://lakscastro.gitbook.io/shared-storage)
+#### See the website for [documentation](https://lakscastro.gitbook.io/shared-storage)
+
+All documentation is also available under `/docs` to each released version which is the data source of the website
+
+You can contribute to the docs by just editing these files through the GitHub web editor!
+
+Latest changes are available on `master` branch and the actual latest published package version lives under `release` branch
+
+`documentation` branch is an automated branch which is not edited manually
+
+All other branches are derivated from issues, new features or bug fixes
+
+## Contributors
+
+These are the brilliant minds behind the development of this plugin!
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- DATA  ->
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 <h2 align="center">
   Open Source
