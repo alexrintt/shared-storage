@@ -1,0 +1,53 @@
+This plugin include **partial** support for the following APIs:
+
+### Partial Support for [Environment API](/Environment/Usage)
+
+Browse the [documentation for details](/Environment/Usage)
+
+```dart
+import 'package:shared_storage/environment.dart' as environment;
+```
+
+### Partial Support for [Media Store API](/Media Store/Usage)
+
+Browse the [documentation for details](/Media Store/Usage)
+
+```dart
+import 'package:shared_storage/media_store.dart' as mediastore;
+```
+
+### Partial Support for [Storage Access Framework](/Storage Access Framework/Usage)
+
+Browse the [documentation for details](/Storage Access Framework/Usage)
+
+```dart
+import 'package:shared_storage/saf.dart' as saf;
+```
+
+All these APIs are module based, which means they are implemented separadely and so you need to import those you want use.
+
+> To request support for some API that is not currently included open a issue explaining your usecase and the API you want to make available, the same applies for new methods or activities for the current APIs.
+
+## Support
+
+If you have ideas to share, bugs to report or need support, you can either open an issue or join our [Discord server](https://discord.gg/86GDERXZNS)
+
+## Android APIs
+
+Most Flutter plugins use Android API's under the hood. So this plugin does the same, and to call native Android storage APIs the following API's are being used:
+
+[`🔗android.os.Environment`](https://developer.android.com/reference/android/os/Environment#summary) [`🔗android.provider.MediaStore`](https://developer.android.com/reference/android/provider/MediaStore#summary) [`🔗android.provider.DocumentsProvider`](https://developer.android.com/guide/topics/providers/document-provider)
+
+## Contributors
+
+These are the brilliant minds behind the development of this plugin!
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- DATA  ->
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->

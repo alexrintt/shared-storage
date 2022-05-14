@@ -1,3 +1,0 @@
-## Sample section
-
-Try it.
