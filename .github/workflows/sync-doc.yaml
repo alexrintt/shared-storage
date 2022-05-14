@@ -30,9 +30,10 @@ jobs:
 
       - name: Push latest changes
         run: |
-          git add .
-          git commit -m "(${{ github.ref }}) Triggered by @${{ github.actor }}"
           git remote remove origin
           git remote add origin https://${{ github.token }}:${{ github.token }}@github.com/lakscastro/shared-storage.git
+          git config --global user.email "<>"
+          git config --global user.name "GitHub Actions"
+          git add .
+          git commit -m "(${{ github.ref }}) Triggered by @${{ github.actor }}"
           git push origin documentation
-
