@@ -18,6 +18,15 @@
         "maintenance",
         "doc"
       ]
+    },
+    {
+      "login": "ankitparmar007",
+      "name": "ankitparmar007",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73648141?v=4",
+      "profile": "https://github.com/ankitparmar007",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "projectName": "shared-storage",
