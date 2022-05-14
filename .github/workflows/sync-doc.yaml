@@ -12,7 +12,9 @@ jobs:
       - uses: dart-lang/setup-dart@v1
 
       - name: Checkout to documentation branch
-        run: git checkout documentation
+        run: |
+          git fetch
+          git checkout documentation
 
       - name: Remove/Delete all current documentation files
         run: rm -r ./*
