@@ -34,4 +34,4 @@ jobs:
           git remote add origin https://${{ github.token }}:${{ github.token }}@github.com/lakscastro/shared-storage.git
           git config --global user.email "<>"
           git config --global user.name "GitHub Actions"
-          [ -z "$(git status --porcelain)" ] || (git add . && git commit -m "(${{ github.ref }}) Triggered by @${{ github.actor }}" && git push origin documentation)
+          [ ! -z "$(git status --porcelain)" ] && git add . && git commit -m "(${{ github.ref }}) Triggered by @${{ github.actor }}" && git push origin documentation
