@@ -138,8 +138,12 @@ These are the brilliant minds behind the development of this plugin!
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://lakscastro.github.io"><img src="https://avatars.githubusercontent.com/u/51419598?v=4?s=100" width="100px;" alt=""/><br /><sub><b>lask</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=lakscastro" title="Code">💻</a> <a href="#maintenance-lakscastro" title="Maintenance">🚧</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=lakscastro" title="Documentation">📖</a></td>
+  </tr>
+</table>
 
-<!-- DATA  ->
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
 
