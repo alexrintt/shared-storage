@@ -153,6 +153,8 @@ These are the brilliant minds behind the development of this plugin!
 
 <br>
 
+<samp>
+
 <h2 align="center">
   Open Source
 </h2>
@@ -163,3 +165,5 @@ These are the brilliant minds behind the development of this plugin!
 <p align="center">
   <img src="https://user-images.githubusercontent.com/51419598/161439601-fc228a0d-d09d-4dbb-b5a3-ebc5dbcf9f46.png" width="35" />
 </p>
+  
+</samp>
