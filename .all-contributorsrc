@@ -38,6 +38,16 @@
         "bug",
         "ideas"
       ]
+    },
+    {
+      "login": "dangilbert",
+      "name": "dangilbert",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6799566?v=4",
+      "profile": "https://github.com/dangilbert",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "projectName": "shared-storage",
