@@ -6,13 +6,13 @@ So, please be aware that this is plugin is not intended for production usage yet
 
 ## Installation
 
-```
+```bash
 flutter pub add shared_storage
 ```
 
 or
 
-```
+```yaml
 dependencies:
   shared_storage: ^latest # Pickup the latest version either from the pub.dev page or the badge in this README.md
 ```
@@ -66,8 +66,16 @@ These are the brilliant minds behind the development of this plugin!
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://lakscastro.github.io"><img src="https://avatars.githubusercontent.com/u/51419598?v=4?s=100" width="100px;" alt=""/><br /><sub><b>lask</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=lakscastro" title="Code">💻</a> <a href="#maintenance-lakscastro" title="Maintenance">🚧</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=lakscastro" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/ankitparmar007"><img src="https://avatars.githubusercontent.com/u/73648141?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ankitparmar007</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Aankitparmar007" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://www.bibliotecaortodoxa.ro"><img src="https://avatars.githubusercontent.com/u/1148228?v=4?s=100" width="100px;" alt=""/><br /><sub><b>www.bibliotecaortodoxa.ro</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=aplicatii-romanesti" title="Code">💻</a> <a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Aaplicatii-romanesti" title="Bug reports">🐛</a> <a href="#ideas-aplicatii-romanesti" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/dangilbert"><img src="https://avatars.githubusercontent.com/u/6799566?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dangilbert</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=dangilbert" title="Code">💻</a> <a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Adangilbert" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/dhaval-k-simformsolutions"><img src="https://avatars.githubusercontent.com/u/90894202?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dhaval-k-simformsolutions</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Adhaval-k-simformsolutions" title="Bug reports">🐛</a> <a href="#ideas-dhaval-k-simformsolutions" title="Ideas, Planning, & Feedback">🤔</a></td>
+  </tr>
+</table>
 
-<!-- DATA  ->
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
 

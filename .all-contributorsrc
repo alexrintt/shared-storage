@@ -1,8 +1,67 @@
 {
-  "files": ["README.md"],
+  "files": [
+    "README.md",
+    "docs/Getting Started.md"
+  ],
   "imageSize": 100,
   "contributorsPerLine": 7,
   "contributorsSortAlphabetically": false,
-  "skipCi": "true",
-  "contributors": []
+  "skipCi": true,
+  "contributors": [
+    {
+      "login": "lakscastro",
+      "name": "lask",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51419598?v=4",
+      "profile": "https://lakscastro.github.io",
+      "contributions": [
+        "code",
+        "maintenance",
+        "doc"
+      ]
+    },
+    {
+      "login": "ankitparmar007",
+      "name": "ankitparmar007",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73648141?v=4",
+      "profile": "https://github.com/ankitparmar007",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "aplicatii-romanesti",
+      "name": "www.bibliotecaortodoxa.ro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1148228?v=4",
+      "profile": "https://www.bibliotecaortodoxa.ro",
+      "contributions": [
+        "code",
+        "bug",
+        "ideas"
+      ]
+    },
+    {
+      "login": "dangilbert",
+      "name": "dangilbert",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6799566?v=4",
+      "profile": "https://github.com/dangilbert",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "dhaval-k-simformsolutions",
+      "name": "dhaval-k-simformsolutions",
+      "avatar_url": "https://avatars.githubusercontent.com/u/90894202?v=4",
+      "profile": "https://github.com/dhaval-k-simformsolutions",
+      "contributions": [
+        "bug",
+        "ideas"
+      ]
+    }
+  ],
+  "projectName": "shared-storage",
+  "projectOwner": "lakscastro",
+  "repoType": "github",
+  "repoHost": "https://github.com"
 }
