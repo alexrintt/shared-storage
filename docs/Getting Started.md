@@ -6,6 +6,10 @@ So, please be aware that this is plugin is not intended for production usage yet
 
 ## Installation
 
+![Package version badge](https://img.shields.io/pub/v/shared_storage.svg?style=for-the-badge&color=22272E&showLabel=false&labelColor=15191f&logo=dart&logoColor=blue)
+
+Use latest version when installing this plugin:
+
 ```bash
 flutter pub add shared_storage
 ```
@@ -14,7 +18,7 @@ or
 
 ```yaml
 dependencies:
-  shared_storage: ^latest # Pickup the latest version either from the pub.dev page or the badge in this README.md
+  shared_storage: ^latest # Pickup the latest version either from the pub.dev page or doc badge
 ```
 
 ## Plugin
