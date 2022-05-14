@@ -1,4 +1,4 @@
-on: 
+on:
   push:
     branches:
       - v0.3.0 # TODO: Use release instead of v0.x.y
@@ -18,7 +18,7 @@ jobs:
 
       - name: Remove/Delete all current documentation files
         run: rm -r ./*
-      
+
       - name: Copy latest version from /docs of the target branch
         run: git checkout origin/v0.3.0 -- docs
 
@@ -34,6 +34,4 @@ jobs:
           git remote add origin https://${{ github.token }}:${{ github.token }}@github.com/lakscastro/shared-storage.git
           git config --global user.email "<>"
           git config --global user.name "GitHub Actions"
-          git add .
-          git commit -m "(${{ github.ref }}) Triggered by @${{ github.actor }}"
-          git push origin documentation
+          [ -z "$(git status --porcelain)" ] || (git add . && git commit -m "(${{ github.ref }}) Triggered by @${{ github.actor }}" && git push origin documentation)
