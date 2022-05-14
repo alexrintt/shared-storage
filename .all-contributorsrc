@@ -27,6 +27,17 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "aplicatii-romanesti",
+      "name": "www.bibliotecaortodoxa.ro",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1148228?v=4",
+      "profile": "https://www.bibliotecaortodoxa.ro",
+      "contributions": [
+        "code",
+        "bug",
+        "ideas"
+      ]
     }
   ],
   "projectName": "shared-storage",
