@@ -22,7 +22,7 @@ jobs:
       - name: Create and active Python venv
         run: |
           python -m venv venv
-          source ./venv/bin/activwate
+          source ./venv/bin/activate
 
       - name: Install mkdocs
         run: |
