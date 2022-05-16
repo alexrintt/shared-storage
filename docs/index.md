@@ -1,3 +1,5 @@
+Check out [pub.dev/shared_storage](https://pub.dev/packages/shared_storage)
+
 ## Stability
 
 The latest version is a Beta release, which means all these APIs can change over a short period of time without prior notice
