@@ -1,0 +1,41 @@
+on:
+  push:
+    branches:
+      - v0.3.0 # TODO: Use release instead of v0.x.y
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+          architecture: "x64"
+      - name: Checkout to documentation branch
+        run: |
+          git fetch
+          git checkout v0.3.0
+
+      - name: Create and active Python venv
+        run: |
+          python -m venv venv
+          source ./venv/bin/activwate
+
+      - name: Install mkdocs
+        run: |
+          pip install mkdocs
+          pip install mkdocs-material
+
+      - name: Prepare for commit
+        run: |
+          git remote remove origin
+          git remote add origin https://${{ github.token }}:${{ github.token }}@github.com/lakscastro/shared-storage.git
+          git config --global user.email "<>"
+          git config --global user.name "GitHub Actions"
+
+      - name: Deploy mkdocs
+        run: |
+          mkdocs gh-deploy
