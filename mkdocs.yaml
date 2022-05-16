@@ -2,7 +2,7 @@ site_name: Shared Storage
 
 site_url: https://lakscastro.github.io/shared-storage/
 site_author: Laks Castro
-site_description: Flutter plugin with low abstraction to work with native Android storage based APIs: Environment, Media Store and Storage Access Framework. Android 4.4+ (API Level 19+)
+site_description: "Flutter plugin with low abstraction to work with native Android storage based APIs: Environment, Media Store and Storage Access Framework. Android 4.4+ (API Level 19+)"
 
 repo_name: lakscastro/shared-storage
 repo_url: https://github.com/lakscastro/shared-storage
