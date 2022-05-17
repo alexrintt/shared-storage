@@ -22,7 +22,7 @@
 
 ## Documentation
 
-#### See the website for [documentation](https://lakscastro.gitbook.io/shared-storage)
+#### See the website for [documentation](https://lakscastro.github.io/shared-storage)
 
 All documentation is also available under `/docs` to each released version which is the data source of the website
 
