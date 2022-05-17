@@ -30,8 +30,6 @@ You can contribute to the docs by just editing these files through the GitHub we
 
 Latest changes are available on `master` branch and the actual latest published package version lives under `release` branch
 
-`documentation` branch is an automated branch which is not edited manually
-
 All other branches are derivated from issues, new features or bug fixes
 
 ## Contributors
