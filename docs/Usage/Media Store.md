@@ -24,6 +24,6 @@ Get the **directory** of a given Media Store Collection
 
 To see all available collections see `MediaStoreCollection` class
 
-```
+```dart
 final directory = getMediaStoreContentDirectory(MediaStoreCollection.downloads);
 ```
