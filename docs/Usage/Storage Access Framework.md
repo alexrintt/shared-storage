@@ -4,9 +4,9 @@
 import 'package:shared_storage/saf.dart' as saf;
 ```
 
-### Notice the alias
-
-Be aware that if you import the package `import '...' as saf;` (strongly recommended) you should prefix all method calls with `saf`, example:
+> **Note**
+> 
+> Be aware that if you import the package `import '...' as saf;` (strongly recommended) you should prefix all method calls with `saf`, example:
 
 ```dart
 saf.openDocumentTree(...);
