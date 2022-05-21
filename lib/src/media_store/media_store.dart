@@ -5,7 +5,7 @@ import 'media_store_collection.dart';
 
 /// The contract between the media provider and applications.
 ///
-/// Can get the absolute path given a [collection]
+/// Get the directory of a given [MediaStoreCollection]
 ///
 /// [Refer to details](https://developer.android.com/reference/android/provider/MediaStore#summary)
 Future<Directory?> getMediaStoreContentDirectory(
