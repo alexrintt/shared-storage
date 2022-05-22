@@ -1,3 +1,4 @@
+name: Build MkDocs
 on:
   workflow_dispatch:
   push:
