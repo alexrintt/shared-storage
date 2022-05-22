@@ -1,0 +1,24 @@
+name: Build MkDocs
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - release
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Checkout to documentation branch
+        run: |
+          git fetch
+          git checkout ${{ github.ref_name }}
+
+      - name: Deploy docs
+        uses: mhausenblas/mkdocs-deploy-gh-pages@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONFIG_FILE: mkdocs.yaml
+          EXTRA_PACKAGES: build-base

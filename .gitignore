@@ -11,6 +11,8 @@
 
 */**/pubspec.lock
 pubspec.lock
+venv/
+site/
 
 # IntelliJ related
 *.iml
