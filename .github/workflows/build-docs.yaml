@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - release
+  workflow_dispatch:
 
 jobs:
   sync:
@@ -12,7 +13,7 @@ jobs:
       - name: Checkout to documentation branch
         run: |
           git fetch
-          git checkout release
+          git checkout ${{ github.ref_name }}
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
