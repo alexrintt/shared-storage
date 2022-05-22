@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import '../channels.dart';
 import 'media_store_collection.dart';
 
@@ -8,7 +6,7 @@ import 'media_store_collection.dart';
 /// Get the directory of a given [MediaStoreCollection]
 ///
 /// [Refer to details](https://developer.android.com/reference/android/provider/MediaStore#summary)
-Future<Directory?> getMediaStoreContentDirectory(
+Future<Uri?> getMediaStoreContentDirectory(
   MediaStoreCollection collection,
 ) async {
   const kGetMediaStoreContentDirectory = 'getMediaStoreContentDirectory';
@@ -23,5 +21,5 @@ Future<Directory?> getMediaStoreContentDirectory(
 
   if (publicDir == null) return null;
 
-  return Directory(publicDir);
+  return Uri.parse(publicDir);
 }

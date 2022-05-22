@@ -18,12 +18,18 @@ getMediaStoreContentDirectory(...);
 
 ## API reference
 
+Orignal API. These methods exists only in this package.
+
+Because methods are an abstraction from native API, for example: `getMediaStoreContentDirectory` is an abstraction because there's no such method in native Android, there you can access these directories synchronously and directly from the `MediaStore` nested classes which is not the goal of this package (re-create all Android APIs) but provide a powerful fully-configurable API to call these APIs.
+
 ### <samp>getMediaStoreContentDirectory</samp>
 
-Get the **directory** of a given Media Store Collection
+Get the **directory** of a given Media Store Collection.
+
+The directory follows the **Uri** format
 
 To see all available collections see `MediaStoreCollection` class
 
 ```dart
-final directory = getMediaStoreContentDirectory(MediaStoreCollection.downloads);
+final Uri directory = getMediaStoreContentDirectory(MediaStoreCollection.downloads);
 ```

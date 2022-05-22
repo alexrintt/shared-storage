@@ -13,11 +13,13 @@ Future<Directory?> getRootDirectory() async {
   return invokeVoidEnvironmentMethod(kGetRootDirectory);
 }
 
-/// Equivalent to `Environment.getExternalStoragePublicDirectory`
+/// Equivalent to `Environment.getExternalStoragePublicDirectory`.
 ///
-/// _Added in API level 8_
+/// _Added in API level 8_.
 ///
-/// _Deprecated in API level 29_
+/// _Deprecated in API level 29_.
+///
+/// See [EnvironmentDirectory] to see all available directories.
 ///
 /// [Refer to details](https://developer.android.com/reference/android/os/Environment#getExternalStoragePublicDirectory%28java.lang.String%29)
 Future<Directory?> getExternalStoragePublicDirectory(
