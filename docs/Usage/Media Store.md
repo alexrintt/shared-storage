@@ -18,7 +18,7 @@ getMediaStoreContentDirectory(...);
 
 ## API reference
 
-Orignal API. These methods exists only in this package.
+Original API. These methods exists only in this package.
 
 Because methods are an abstraction from native API, for example: `getMediaStoreContentDirectory` is an abstraction because there's no such method in native Android, there you can access these directories synchronously and directly from the `MediaStore` nested classes which is not the goal of this package (re-create all Android APIs) but provide a powerful fully-configurable API to call these APIs.
 

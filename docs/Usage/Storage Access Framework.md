@@ -44,7 +44,7 @@ To operate (read, delete, update, create) a file or folder within a directory, y
 
 ## API reference
 
-Orignal API. These methods exists only in this package.
+Original API. These methods exists only in this package.
 
 Because methods are an abstraction from native API, for example: `openDocumentTree` is an abstraction because there's no such method in native Android, there you need to create a intent and start an activity which is not the goal of this package (re-create all Android APIs) but provide a powerful fully-configurable API to call these APIs.
 
