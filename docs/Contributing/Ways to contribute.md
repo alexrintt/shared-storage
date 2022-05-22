@@ -4,7 +4,7 @@ Code is not the only thing matters when we talk about packages and open-source l
 
 - Reporting bugs
 - Creating show-cases
-- Improving dodcumentation
+- Improving documentation
 - Asking questions
 - Answering questions
 - Sharing ideas
