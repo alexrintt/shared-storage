@@ -3,7 +3,6 @@
 Code is not the only thing matters when we talk about packages and open-source libraries, there's a lot of another tasks which are equally important:
 
 - Reporting bugs
-- Useful questions
 - Creating show-cases
 - Improving dodcumentation
 - Asking questions
