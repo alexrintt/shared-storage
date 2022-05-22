@@ -12,7 +12,7 @@ jobs:
       - name: Checkout to documentation branch
         run: |
           git fetch
-          git checkout v0.3.0
+          git checkout release
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
