@@ -2,8 +2,13 @@
 
 Major release focused on support for `Storage Access Framework`.
 
+### Breaking Changes
+
 - New `minSdkVersion` set to `19`.
 - `getMediaStoreContentDirectory` return type set to `Uri`.
+
+### Deprecation Notices
+
 - `getExternalStoragePublicDirectory` was marked as deprecated and should be replaced with an equivalent API depending on your use-case, see [how to migrate `getExternalStoragePublicDirectory`](https://stackoverflow.com/questions/56468539/getexternalstoragepublicdirectory-deprecated-in-android-q).
 
 ## 0.2.0
