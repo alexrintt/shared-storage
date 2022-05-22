@@ -33,3 +33,9 @@ To see all available collections see `MediaStoreCollection` class
 ```dart
 final Uri directory = getMediaStoreContentDirectory(MediaStoreCollection.downloads);
 ```
+
+## Android Official Documentation
+
+The **Media Store** [official documentation is available here.](https://developer.android.com/reference/android/provider/MediaStore)
+
+All the APIs listed in this plugin module are derivated from the official docs.

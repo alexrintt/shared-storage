@@ -166,6 +166,6 @@ Future<bool> isPersistedUri(Uri uri) async {
 
 ## Android Official Documentation
 
-The Storage Access Framework [official documentation is available here.](https://developer.android.com/guide/topics/providers/document-provider)
+The **Storage Access Framework** [official documentation is available here.](https://developer.android.com/guide/topics/providers/document-provider)
 
 All the APIs listed in this plugin module are derivated from the official docs.

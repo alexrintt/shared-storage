@@ -97,3 +97,9 @@ Return root directory where all external storage devices will be mounted. For ex
 ```dart
 final Directory? storageDir = await getStorageDirectory();
 ```
+
+## Android Official Documentation
+
+The **Environment** [official documentation is available here.](https://developer.android.com/reference/android/os/Environment)
+
+All the APIs listed in this plugin module are derivated from the official docs.
