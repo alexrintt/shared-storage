@@ -2,7 +2,7 @@ Check out [pub.dev/shared_storage](https://pub.dev/packages/shared_storage)
 
 ## Stability
 
-The latest version is a Beta release, which means all these APIs can change over a short period of time without prior notice
+The latest version is a Beta release, which means all these APIs can change over a short period of time without prior notice.
 
 So, please be aware that this is plugin is not intended for production usage yet, since the API is currently in development.
 
@@ -57,7 +57,7 @@ All these APIs are module based, which means they are implemented separadely and
 
 ## Support
 
-If you have ideas to share, bugs to report or need support, you can either open an issue or join our [Discord server](https://discord.gg/86GDERXZNS)
+If you have ideas to share, bugs to report or need support, you can either open an issue or join our [Discord server](https://discord.gg/86GDERXZNS).
 
 ## Android APIs
 
@@ -70,6 +70,7 @@ Most Flutter plugins use Android API's under the hood. So this plugin does the s
 These are the brilliant minds behind the development of this plugin!
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
