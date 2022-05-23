@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.saf.utils
+package io.lakscastro.sharedstorage.storageaccessframework.lib
 
 import android.content.ContentResolver
 import android.content.Context
@@ -54,17 +54,14 @@ fun documentFromUri(context: Context, uri: String): DocumentFile? =
  * Generate the `DocumentFile` reference from URI `uri`
  */
 @RequiresApi(API_21)
-fun documentFromUri(context: Context, uri: Uri): DocumentFile? {
+fun documentFromUri(
+  context: Context,
+  uri: Uri
+): DocumentFile? {
   return if (isTreeUri(uri)) {
     DocumentFile.fromTreeUri(context, uri)
   } else {
-    DocumentFile.fromSingleUri(
-      context,
-      DocumentsContract.buildDocumentUriUsingTree(
-        uri,
-        DocumentsContract.getDocumentId(uri)
-      )
-    )
+    DocumentFile.fromSingleUri(context, uri)
   }
 }
 
@@ -92,14 +89,15 @@ fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
 
 /**
  * Standard map encoding of a row result of a `DocumentFile`
- * ```dart
+ * ```kt
  * result.success(createDocumentFileMap(documentFile))
  * ```
+ *
  * Example:
  * ```py
  * input = {
- *   "last_modified": 2939496, /// Key from DocumentsContract.Document.COLUMN_LAST_MODIFIED
- *   "_display_name": "MyFile" /// Key from DocumentsContract.Document.COLUMN_DISPLAY_NAME
+ *   "last_modified": 2939496, # Key from DocumentsContract.Document.COLUMN_LAST_MODIFIED
+ *   "_display_name": "MyFile" # Key from DocumentsContract.Document.COLUMN_DISPLAY_NAME
  * }
  *
  * output = createCursorRowMap(input)
@@ -123,7 +121,7 @@ fun createCursorRowMap(
   val formattedData = mutableMapOf<String, Any>()
 
   for (value in values) {
-    val key = parseDocumentFileColumn(value)!!
+    val key = parseDocumentFileColumn(value)
 
     if (data[key] != null) {
       formattedData[documentFileColumnToRawString(value)!!] = data[key]!!
@@ -161,8 +159,8 @@ fun traverseDirectoryEntries(
   rootUri: Uri,
   columns: Array<String>,
   rootOnly: Boolean,
-  block: (data: Map<String, Any>) -> Unit
-) {
+  block: (data: Map<String, Any>, isLast: Boolean) -> Unit
+): Boolean {
   val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
     rootUri,
     DocumentsContract.getTreeDocumentId(rootUri)
@@ -188,9 +186,13 @@ fun traverseDirectoryEntries(
       null,
       null,
       null
-    ) ?: return
+    ) ?: return false
 
     try {
+      if (cursor.count == 0) {
+        return false
+      }
+
       while (cursor.moveToNext()) {
         val data = mutableMapOf<String, Any>()
 
@@ -201,8 +203,11 @@ fun traverseDirectoryEntries(
           )
         }
 
-        val mimeType = data[DocumentsContract.Document.COLUMN_MIME_TYPE] as String?
-        val id = data[DocumentsContract.Document.COLUMN_DOCUMENT_ID] as String as String?
+        val mimeType =
+          data[DocumentsContract.Document.COLUMN_MIME_TYPE] as String?
+
+        val id =
+          data[DocumentsContract.Document.COLUMN_DOCUMENT_ID] as String
 
         val isDirectory = if (mimeType != null) isDirectory(mimeType) else null
 
@@ -213,19 +218,32 @@ fun traverseDirectoryEntries(
           )
         )
 
-        block(createCursorRowMap(rootUri, parent, uri, data, isDirectory = isDirectory))
+        if (isDirectory != null && isDirectory && !rootOnly) {
+          val nextChildren =
+            DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
 
-        if (isDirectory != null && isDirectory) {
-          val nextChildren = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
           val nextNode = Pair(uri, nextChildren)
 
           dirNodes.add(nextNode)
         }
+
+        block(
+          createCursorRowMap(
+            rootUri,
+            parent,
+            uri,
+            data,
+            isDirectory = isDirectory
+          ),
+          dirNodes.isEmpty() && cursor.isLast
+        )
       }
     } finally {
       closeQuietly(cursor)
     }
   }
+
+  return true
 }
 
 @RequiresApi(API_19)

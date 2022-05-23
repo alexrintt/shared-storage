@@ -8,42 +8,30 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.lakscastro.sharedstorage.environment.EnvironmentApi
 import io.lakscastro.sharedstorage.mediastore.MediaStoreApi
-import io.lakscastro.sharedstorage.saf.StorageAccessFramework
+import io.lakscastro.sharedstorage.storageaccessframework.StorageAccessFrameworkApi
 
 const val ROOT_CHANNEL = "io.lakscastro.plugins/sharedstorage"
 
-/**
- * Flutter plugin Kotlin implementation `SharedStoragePlugin`
- */
+/** Flutter plugin Kotlin implementation `SharedStoragePlugin` */
 class SharedStoragePlugin : FlutterPlugin, ActivityAware {
-  /**
-   * `Environment` API channel
-   */
+  /** `Environment` API channel */
   private val environmentApi = EnvironmentApi(this)
 
-  /**
-   * `MediaStore` API channel
-   */
+  /** `MediaStore` API channel */
   private val mediaStoreApi = MediaStoreApi(this)
 
-  /**
-   * `DocumentFile` API channel
-   */
-  private val storageAccessFrameworkApi = StorageAccessFramework(this)
+  /** `DocumentFile` API channel */
+  private val storageAccessFrameworkApi = StorageAccessFrameworkApi(this)
 
   lateinit var context: Context
   var binding: ActivityPluginBinding? = null
 
+  /** Setup all APIs */
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPluginBinding) {
     context = flutterPluginBinding.applicationContext
 
-    /** Setup `Environment` API */
     environmentApi.startListening(flutterPluginBinding.binaryMessenger)
-
-    /** Setup `MediaStore` API */
     mediaStoreApi.startListening(flutterPluginBinding.binaryMessenger)
-
-    /** Setup `StorageAccessFramework` API */
     storageAccessFrameworkApi.startListening(flutterPluginBinding.binaryMessenger)
   }
 

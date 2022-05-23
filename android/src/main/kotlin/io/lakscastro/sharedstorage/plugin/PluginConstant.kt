@@ -2,10 +2,10 @@ package io.lakscastro.sharedstorage.plugin
 
 import android.os.Build
 
-/// Generic exceptions
+/** Generic exceptions */
 const val EXCEPTION_NOT_SUPPORTED = "EXCEPTION_NOT_SUPPORTED"
 
-/// API level constants by version codes
+/** API level constants by version codes */
 const val API_18 = Build.VERSION_CODES.JELLY_BEAN_MR2
 const val API_19 = Build.VERSION_CODES.KITKAT
 const val API_20 = Build.VERSION_CODES.KITKAT_WATCH

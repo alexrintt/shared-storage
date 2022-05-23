@@ -4,16 +4,14 @@
 import 'package:shared_storage/saf.dart' as saf;
 ```
 
-### Notice the alias
-
-Be aware that if you import the package `import '...' as saf;` (strongly recommended) you should prefix all method calls with `saf`, example:
+> **Note** Be aware that if you import the package `import '...' as saf;` (strongly recommended) you should prefix all method calls with `saf`, example:
 
 ```dart
 saf.openDocumentTree(...);
 saf.listFiles(...);
 ```
 
-But if you import without alias `import '...';` (Not recommeded because can conflict with other method names) you should use directly as functions:
+But if you import without alias `import '...';` (Not recommeded because can conflict with other method/package names) you should use directly as functions:
 
 ```dart
 openDocumentTree(...);
@@ -45,6 +43,10 @@ Often this `Uri`s represent a folder or a file but not always. And different `Ur
 To operate (read, delete, update, create) a file or folder within a directory, you need first to request permission of the user. These permissions are represented as `UriPermission`, [reference](https://developer.android.com/reference/android/content/UriPermission).
 
 ## API reference
+
+Original API. These methods exists only in this package.
+
+Because methods are an abstraction from native API, for example: `openDocumentTree` is an abstraction because there's no such method in native Android, there you need to create a intent and start an activity which is not the goal of this package (re-create all Android APIs) but provide a powerful fully-configurable API to call these APIs.
 
 ### <samp>openDocumentTree</samp>
 
@@ -156,7 +158,7 @@ Alias implementation:
 
 ```dart
 Future<bool> isPersistedUri(Uri uri) async {
-  final persistedUris = await persistedUriPermissions();
+  final List<UriPermission>? persistedUris = await persistedUriPermissions();
 
   return persistedUris?.any((persistedUri) => persistedUri.uri == uri) ?? false;
 }
@@ -164,6 +166,6 @@ Future<bool> isPersistedUri(Uri uri) async {
 
 ## Android Official Documentation
 
-The Storage Access Framework [official documentation is available here.](https://developer.android.com/guide/topics/providers/document-provider)
+The **Storage Access Framework** [official documentation is available here.](https://developer.android.com/guide/topics/providers/document-provider)
 
 All the APIs listed in this plugin module are derivated from the official docs.

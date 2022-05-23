@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shared_storage/shared_storage.dart';
-import 'key_value_text.dart';
-import 'list_files.dart';
-import 'simple_card.dart';
+import 'package:shared_storage/saf.dart';
+
+import '../../theme/spacing.dart';
+import '../../widgets/buttons.dart';
+import '../../widgets/key_value_text.dart';
+import '../../widgets/simple_card.dart';
+import '../folder_files/folder_file_list.dart';
 
 class PersistedUriCard extends StatefulWidget {
   const PersistedUriCard({
@@ -23,11 +26,19 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
     /// Create a new file inside the `parentUri`
     final documentFile = await parentUri.toDocumentFile();
 
-    documentFile?.createFileAsString(
-      mimeType: 'text/plain',
-      content: 'Sample File Content',
-      displayName: 'File created by Shared Storage Sample App',
-    );
+    const kFilename = 'Sample File';
+
+    final child = await documentFile?.child(kFilename);
+
+    if (child == null) {
+      documentFile?.createFileAsString(
+        mimeType: 'text/plain',
+        content: 'Sample File Content',
+        displayName: kFilename,
+      );
+    } else {
+      print('This File Already Exists');
+    }
   }
 
   Future<void> _revokeUri(Uri uri) async {
@@ -39,20 +50,8 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
   void _openListFilesPage() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ListFiles(uri: widget.permissionUri.uri),
+        builder: (context) => FolderFileList(uri: widget.permissionUri.uri),
       ),
-    );
-  }
-
-  Widget _buildActionButton(
-    String text, {
-    required VoidCallback onTap,
-    Color? color,
-  }) {
-    return TextButton(
-      style: TextButton.styleFrom(primary: color),
-      onPressed: onTap,
-      child: Text(text),
     );
   }
 
@@ -69,21 +68,25 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
             'uri': '${widget.permissionUri.uri}',
           },
         ),
-        Row(
+        Wrap(
           children: [
-            _buildActionButton(
+            ActionButton(
               'Create Sample File',
               onTap: () => _appendSampleFile(
                 widget.permissionUri.uri,
               ),
             ),
-            const Padding(padding: EdgeInsets.all(4)),
-            _buildActionButton(
+            ActionButton(
+              'Open Tree Here',
+              onTap: () =>
+                  openDocumentTree(initialUri: widget.permissionUri.uri),
+            ),
+            Padding(padding: k2dp.all),
+            DangerButton(
               'Revoke',
               onTap: () => _revokeUri(
                 widget.permissionUri.uri,
               ),
-              color: Colors.red,
             ),
           ],
         ),

@@ -14,3 +14,15 @@ fun MethodChannel.Result.notSupported(
     mapOf("method" to method, *debug.toList().toTypedArray())
   )
 }
+
+inline fun <reified T : Enum<T>> valueOf(type: String?): T? {
+  if (type == null) return null
+
+  return try {
+    java.lang.Enum.valueOf(T::class.java, type)
+  } catch (e: Exception) {
+    null
+  }
+}
+
+inline fun <reified T : Enum<T>> valueOf(type: String?, default: T): T = valueOf<T>(type) ?: default
