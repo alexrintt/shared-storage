@@ -27,7 +27,7 @@ dependencies:
 
 This plugin include **partial** support for the following APIs:
 
-### Partial Support for [Environment](./Environment/Usage)
+### Partial Support for [Environment](./Usage/Environment.md)
 
 Mirror API from [Environment](https://developer.android.com/reference/android/os/Environment)
 
@@ -35,7 +35,7 @@ Mirror API from [Environment](https://developer.android.com/reference/android/os
 import 'package:shared_storage/environment.dart' as environment;
 ```
 
-### Partial Support for [Media Store](./Media Store/Usage)
+### Partial Support for [Media Store](./Usage/Media%20Store.md)
 
 Mirror API from [MediaStore provider](https://developer.android.com/reference/android/provider/MediaStore)
 
@@ -43,7 +43,7 @@ Mirror API from [MediaStore provider](https://developer.android.com/reference/an
 import 'package:shared_storage/media_store.dart' as mediastore;
 ```
 
-### Partial Support for [Storage Access Framework](./Storage Access Framework/Usage)
+### Partial Support for [Storage Access Framework](./Usage/Storage%20Access%20Framework.md)
 
 Mirror API from [Storage Access Framework](https://developer.android.com/guide/topics/providers/document-provider)
 
