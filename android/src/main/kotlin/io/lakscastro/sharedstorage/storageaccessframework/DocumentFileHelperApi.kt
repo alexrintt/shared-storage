@@ -29,10 +29,10 @@ import io.lakscastro.sharedstorage.storageaccessframework.lib.*
  * natively by Android.
  *
  * This is why it is separated from the original and raw `DocumentFileApi` which is the class that
- * only exposes the APIs without modifying them
+ * only exposes the APIs without modifying them (Mirror API).
  *
  * Then here is where we can implement the main abstractions/use-cases which would be available
- * globally without modifying the strict APIs
+ * globally without modifying the strict APIs.
  */
 internal class DocumentFileHelperApi(private val plugin: SharedStoragePlugin) :
     MethodChannel.MethodCallHandler,
