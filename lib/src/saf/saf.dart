@@ -7,13 +7,14 @@ import 'common.dart';
 
 /// {@template sharedstorage.saf.openDocumentTree}
 /// Start Activity Action: Allow the user to pick a directory subtree.
+///
 /// When invoked, the system will display the various `DocumentsProvider`
 /// instances installed on the device, letting the user navigate through them.
 /// Apps can fully manage documents within the returned directory.
 ///
-/// [Refer to details](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT_TREE)
+/// [Refer to details](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT_TREE).
 ///
-/// support the initial directory of the directory picker
+/// support the initial directory of the directory picker.
 /// {@endtemplate}
 Future<Uri?> openDocumentTree({
   bool grantWritePermission = true,
@@ -37,8 +38,9 @@ Future<Uri?> openDocumentTree({
 /// {@template sharedstorage.saf.persistedUriPermissions}
 /// Returns an `List<Uri>` with all persisted [Uri]
 ///
-/// To persist an [Uri] call `openDocumentTree`
-/// and to remove an persisted [Uri] call `releasePersistableUriPermission`
+/// To persist an [Uri] call `openDocumentTree`.
+///
+/// To remove an persisted [Uri] call `releasePersistableUriPermission`.
 /// {@endtemplate}
 Future<List<UriPermission>?> persistedUriPermissions() async {
   const kPersistedUriPermissions = 'persistedUriPermissions';
@@ -54,12 +56,14 @@ Future<List<UriPermission>?> persistedUriPermissions() async {
 }
 
 /// {@template sharedstorage.saf.releasePersistableUriPermission}
-/// Will revoke an persistable Uri
+/// Will revoke an persistable Uri.
 ///
 /// Call this when your App no longer wants the permission of an [Uri] returned
-/// by `openDocumentTree` method
+/// by `openDocumentTree` method.
 ///
-/// To get the current persisted [Uri]s call `persistedUriPermissions`
+/// To get the current persisted [Uri]s call `persistedUriPermissions`.
+///
+/// [Refer to details](https://developer.android.com/reference/android/content/ContentResolver#releasePersistableUriPermission(android.net.Uri,%20int)).
 /// {@endtemplate}
 Future<void> releasePersistableUriPermission(Uri directory) async {
   const kReleasePersistableUriPermission = 'releasePersistableUriPermission';
@@ -73,11 +77,11 @@ Future<void> releasePersistableUriPermission(Uri directory) async {
 }
 
 /// {@template sharedstorage.saf.isPersistedUri}
-/// Convenient method to verify if a given [uri]
-/// is allowed to be write or read from SAF API's
+/// Convenient method to verify if a given [uri].
+/// is allowed to be write or read from SAF API's.
 ///
 /// This uses the `releasePersistableUriPermission` method to get the List
-/// of allowed [Uri]s then will verify if the [uri] is included in
+/// of allowed [Uri]s then will verify if the [uri] is included in.
 /// {@endtemplate}
 Future<bool> isPersistedUri(Uri uri) async {
   final persistedUris = await persistedUriPermissions();
@@ -86,9 +90,9 @@ Future<bool> isPersistedUri(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.canRead}
-/// Equivalent to `DocumentFile.canRead`
+/// Equivalent to `DocumentFile.canRead`.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canRead())
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canRead()).
 /// {@endtemplate}
 Future<bool?> canRead(Uri uri) async {
   const kCanRead = 'canRead';
@@ -99,9 +103,9 @@ Future<bool?> canRead(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.canWrite}
-/// Equivalent to `DocumentFile.canWrite`
+/// Equivalent to `DocumentFile.canWrite`.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canWrite())
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canWrite()).
 /// {@endtemplate}
 Future<bool?> canWrite(Uri uri) async {
   const kCanWrite = 'canWrite';
@@ -112,9 +116,9 @@ Future<bool?> canWrite(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.getDocumentThumbnail}
-/// Equivalent to `DocumentsContract.getDocumentThumbnail`
+/// Equivalent to `DocumentsContract.getDocumentThumbnail`.
 ///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#getDocumentThumbnail(android.content.ContentResolver,%20android.net.Uri,%20android.graphics.Point,%20android.os.CancellationSignal))
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#getDocumentThumbnail(android.content.ContentResolver,%20android.net.Uri,%20android.graphics.Point,%20android.os.CancellationSignal)).
 /// {@endtemplate}
 Future<DocumentBitmap?> getDocumentThumbnail({
   required Uri rootUri,
@@ -140,11 +144,11 @@ Future<DocumentBitmap?> getDocumentThumbnail({
 }
 
 /// {@template sharedstorage.saf.listFiles}
-/// **Important**: Ensure you have read permission by calling `canRead` before calling `listFiles`
+/// **Important**: Ensure you have read permission by calling `canRead` before calling `listFiles`.
 ///
-/// Emits a new event for each child document file
+/// Emits a new event for each child document file.
 ///
-/// Works with small and large data file sets
+/// Works with small and large data file sets.
 ///
 /// ```dart
 /// /// Usage:
@@ -162,7 +166,7 @@ Future<DocumentBitmap?> getDocumentThumbnail({
 /// });
 /// ```
 ///
-/// [Refer to details](https://stackoverflow.com/questions/41096332/issues-traversing-through-directory-hierarchy-with-android-storage-access-framew)
+/// [Refer to details](https://stackoverflow.com/questions/41096332/issues-traversing-through-directory-hierarchy-with-android-storage-access-framew).
 /// {@endtemplate}
 Stream<PartialDocumentFile> listFiles(
   Uri uri, {
@@ -185,7 +189,7 @@ Stream<PartialDocumentFile> listFiles(
 }
 
 /// {@template sharedstorage.saf.exists}
-/// Verify if a given [uri] exists
+/// Verify if a given [uri] exists.
 /// {@endtemplate}
 Future<bool?> exists(Uri uri) async {
   const kExists = 'exists';
@@ -196,9 +200,9 @@ Future<bool?> exists(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.buildDocumentUriUsingTree}
-/// Equivalent to `DocumentsContract.buildDocumentUriUsingTree`
+/// Equivalent to `DocumentsContract.buildDocumentUriUsingTree`.
 ///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUriUsingTree%28android.net.Uri,%20java.lang.String%29)
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUriUsingTree%28android.net.Uri,%20java.lang.String%29).
 /// {@endtemplate}
 Future<Uri?> buildDocumentUriUsingTree(Uri treeUri, String documentId) async {
   const kBuildDocumentUriUsingTree = 'buildDocumentUriUsingTree';
@@ -219,9 +223,9 @@ Future<Uri?> buildDocumentUriUsingTree(Uri treeUri, String documentId) async {
 }
 
 /// {@template sharedstorage.saf.buildDocumentUri}
-/// Equivalent to `DocumentsContract.buildDocumentUri`
+/// Equivalent to `DocumentsContract.buildDocumentUri`.
 ///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29)
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29).
 /// {@endtemplate}
 Future<Uri?> buildDocumentUri(String authority, String documentId) async {
   const kBuildDocumentUri = 'buildDocumentUri';
@@ -242,9 +246,9 @@ Future<Uri?> buildDocumentUri(String authority, String documentId) async {
 }
 
 /// {@template sharedstorage.saf.buildDocumentUri}
-/// Equivalent to `DocumentsContract.buildDocumentUri`
+/// Equivalent to `DocumentsContract.buildDocumentUri`.
 ///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29)
+/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29).
 /// {@endtemplate}
 Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
   const kBuildTreeDocumentUri = 'buildTreeDocumentUri';
@@ -265,11 +269,11 @@ Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
 }
 
 /// {@template sharedstorage.saf.delete}
-/// Equivalent to `DocumentFile.delete`
+/// Equivalent to `DocumentFile.delete`.
 ///
-/// Returns `true` if deleted successfully
+/// Returns `true` if deleted successfully.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#delete%28%29)
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#delete%28%29).
 /// {@endtemplate}
 Future<bool?> delete(Uri uri) async {
   const kDelete = 'delete';
@@ -280,11 +284,11 @@ Future<bool?> delete(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.createDirectory}
-/// Create a direct child document tree named `displayName` given a parent `parentUri`
+/// Create a direct child document tree named `displayName` given a parent `parentUri`.
 ///
-/// Equivalent to `DocumentFile.createDirectory`
+/// Equivalent to `DocumentFile.createDirectory`.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createDirectory%28java.lang.String%29)
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createDirectory%28java.lang.String%29).
 /// {@endtemplate}
 Future<DocumentFile?> createDirectory(Uri parentUri, String displayName) async {
   const kCreateDirectory = 'createDirectory';
@@ -303,12 +307,12 @@ Future<DocumentFile?> createDirectory(Uri parentUri, String displayName) async {
 }
 
 /// {@template sharedstorage.saf.createFile}
-/// Convenient method to create files using either String or raw bytes
+/// Convenient method to create files using either String or raw bytes.
 ///
 /// Under the hood this method calls `createFileAsString` or `createFileAsBytes`
-/// depending on which argument is passed
+/// depending on which argument is passed.
 ///
-/// If both (bytes and content) are passed, the bytes will be used and the content will be ignored
+/// If both (bytes and content) are passed, the bytes will be used and the content will be ignored.
 /// {@endtemplate}
 Future<DocumentFile?> createFile(
   Uri parentUri, {
@@ -338,12 +342,12 @@ Future<DocumentFile?> createFile(
 }
 
 /// {@template sharedstorage.saf.createFileAsBytes}
-/// Create a direct child document of `parentUri`
-/// - `mimeType` is the type of document following [this specs](https://www.iana.org/assignments/media-types/media-types.xhtml)
-/// - `displayName` is the name of the document, must be a valid file name
-/// - `bytes` is the content of the document as a list of bytes `Uint8List`
+/// Create a direct child document of `parentUri`.
+/// - `mimeType` is the type of document following [this specs](https://www.iana.org/assignments/media-types/media-types.xhtml).
+/// - `displayName` is the name of the document, must be a valid file name.
+/// - `bytes` is the content of the document as a list of bytes `Uint8List`.
 ///
-/// Returns the created file as a `DocumentFile`
+/// Returns the created file as a `DocumentFile`.
 /// {@endtemplate}
 Future<DocumentFile?> createFileAsBytes(
   Uri parentUri, {
@@ -366,8 +370,8 @@ Future<DocumentFile?> createFileAsBytes(
 }
 
 /// {@template sharedstorage.saf.createFileAsString}
-/// Convenient method to create a file
-/// using `content` as String instead Uint8List
+/// Convenient method to create a file.
+/// using `content` as String instead Uint8List.
 /// {@endtemplate}
 Future<DocumentFile?> createFileAsString(
   Uri parentUri, {
@@ -384,11 +388,11 @@ Future<DocumentFile?> createFileAsString(
 }
 
 /// {@template sharedstorage.saf.length}
-/// Equivalent to `DocumentFile.length`
+/// Equivalent to `DocumentFile.length`.
 ///
-/// Returns the size of a given document `uri` in bytes
+/// Returns the size of a given document `uri` in bytes.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#length%28%29)
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#length%28%29).
 /// {@endtemplate}
 Future<int?> documentLength(Uri uri) async {
   const kLength = 'length';
@@ -399,9 +403,9 @@ Future<int?> documentLength(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.lastModified}
-/// Equivalent to `DocumentFile.lastModified`
+/// Equivalent to `DocumentFile.lastModified`.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#lastModified%28%29)
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#lastModified%28%29).
 /// {@endtemplate}
 Future<DateTime?> lastModified(Uri uri) async {
   const kLastModified = 'lastModified';
@@ -417,11 +421,11 @@ Future<DateTime?> lastModified(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.findFile}
-/// Equivalent to `DocumentFile.findFile`
+/// Equivalent to `DocumentFile.findFile`.
 ///
-/// If you want to check if a given document file exists by their [displayName] prefer using `child` instead
+/// If you want to check if a given document file exists by their [displayName] prefer using `child` instead.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#findFile%28java.lang.String%29)
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#findFile%28java.lang.String%29).
 /// {@endtemplate}
 Future<DocumentFile?> findFile(Uri directoryUri, String displayName) async {
   const kFindFile = 'findFile';
@@ -435,16 +439,16 @@ Future<DocumentFile?> findFile(Uri directoryUri, String displayName) async {
 }
 
 /// {@template sharedstorage.saf.renameTo}
-/// Rename the current document `uri` to a new `displayName`
+/// Rename the current document `uri` to a new `displayName`.
 ///
 /// **Note: after using this method `uri` is not longer valid,
-/// use the returned document instead**
+/// use the returned document instead**.
 ///
-/// Returns the updated document
+/// Returns the updated document.
 ///
-/// Equivalent to `DocumentFile.renameTo`
+/// Equivalent to `DocumentFile.renameTo`.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#renameTo%28java.lang.String%29)
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#renameTo%28java.lang.String%29).
 /// {@endtemplate}
 Future<DocumentFile?> renameTo(Uri uri, String displayName) async {
   const kRenameTo = 'renameTo';
@@ -455,11 +459,11 @@ Future<DocumentFile?> renameTo(Uri uri, String displayName) async {
 }
 
 /// {@template sharedstorage.saf.fromTreeUri}
-/// Create a new `DocumentFile` instance given `uri`
+/// Create a new `DocumentFile` instance given `uri`.
 ///
-/// Equivalent to `DocumentFile.fromTreeUri`
+/// Equivalent to `DocumentFile.fromTreeUri`.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29)
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29).
 /// {@endtemplate}
 Future<DocumentFile?> fromTreeUri(Uri uri) async {
   const kFromTreeUri = 'fromTreeUri';
@@ -470,12 +474,12 @@ Future<DocumentFile?> fromTreeUri(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.child}
-/// Return the `child` of the given `uri` if it exists otherwise `null`
+/// Return the `child` of the given `uri` if it exists otherwise `null`.
 ///
 /// It's faster than [DocumentFile.findFile]
 /// `path` is the single file name or file path. Empty string returns to itself.
 ///
-/// Equivalent to `DocumentFile.child` extension/overload
+/// Equivalent to `DocumentFile.child` extension/overload.
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29)
 /// {@endtemplate}
@@ -496,15 +500,15 @@ Future<DocumentFile?> child(
 }
 
 /// {@template sharedstorage.saf.openDocumentFile}
-/// It's a convenience method to launch the default application associated with the given MIME type
-/// and can't be considered an official SAF API.
+/// It's a convenience method to launch the default application associated
+/// with the given MIME type and can't be considered an official SAF API.
 ///
-/// Launch `ACTION_VIEW` intent to open the given document `uri`
+/// Launch `ACTION_VIEW` intent to open the given document `uri`.
 ///
 /// Throws an `PlatformException` with code `EXCEPTION_ACTIVITY_NOT_FOUND` if the activity is not found
 /// to the respective MIME type of the give Uri.
 ///
-/// Returns `true` if launched successfully otherwise `false`
+/// Returns `true` if launched successfully otherwise `false`.
 /// {@endtemplate}
 Future<bool?> openDocumentFile(Uri uri) async {
   const kOpenDocumentFile = 'openDocumentFile';
@@ -520,11 +524,11 @@ Future<bool?> openDocumentFile(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.parentFile}
-/// Get the parent file of the given `uri`
+/// Get the parent file of the given `uri`.
 ///
-/// Equivalent to `DocumentFile.getParentFile`
+/// Equivalent to `DocumentFile.getParentFile`.
 ///
-/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#getParentFile%28%29)
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#getParentFile%28%29).
 /// {@endtemplate}
 Future<DocumentFile?> parentFile(Uri uri) async {
   const kParentFile = 'parentFile';
@@ -535,9 +539,9 @@ Future<DocumentFile?> parentFile(Uri uri) async {
 }
 
 /// {@template sharedstorage.saf.copy}
-/// Copy a document `uri` to the `destination`
+/// Copy a document `uri` to the `destination`.
 ///
-/// This API uses the `createFile` and `getDocumentContent` API's behind the scenes
+/// This API uses the `createFile` and `getDocumentContent` API's behind the scenes.
 /// {@endtemplate}
 Future<DocumentFile?> copy(Uri uri, Uri destination) async {
   const kCopy = 'copy';
@@ -548,11 +552,11 @@ Future<DocumentFile?> copy(Uri uri, Uri destination) async {
 }
 
 /// {@template sharedstorage.saf.getDocumentContent}
-/// Get content of a given document `uri`
+/// Get content of a given document `uri`.
 ///
-/// Equivalent to `contentDescriptor` usage
+/// Equivalent to `contentDescriptor` usage.
 ///
-/// [Refer to details](https://developer.android.com/training/data-storage/shared/documents-files#input_stream)
+/// [Refer to details](https://developer.android.com/training/data-storage/shared/documents-files#input_stream).
 /// {@endtemplate}
 Future<Uint8List?> getDocumentContent(Uri uri) async {
   const kGetDocumentContent = 'getDocumentContent';
@@ -567,7 +571,7 @@ Future<Uint8List?> getDocumentContent(Uri uri) async {
 
 /// {@template sharedstorage.saf.getDocumentContentAsString}
 /// Helper method to read document using
-/// `getDocumentContent` and get the content as String instead as `Uint8List`
+/// `getDocumentContent` and get the content as String instead as `Uint8List`.
 /// {@endtemplate}
 Future<String?> getDocumentContentAsString(
   Uri uri, {
@@ -584,7 +588,7 @@ Future<String?> getDocumentContentAsString(
 /// Helper method to generate the file path of the given `uri`
 ///
 /// See [Get real path from URI, Android KitKat new storage access framework](https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175#20559175)
-/// for details
+/// for details.
 /// {@endtemplate}
 Future<String?> getRealPathFromUri(Uri uri) async {
   const kGetRealPathFromUri = 'getRealPathFromUri';

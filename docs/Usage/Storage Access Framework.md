@@ -90,6 +90,19 @@ final Stream<PartialDocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.l
 onNewFileLoaded.listen((file) => files.add(file), onDone: () => print('All files were loaded'));
 ```
 
+### <samp>getRealPathFromUri</samp>
+
+Helper method to generate the file path of the given `uri`.
+
+See [Get real path from URI, Android KitKat new storage access framework](https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175#20559175) for details.
+
+```dart
+/// Any valid Uri.
+final Uri myUri = ...;
+
+final String? file = await getRealPathFromUri(myUri);
+```
+
 ## Mirror methods
 
 Mirror methods are available to provide an way to call a native method without using any abstraction, available mirror methods:
