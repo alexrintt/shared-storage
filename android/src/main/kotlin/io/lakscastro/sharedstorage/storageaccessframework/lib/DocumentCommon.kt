@@ -8,12 +8,14 @@ import android.os.Build
 import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.RequiresApi
+import androidx.annotation.RestrictTo
 import androidx.documentfile.provider.DocumentFile
 import io.lakscastro.sharedstorage.plugin.API_19
 import io.lakscastro.sharedstorage.plugin.API_21
 import io.lakscastro.sharedstorage.plugin.API_24
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
+import java.io.File
 
 /**
  * Helper class to make more easy to handle callbacks using Kotlin syntax
