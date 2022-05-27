@@ -14,17 +14,15 @@ Major release focused on support for `Storage Access Framework`.
 
 ### New Features
 
-- <samp>Mirror</samp> `createFile` from [DocumentFile.createFile()](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createFile(java.lang.String,%20java.lang.String)>). Create a child file from given a parent uri.
+- <samp>Mirror</samp> `createFile` from [`DocumentFile.createFile()`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createFile(java.lang.String,%20java.lang.String)>). Create a child file from given a parent uri.
 
-- <samp>Mirror</samp> `child` from [DocumentFile.child()](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createFile(java.lang.String,%20java.lang.String)>). Find the child file of a given parent uri and child name, null if doesn't exists.
+- <samp>External</samp> `child` from [`com.anggrayudi.storage.file.DocumentFile.child()`](https://github.com/anggrayudi/SimpleStorage/blob/551fae55641dc58a9d3d99cb58fdf51c3d312b2d/storage/src/main/java/com/anggrayudi/storage/file/DocumentFileExt.kt#L270). Find the child file of a given parent uri and child name, null if doesn't exists (faster than `findFile`).
 
 - <samp>Original `UNSTABLE`</samp> `openDocumentFile`. Open a file uri in a external app, by starting a new activity with `ACTION_VIEW` Intent.
 
 - <samp>Original `UNSTABLE`</samp> `getRealPathFromUri`. Return the real path to work with native old `File` API instead Uris, be aware this approach is no longer supported on Android 10+ (API 29+) and though new, this API is **marked as deprecated** and should be migrated to a _scoped-storage_ approach.
 
 - <samp>Alias</samp> `getDocumentContentAsString`. Alias for `getDocumentContent` and convert all bytes into `String`.
-
--
 
 ### Deprecation Notices
 

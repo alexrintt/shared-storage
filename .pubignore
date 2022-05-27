@@ -18,7 +18,10 @@
 */**/local.properties
 loca.properties
 .vscode/
-.site/
+site/
+docs/
+*venv/
+mkdocs.yaml
 
 */**/.metadata
 .metadata
