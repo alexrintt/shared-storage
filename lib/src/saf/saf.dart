@@ -189,7 +189,11 @@ Stream<PartialDocumentFile> listFiles(
 }
 
 /// {@template sharedstorage.saf.exists}
-/// Verify if a given [uri] exists.
+///  Equivalent to `DocumentFile.exists`.
+///
+/// Verify wheter or not a given [uri] exists.
+///
+/// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#exists()).
 /// {@endtemplate}
 Future<bool?> exists(Uri uri) async {
   const kExists = 'exists';
