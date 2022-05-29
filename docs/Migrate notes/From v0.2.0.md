@@ -42,19 +42,6 @@ Choose which modules/imports one you want to include inside ee project.
 
 ## Media Store `getMediaStoreContentDirectory`
 
-In `android\app\build.gradle` set `android.defaultConfig.minSdkVersion` to `19`:
-
-```gradle
-android {
-  ...
-  defaultConfig {
-    ...
-    minSdkVersion 19
-  }
-  ...
-}
-```
-
 The method `getMediaStoreContentDirectory` now returns the right class `Uri` instead of a `Directory`.
 
 Be sure to update all ocurrences.
