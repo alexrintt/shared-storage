@@ -1,5 +1,6 @@
 name: Publish new plugin version
-on: 
+on:
+  workflow_dispatch:
   push:
     branches:
       - release
@@ -11,6 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
+
+      - name: Checkout to release branch
+        run: |
+          git fetch
+          git checkout ${{ github.ref_name }}
 
       - name: Create credentials file
         run: echo $PUB_CREDENTIALS > ~/pub-credentials.json
