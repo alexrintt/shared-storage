@@ -38,7 +38,7 @@ import 'package:shared_storage/media_store.dart' as media_store;
 import 'package:shared_storage/environment.dart' as environment;
 ```
 
-Choose which modules/imports one you want to include inside ee project.
+Choose which modules/imports one you want to include inside in your project.
 
 ## Media Store `getMediaStoreContentDirectory`
 
