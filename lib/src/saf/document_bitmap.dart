@@ -1,6 +1,15 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+/// Represent the bitmap/image of a document.
+///
+/// Usually the thumbnail of the document.
+///
+/// The bitmap is represented as a base64 string.
+///
+/// Should be used to show a list/grid preview of a file list.
+///
+/// See also [getDocumentThumbnail].
 class DocumentBitmap {
   const DocumentBitmap({
     required this.base64,

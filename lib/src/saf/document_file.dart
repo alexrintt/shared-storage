@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import '../common/functional_extender.dart';
 import 'document_file_column.dart';
 import 'partial_document_file.dart';
 import 'saf.dart' as saf;
@@ -9,10 +10,7 @@ extension UriDocumentFileUtils on Uri {
   Future<DocumentFile?> toDocumentFile() => DocumentFile.fromTreeUri(this);
 
   /// {@macro sharedstorage.saf.openDocumentFile}
-  Future<void> open() => saf.openDocumentFile(this);
-
-  /// {@macro sharedstorage.saf.openDocumentFile}
-  Future<void> openDocumentFile() => open();
+  Future<void> openDocumentFile() => saf.openDocumentFile(this);
 }
 
 /// Equivalent to Android `DocumentFile` class
@@ -78,6 +76,7 @@ class DocumentFile {
   static Future<DocumentFile?> fromTreeUri(Uri uri) => saf.fromTreeUri(uri);
 
   /// {@macro sharedstorage.saf.child}
+  @willbemovedsoon
   Future<DocumentFile?> child(
     String path, {
     bool requiresWriteAccess = false,
