@@ -40,25 +40,21 @@ See the label [reference here](/docs/Usage/API%20Labeling.md).
 
 - <samp>Mirror</samp> `buildDocumentUri` from [`DocumentsContract.buildDocumentUri`](<https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri(java.lang.String,%20java.lang.String)>).
 
-- <samp>Mirror</samp> `buildDocumentUri` from [`DocumentsContract.buildDocumentUri`](<https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri(java.lang.String,%20java.lang.String)>).
-
 - <samp>Mirror</samp> `buildTreeDocumentUri` from [`DocumentsContract.buildTreeDocumentUri`](<https://developer.android.com/reference/android/provider/DocumentsContract#buildTreeDocumentUri(java.lang.String,%20java.lang.String)>).
-
-- <samp>Mirror</samp> `createFile` from [`DocumentFile.createFile`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createFile(java.lang.String,%20java.lang.String)>). Create a child file from given a parent uri.
 
 - <samp>Mirror</samp> `delete` from [`DocumentFile.delete`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#delete()>). Self explanatory.
 
 - <samp>Mirror</samp> `createDirectory` from [`DocumentFile.createDirectory`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createDirectory(java.lang.String)>). Creates a new child document file that represents a directory given the `displayName` (folder name).
 
-- <samp>Mirror</samp> `createFile` from [`DocumentFile.createFile`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createFile(java.lang.String,%20java.lang.String)>). Creates a new child document file that represents a single file given the `displayName` and the `mimeType` (file name and file type, respectively).
+- <samp>Alias</samp> `createFile`. Alias for `createFileAsBytes` or `createFileAsString` depending which params are provided.
 
-- <samp>Alias</samp> `createFileAsBytes`. Alias for `createFile(bytes: Uint8List.fromList('file content...'.codeUnits))`.
+- <samp>Mirror</samp> `createFileAsBytes` from [`DocumentFile.createFile`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createFile(java.lang.String,%20java.lang.String)>). Given the parent uri, creates a new child document file that represents a single file given the `displayName`, `mimeType` and its `content` in bytes (file name, file type and file content in raw bytes, respectively).
 
-- <samp>Alias</samp> `createFileAsString`. Alias for `createFile(content: 'file content...')`.
+- <samp>Alias</samp> `createFileAsString`. Alias for `createFileAsBytes(bytes: Uint8List.fromList('file content...'.codeUnits))`.
 
-- <samp>Mirror</samp> `documentLength` from [`DocumentFile.length`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#length()>). Returns the length of this file in bytes. Returns 0 if the file does not exist, or if the length is unknown.
+- <samp>Mirror</samp> `documentLength` from [`DocumentFile.length`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#length()>). Returns the length of the given file (uri) in bytes. Returns 0 if the file does not exist, or if the length is unknown.
 
-- <samp>Mirror</samp> `lastModified` from [`DocumentFile.lastModified`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#lastModified()>). Returns the time when this file was last modified, measured in milliseconds since January 1st, 1970, midnight. Returns 0 if the file does not exist, or if the modified time is unknown.
+- <samp>Mirror</samp> `lastModified` from [`DocumentFile.lastModified`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#lastModified()>). Returns the time when the given file (uri) was last modified, measured in milliseconds since January 1st, 1970, midnight. Returns 0 if the file does not exist, or if the modified time is unknown.
 
 - <samp>Mirror</samp> `findFile` from [`DocumentFile.findFile`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#findFile(java.lang.String)>). Search through listFiles() for the first document matching the given display name, this method has a really poor performance for large data sets, prefer using `child` instead.
 
@@ -71,8 +67,6 @@ See the label [reference here](/docs/Usage/API%20Labeling.md).
 - <samp>Mirror</samp> `copy` from [`DocumentsContract.copyDocument`](<https://developer.android.com/reference/android/provider/DocumentsContract#copyDocument(android.content.ContentResolver,%20android.net.Uri,%20android.net.Uri)>). Copies the given document to the given `destination`.
 
 - <samp>Original</samp> `getDocumentContent`. Read a document file from its uri by opening a input stream and returning its bytes.
-
-- <samp>Alias</samp> `getDocumentContentAsString`. Alias for `getDocumentContent` except this convert the bytes to `String`.
 
 - <samp>External</samp> `child` from [`com.anggrayudi.storage.file.DocumentFile.child`](https://github.com/anggrayudi/SimpleStorage/blob/551fae55641dc58a9d3d99cb58fdf51c3d312b2d/storage/src/main/java/com/anggrayudi/storage/file/DocumentFileExt.kt#L270). Find the child file of a given parent uri and child name, null if doesn't exists (faster than `findFile`).
 
@@ -87,8 +81,7 @@ See the label [reference here](/docs/Usage/API%20Labeling.md).
 - <samp>Extension</samp> `UriDocumentFileUtils` on `Uri` (Accesible by `uri.extensionMethod(...)`).
 
   - <samp>Alias</samp> `toDocumentFile`. Alias for `DocumentFile.fromTreeUri(this)` which is an alias for `fromTreeUri`. method: convert `this` to the respective `DocumentFile` (if exists, otherwise `null`).
-  - <samp>Alias</samp> `open`. Alias for `openDocumentFile`.
-  - <samp>Alias</samp> `openDocumentFile`. Alias for `openDocumentFile` (same of `open` alias with a more specific name).
+  - <samp>Alias</samp> `openDocumentFile`. Alias for `openDocumentFile`.
 
 - <samp>Mirror</samp> `getDownloadCacheDirectory` from [`Environment.getDataDirectory`](https://developer.android.com/reference/android/os/Environment#getDownloadCacheDirectory%28%29).
 

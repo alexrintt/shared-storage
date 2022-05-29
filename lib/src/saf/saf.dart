@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import '../../saf.dart';
 import '../channels.dart';
+import '../common/functional_extender.dart';
 import 'common.dart';
 
 /// {@template sharedstorage.saf.openDocumentTree}
@@ -30,9 +31,7 @@ Future<Uri?> openDocumentTree({
   final selectedDirectoryUri =
       await kDocumentFileChannel.invokeMethod<String?>(kOpenDocumentTree, args);
 
-  if (selectedDirectoryUri == null) return null;
-
-  return Uri.parse(selectedDirectoryUri);
+  return selectedDirectoryUri?.apply((e) => Uri.parse(e));
 }
 
 /// {@template sharedstorage.saf.persistedUriPermissions}
@@ -43,16 +42,12 @@ Future<Uri?> openDocumentTree({
 /// To remove an persisted [Uri] call `releasePersistableUriPermission`.
 /// {@endtemplate}
 Future<List<UriPermission>?> persistedUriPermissions() async {
-  const kPersistedUriPermissions = 'persistedUriPermissions';
-
   final persistedUriPermissions =
-      await kDocumentFileChannel.invokeListMethod(kPersistedUriPermissions);
+      await kDocumentFileChannel.invokeListMethod('persistedUriPermissions');
 
-  if (persistedUriPermissions == null) return null;
-
-  return persistedUriPermissions
-      .map((e) => UriPermission.fromMap(Map.from(e as Map)))
-      .toList();
+  return persistedUriPermissions?.apply(
+    (p) => p.map((e) => UriPermission.fromMap(Map.from(e as Map))).toList(),
+  );
 }
 
 /// {@template sharedstorage.saf.releasePersistableUriPermission}
@@ -66,13 +61,9 @@ Future<List<UriPermission>?> persistedUriPermissions() async {
 /// [Refer to details](https://developer.android.com/reference/android/content/ContentResolver#releasePersistableUriPermission(android.net.Uri,%20int)).
 /// {@endtemplate}
 Future<void> releasePersistableUriPermission(Uri directory) async {
-  const kReleasePersistableUriPermission = 'releasePersistableUriPermission';
-
-  final args = <String, String>{'uri': '$directory'};
-
   await kDocumentFileChannel.invokeMethod(
-    kReleasePersistableUriPermission,
-    args,
+    'releasePersistableUriPermission',
+    <String, String>{'uri': '$directory'},
   );
 }
 
@@ -94,26 +85,16 @@ Future<bool> isPersistedUri(Uri uri) async {
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canRead()).
 /// {@endtemplate}
-Future<bool?> canRead(Uri uri) async {
-  const kCanRead = 'canRead';
-
-  final args = {'uri': '$uri'};
-
-  return kDocumentFileChannel.invokeMethod<bool>(kCanRead, args);
-}
+Future<bool?> canRead(Uri uri) async => kDocumentFileChannel
+    .invokeMethod<bool>('canRead', <String, String>{'uri': '$uri'});
 
 /// {@template sharedstorage.saf.canWrite}
 /// Equivalent to `DocumentFile.canWrite`.
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canWrite()).
 /// {@endtemplate}
-Future<bool?> canWrite(Uri uri) async {
-  const kCanWrite = 'canWrite';
-
-  final args = {'uri': '$uri'};
-
-  return kDocumentFileChannel.invokeMethod<bool>(kCanWrite, args);
-}
+Future<bool?> canWrite(Uri uri) async => kDocumentFileChannel
+    .invokeMethod<bool>('canWrite', <String, String>{'uri': '$uri'});
 
 /// {@template sharedstorage.saf.getDocumentThumbnail}
 /// Equivalent to `DocumentsContract.getDocumentThumbnail`.
@@ -126,8 +107,6 @@ Future<DocumentBitmap?> getDocumentThumbnail({
   required double width,
   required double height,
 }) async {
-  const kGetDocumentThumbnail = 'getDocumentThumbnail';
-
   final args = <String, dynamic>{
     'rootUri': '$rootUri',
     'documentId': documentId,
@@ -136,11 +115,9 @@ Future<DocumentBitmap?> getDocumentThumbnail({
   };
 
   final bitmap = await kDocumentsContractChannel
-      .invokeMapMethod<String, dynamic>(kGetDocumentThumbnail, args);
+      .invokeMapMethod<String, dynamic>('getDocumentThumbnail', args);
 
-  if (bitmap == null) return null;
-
-  return DocumentBitmap.fromMap(bitmap);
+  return bitmap?.apply((b) => DocumentBitmap.fromMap(b));
 }
 
 /// {@template sharedstorage.saf.listFiles}
@@ -172,11 +149,9 @@ Stream<PartialDocumentFile> listFiles(
   Uri uri, {
   required List<DocumentFileColumn> columns,
 }) {
-  const kListFiles = 'listFiles';
-
   final args = <String, dynamic>{
     'uri': '$uri',
-    'event': kListFiles,
+    'event': 'listFiles',
     'columns': columns.map((e) => '$e').toList(),
   };
 
@@ -195,13 +170,8 @@ Stream<PartialDocumentFile> listFiles(
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#exists()).
 /// {@endtemplate}
-Future<bool?> exists(Uri uri) async {
-  const kExists = 'exists';
-
-  final args = <String, String>{'uri': '$uri'};
-
-  return kDocumentFileChannel.invokeMethod<bool>(kExists, args);
-}
+Future<bool?> exists(Uri uri) async => kDocumentFileChannel
+    .invokeMethod<bool>('exists', <String, String>{'uri': '$uri'});
 
 /// {@template sharedstorage.saf.buildDocumentUriUsingTree}
 /// Equivalent to `DocumentsContract.buildDocumentUriUsingTree`.
@@ -209,21 +179,17 @@ Future<bool?> exists(Uri uri) async {
 /// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUriUsingTree%28android.net.Uri,%20java.lang.String%29).
 /// {@endtemplate}
 Future<Uri?> buildDocumentUriUsingTree(Uri treeUri, String documentId) async {
-  const kBuildDocumentUriUsingTree = 'buildDocumentUriUsingTree';
-
   final args = <String, String>{
     'treeUri': '$treeUri',
     'documentId': documentId,
   };
 
   final uri = await kDocumentsContractChannel.invokeMethod<String>(
-    kBuildDocumentUriUsingTree,
+    'buildDocumentUriUsingTree',
     args,
   );
 
-  if (uri == null) return null;
-
-  return Uri.parse(uri);
+  return uri?.apply((u) => Uri.parse(u));
 }
 
 /// {@template sharedstorage.saf.buildDocumentUri}
@@ -232,21 +198,17 @@ Future<Uri?> buildDocumentUriUsingTree(Uri treeUri, String documentId) async {
 /// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29).
 /// {@endtemplate}
 Future<Uri?> buildDocumentUri(String authority, String documentId) async {
-  const kBuildDocumentUri = 'buildDocumentUri';
-
   final args = <String, String>{
     'authority': authority,
     'documentId': documentId,
   };
 
   final uri = await kDocumentsContractChannel.invokeMethod<String>(
-    kBuildDocumentUri,
+    'buildDocumentUri',
     args,
   );
 
-  if (uri == null) return null;
-
-  return Uri.parse(uri);
+  return uri?.apply((u) => Uri.parse(u));
 }
 
 /// {@template sharedstorage.saf.buildDocumentUri}
@@ -255,21 +217,17 @@ Future<Uri?> buildDocumentUri(String authority, String documentId) async {
 /// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29).
 /// {@endtemplate}
 Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
-  const kBuildTreeDocumentUri = 'buildTreeDocumentUri';
-
   final args = <String, String>{
     'authority': authority,
     'documentId': documentId,
   };
 
   final uri = await kDocumentsContractChannel.invokeMethod<String>(
-    kBuildTreeDocumentUri,
+    'buildTreeDocumentUri',
     args,
   );
 
-  if (uri == null) return null;
-
-  return Uri.parse(uri);
+  return uri?.apply((u) => Uri.parse(u));
 }
 
 /// {@template sharedstorage.saf.delete}
@@ -279,13 +237,8 @@ Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#delete%28%29).
 /// {@endtemplate}
-Future<bool?> delete(Uri uri) async {
-  const kDelete = 'delete';
-
-  final args = <String, String>{'uri': '$uri'};
-
-  return kDocumentFileChannel.invokeMethod<bool>(kDelete, args);
-}
+Future<bool?> delete(Uri uri) async => kDocumentFileChannel
+    .invokeMethod<bool>('delete', <String, String>{'uri': '$uri'});
 
 /// {@template sharedstorage.saf.createDirectory}
 /// Create a direct child document tree named `displayName` given a parent `parentUri`.
@@ -295,19 +248,15 @@ Future<bool?> delete(Uri uri) async {
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createDirectory%28java.lang.String%29).
 /// {@endtemplate}
 Future<DocumentFile?> createDirectory(Uri parentUri, String displayName) async {
-  const kCreateDirectory = 'createDirectory';
-
   final args = <String, String>{
     'uri': '$parentUri',
     'displayName': displayName,
   };
 
   final createdDocumentFile = await kDocumentFileChannel
-      .invokeMapMethod<String, dynamic>(kCreateDirectory, args);
+      .invokeMapMethod<String, dynamic>('createDirectory', args);
 
-  if (createdDocumentFile == null) return null;
-
-  return DocumentFile.fromMap(createdDocumentFile);
+  return createdDocumentFile?.apply((c) => DocumentFile.fromMap(c));
 }
 
 /// {@template sharedstorage.saf.createFile}
@@ -352,6 +301,8 @@ Future<DocumentFile?> createFile(
 /// - `bytes` is the content of the document as a list of bytes `Uint8List`.
 ///
 /// Returns the created file as a `DocumentFile`.
+///
+/// Mirror of [`DocumentFile.createFile`](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createFile(java.lang.String,%20java.lang.String))
 /// {@endtemplate}
 Future<DocumentFile?> createFileAsBytes(
   Uri parentUri, {
@@ -359,8 +310,6 @@ Future<DocumentFile?> createFileAsBytes(
   required String displayName,
   required Uint8List bytes,
 }) async {
-  const kCreateFile = 'createFile';
-
   final directoryUri = '$parentUri';
 
   final args = <String, dynamic>{
@@ -370,7 +319,7 @@ Future<DocumentFile?> createFileAsBytes(
     'directoryUri': directoryUri,
   };
 
-  return invokeMapMethod(kCreateFile, args);
+  return invokeMapMethod('createFile', args);
 }
 
 /// {@template sharedstorage.saf.createFileAsString}
@@ -398,13 +347,8 @@ Future<DocumentFile?> createFileAsString(
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#length%28%29).
 /// {@endtemplate}
-Future<int?> documentLength(Uri uri) async {
-  const kLength = 'length';
-
-  final args = <String, String>{'uri': '$uri'};
-
-  return kDocumentFileChannel.invokeMethod<int>(kLength, args);
-}
+Future<int?> documentLength(Uri uri) async => kDocumentFileChannel
+    .invokeMethod<int>('length', <String, String>{'uri': '$uri'});
 
 /// {@template sharedstorage.saf.lastModified}
 /// Equivalent to `DocumentFile.lastModified`.
@@ -414,14 +358,12 @@ Future<int?> documentLength(Uri uri) async {
 Future<DateTime?> lastModified(Uri uri) async {
   const kLastModified = 'lastModified';
 
-  final args = <String, String>{'uri': '$uri'};
+  final inMillisecondsSinceEpoch = await kDocumentFileChannel
+      .invokeMethod<int>(kLastModified, <String, String>{'uri': '$uri'});
 
-  final inMillisecondsSinceEpoch =
-      await kDocumentFileChannel.invokeMethod<int>(kLastModified, args);
-
-  if (inMillisecondsSinceEpoch == null) return null;
-
-  return DateTime.fromMillisecondsSinceEpoch(inMillisecondsSinceEpoch);
+  return inMillisecondsSinceEpoch
+      ?.takeIf((i) => i > 0)
+      ?.apply((i) => DateTime.fromMillisecondsSinceEpoch(i));
 }
 
 /// {@template sharedstorage.saf.findFile}
@@ -432,14 +374,12 @@ Future<DateTime?> lastModified(Uri uri) async {
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#findFile%28java.lang.String%29).
 /// {@endtemplate}
 Future<DocumentFile?> findFile(Uri directoryUri, String displayName) async {
-  const kFindFile = 'findFile';
-
   final args = <String, String>{
     'uri': '$directoryUri',
     'displayName': displayName,
   };
 
-  return invokeMapMethod(kFindFile, args);
+  return invokeMapMethod('findFile', args);
 }
 
 /// {@template sharedstorage.saf.renameTo}
@@ -454,13 +394,11 @@ Future<DocumentFile?> findFile(Uri directoryUri, String displayName) async {
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#renameTo%28java.lang.String%29).
 /// {@endtemplate}
-Future<DocumentFile?> renameTo(Uri uri, String displayName) async {
-  const kRenameTo = 'renameTo';
-
-  final args = <String, String>{'uri': '$uri', 'displayName': displayName};
-
-  return invokeMapMethod(kRenameTo, args);
-}
+Future<DocumentFile?> renameTo(Uri uri, String displayName) async =>
+    invokeMapMethod(
+      'renameTo',
+      <String, String>{'uri': '$uri', 'displayName': displayName},
+    );
 
 /// {@template sharedstorage.saf.fromTreeUri}
 /// Create a new `DocumentFile` instance given `uri`.
@@ -469,13 +407,8 @@ Future<DocumentFile?> renameTo(Uri uri, String displayName) async {
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29).
 /// {@endtemplate}
-Future<DocumentFile?> fromTreeUri(Uri uri) async {
-  const kFromTreeUri = 'fromTreeUri';
-
-  final args = <String, String>{'uri': '$uri'};
-
-  return invokeMapMethod(kFromTreeUri, args);
-}
+Future<DocumentFile?> fromTreeUri(Uri uri) async =>
+    invokeMapMethod('fromTreeUri', <String, String>{'uri': '$uri'});
 
 /// {@template sharedstorage.saf.child}
 /// Return the `child` of the given `uri` if it exists otherwise `null`.
@@ -487,20 +420,19 @@ Future<DocumentFile?> fromTreeUri(Uri uri) async {
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29)
 /// {@endtemplate}
+@willbemovedsoon
 Future<DocumentFile?> child(
   Uri uri,
   String path, {
   bool requiresWriteAccess = false,
 }) async {
-  const kChild = 'child';
-
   final args = <String, dynamic>{
     'uri': '$uri',
     'path': path,
     'requiresWriteAccess': requiresWriteAccess,
   };
 
-  return invokeMapMethod(kChild, args);
+  return invokeMapMethod('child', args);
 }
 
 /// {@template sharedstorage.saf.openDocumentFile}
@@ -515,16 +447,13 @@ Future<DocumentFile?> child(
 /// Returns `true` if launched successfully otherwise `false`.
 /// {@endtemplate}
 Future<bool?> openDocumentFile(Uri uri) async {
-  const kOpenDocumentFile = 'openDocumentFile';
-
-  final args = <String, String>{'uri': '$uri'};
-
-  final launched = await kDocumentFileHelperChannel.invokeMethod<bool>(
-    kOpenDocumentFile,
-    args,
+  final successfullyLaunched =
+      await kDocumentFileHelperChannel.invokeMethod<bool>(
+    'openDocumentFile',
+    <String, String>{'uri': '$uri'},
   );
 
-  return launched;
+  return successfullyLaunched;
 }
 
 /// {@template sharedstorage.saf.parentFile}
@@ -534,13 +463,8 @@ Future<bool?> openDocumentFile(Uri uri) async {
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#getParentFile%28%29).
 /// {@endtemplate}
-Future<DocumentFile?> parentFile(Uri uri) async {
-  const kParentFile = 'parentFile';
-
-  final args = <String, String>{'uri': '$uri'};
-
-  return invokeMapMethod(kParentFile, args);
-}
+Future<DocumentFile?> parentFile(Uri uri) async =>
+    invokeMapMethod('parentFile', <String, String>{'uri': '$uri'});
 
 /// {@template sharedstorage.saf.copy}
 /// Copy a document `uri` to the `destination`.
@@ -548,11 +472,9 @@ Future<DocumentFile?> parentFile(Uri uri) async {
 /// This API uses the `createFile` and `getDocumentContent` API's behind the scenes.
 /// {@endtemplate}
 Future<DocumentFile?> copy(Uri uri, Uri destination) async {
-  const kCopy = 'copy';
-
   final args = <String, String>{'uri': '$uri', 'destination': '$destination'};
 
-  return invokeMapMethod(kCopy, args);
+  return invokeMapMethod('copy', args);
 }
 
 /// {@template sharedstorage.saf.getDocumentContent}
@@ -562,16 +484,11 @@ Future<DocumentFile?> copy(Uri uri, Uri destination) async {
 ///
 /// [Refer to details](https://developer.android.com/training/data-storage/shared/documents-files#input_stream).
 /// {@endtemplate}
-Future<Uint8List?> getDocumentContent(Uri uri) async {
-  const kGetDocumentContent = 'getDocumentContent';
-
-  final args = <String, String>{'uri': '$uri'};
-
-  return kDocumentFileChannel.invokeMethod<Uint8List>(
-    kGetDocumentContent,
-    args,
-  );
-}
+Future<Uint8List?> getDocumentContent(Uri uri) async =>
+    kDocumentFileChannel.invokeMethod<Uint8List>(
+      'getDocumentContent',
+      <String, String>{'uri': '$uri'},
+    );
 
 /// {@template sharedstorage.saf.getDocumentContentAsString}
 /// Helper method to read document using
@@ -583,9 +500,7 @@ Future<String?> getDocumentContentAsString(
 }) async {
   final bytes = await getDocumentContent(uri);
 
-  if (bytes == null) return null;
-
-  return String.fromCharCodes(bytes);
+  return bytes?.apply((a) => String.fromCharCodes(a));
 }
 
 /// {@template sharedstorage.saf.getDocumentContentAsString}
@@ -594,10 +509,5 @@ Future<String?> getDocumentContentAsString(
 /// See [Get real path from URI, Android KitKat new storage access framework](https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175#20559175)
 /// for details.
 /// {@endtemplate}
-Future<String?> getRealPathFromUri(Uri uri) async {
-  const kGetRealPathFromUri = 'getRealPathFromUri';
-
-  final args = <String, String>{'uri': '$uri'};
-
-  return kDocumentFileHelperChannel.invokeMethod(kGetRealPathFromUri, args);
-}
+Future<String?> getRealPathFromUri(Uri uri) async => kDocumentFileHelperChannel
+    .invokeMethod('getRealPathFromUri', <String, String>{'uri': '$uri'});
