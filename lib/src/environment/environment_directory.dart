@@ -8,12 +8,12 @@
 ///
 /// [Refer to details](https://developer.android.com/reference/android/os/Environment#fields_1)
 class EnvironmentDirectory {
-  final String id;
-
   const EnvironmentDirectory._(this.id);
 
   /// Define a custom [folder]
   const EnvironmentDirectory.custom(String folder) : id = folder;
+
+  final String id;
 
   static const _kPrefix = 'EnvironmentDirectory';
 

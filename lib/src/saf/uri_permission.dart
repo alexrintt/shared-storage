@@ -4,6 +4,24 @@
 ///
 /// [Refer to details](https://developer.android.com/reference/android/content/UriPermission)
 class UriPermission {
+  /// Even we allow create instances of this class avoid it and use
+  /// `persistedUriPermissions` API instead
+  const UriPermission({
+    required this.isReadPermission,
+    required this.isWritePermission,
+    required this.persistedTime,
+    required this.uri,
+  });
+
+  factory UriPermission.fromMap(Map<String, dynamic> map) {
+    return UriPermission(
+      isReadPermission: map['isReadPermission'] as bool,
+      isWritePermission: map['isWritePermission'] as bool,
+      persistedTime: map['persistedTime'] as int,
+      uri: Uri.parse(map['uri'] as String),
+    );
+  }
+
   /// Whether an [UriPermission] is created with [`FLAG_GRANT_READ_URI_PERMISSION`](https://developer.android.com/reference/android/content/Intent#FLAG_GRANT_READ_URI_PERMISSION)
   final bool isReadPermission;
 
@@ -22,14 +40,6 @@ class UriPermission {
   /// [Refer to details](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/content/UriPermission.java#56)
   final Uri uri;
 
-  /// Even we allow create instances of this class avoid it and use
-  /// `persistedUriPermissions` API instead
-  const UriPermission(
-      {required this.isReadPermission,
-      required this.isWritePermission,
-      required this.persistedTime,
-      required this.uri});
-
   @override
   bool operator ==(Object other) =>
       other is UriPermission &&
@@ -42,16 +52,7 @@ class UriPermission {
   int get hashCode =>
       Object.hash(isReadPermission, isWritePermission, persistedTime, uri);
 
-  static UriPermission fromMap(Map<String, dynamic> map) {
-    return UriPermission(
-      isReadPermission: map['isReadPermission'],
-      isWritePermission: map['isWritePermission'],
-      persistedTime: map['persistedTime'],
-      uri: Uri.parse(map['uri']),
-    );
-  }
-
-  Map<String, dynamic> toMap(Map<String, dynamic> map) {
+  Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'isReadPermission': isReadPermission,
       'isWritePermission': isWritePermission,

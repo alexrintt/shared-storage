@@ -2,9 +2,9 @@
 ///
 /// [Refer to details](https://developer.android.com/reference/android/provider/MediaStore#summary)
 class MediaStoreCollection {
-  final String id;
-
   const MediaStoreCollection._(this.id);
+
+  final String id;
 
   static const _kPrefix = 'MediaStoreCollection';
 
@@ -41,5 +41,5 @@ class MediaStoreCollection {
   int get hashCode => id.hashCode;
 
   @override
-  String toString() => 'MediaStoreCollection.$id';
+  String toString() => id;
 }

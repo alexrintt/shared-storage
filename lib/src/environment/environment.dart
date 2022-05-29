@@ -1,70 +1,83 @@
 import 'dart:io';
 
-import '../method_channel.dart';
+import '../channels.dart';
+import 'common.dart';
 import 'environment_directory.dart';
 
-/// Return root of the "system" partition holding the core Android OS.
-/// Always present and mounted read-only.
+/// Equivalent to `Environment.getRootDirectory`
 ///
-/// Equivalent to [Environment.getRootDirectory]
-///
-/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getRootDirectory())
+/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getRootDirectory%28%29)
 Future<Directory?> getRootDirectory() async {
   const kGetRootDirectory = 'getRootDirectory';
 
-  final publicDir = await kChannel.invokeMethod<String?>(kGetRootDirectory);
-
-  if (publicDir == null) return null;
-
-  return Directory(publicDir);
+  return invokeVoidEnvironmentMethod(kGetRootDirectory);
 }
 
-/// Get a top-level shared/external storage directory for placing files of a
-/// particular type. This is where the user will typically place and manage
-/// their own files, so you should be careful about what you put here to
-/// ensure you don't erase their files or get in the way
-/// of their own organization.
+/// Equivalent to `Environment.getExternalStoragePublicDirectory`.
 ///
-/// _Added in API level 8_
+/// _Added in API level 8_.
 ///
-/// _Deprecated in API level 29_
+/// _Deprecated in API level 29_.
 ///
-/// Equivalent to [Environment.getExternalStoragePublicDirectory] Android method
+/// See [EnvironmentDirectory] to see all available directories.
 ///
-/// Throws [UnsupportedError] if not available on current Android version
+/// See [how to migrate](https://stackoverflow.com/questions/56468539/getexternalstoragepublicdirectory-deprecated-in-android-q) from this deprecated API.
 ///
-/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getExternalStoragePublicDirectory(java.lang.String))
+/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getExternalStoragePublicDirectory%28java.lang.String%29)
+@Deprecated(
+  '''Deprecated in API level 29 (Android 10+) and was deprecated in this package after v0.3.0.\nSee how to migrate: https://stackoverflow.com/questions/56468539/getexternalstoragepublicdirectory-deprecated-in-android-q''',
+)
 Future<Directory?> getExternalStoragePublicDirectory(
-    EnvironmentDirectory directory) async {
+  EnvironmentDirectory directory,
+) async {
   const kGetExternalStoragePublicDirectory =
       'getExternalStoragePublicDirectory';
   const kDirectoryArg = 'directory';
 
   final args = <String, String>{kDirectoryArg: '$directory'};
 
-  final publicDir = await kChannel.invokeMethod<String?>(
-      kGetExternalStoragePublicDirectory, args);
+  final publicDir = await kEnvironmentChannel.invokeMethod<String?>(
+    kGetExternalStoragePublicDirectory,
+    args,
+  );
 
   if (publicDir == null) return null;
 
   return Directory(publicDir);
 }
 
-/// Return the primary shared/external storage directory.
-/// This directory may not currently be accessible
-/// if it has been mounted by the user on their
-/// computer, has been removed from the device,
-/// or some other problem has happened.
-/// You can determine its current state with getExternalStorageState().
+/// Equivalent to `Environment.getExternalStorageDirectory`
 ///
-/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getExternalStorageDirectory())
+/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getExternalStorageDirectory%28%29)
 Future<Directory?> getExternalStorageDirectory() async {
   const kGetExternalStorageDirectory = 'getExternalStorageDirectory';
 
-  final publicDir =
-      await kChannel.invokeMethod<String>(kGetExternalStorageDirectory);
+  return invokeVoidEnvironmentMethod(kGetExternalStorageDirectory);
+}
 
-  if (publicDir == null) return null;
+/// Equivalent to `Environment.getDataDirectory`
+///
+/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getDataDirectory%28%29)
+Future<Directory?> getDataDirectory() async {
+  const kGetDataDirectory = 'getDataDirectory';
 
-  return Directory(publicDir);
+  return invokeVoidEnvironmentMethod(kGetDataDirectory);
+}
+
+/// Equivalent to `Environment.getDataDirectory`
+///
+/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getDownloadCacheDirectory%28%29)
+Future<Directory?> getDownloadCacheDirectory() async {
+  const kGetDownloadCacheDirectory = 'getDownloadCacheDirectory';
+
+  return invokeVoidEnvironmentMethod(kGetDownloadCacheDirectory);
+}
+
+/// Equivalent to `Environment.getStorageDirectory`
+///
+/// [Refer to details](https://developer.android.com/reference/android/os/Environment#getStorageDirectory%28%29)
+Future<Directory?> getStorageDirectory() {
+  const kGetStorageDirectory = 'getStorageDirectory';
+
+  return invokeVoidEnvironmentMethod(kGetStorageDirectory);
 }

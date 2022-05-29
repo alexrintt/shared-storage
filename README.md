@@ -1,101 +1,62 @@
-## Shared Storage Flutter Plugin
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/51419598/161439601-fc228a0d-d09d-4dbb-b5a3-ebc5dbcf9f46.png">
+</p>
 
-[![pub package](https://img.shields.io/pub/v/shared_storage.svg)](https://pub.dartlang.org/packages/shared_storage)
+<h6 align="center"><samp>#flutter, #package, #android, #saf, #storage</samp></h6>
+<samp><h1 align="center">Shared Storage</h1></samp>
 
-Plugin to fetch Android shared storage/folders info
+<h6 align="center">
+    <samp>
+      Access Android <kbd>Storage Access Framework</kbd>, <kbd>Media Store</kbd> and <kbd>Environment</kbd> APIs through your Flutter Apps
+    </samp>
+</h6>
 
-### Notes
+<p align="center">
+  <a href="https://pub.dev/packages/shared_storage"><img src="https://img.shields.io/pub/v/shared_storage.svg?style=for-the-badge&color=22272E&showLabel=false&labelColor=15191f&logo=dart&logoColor=blue"></a>
+  <img src="https://img.shields.io/badge/Kotlin-22272E?&style=for-the-badge&logo=kotlin&logoColor=9966FF">
+  <img src="https://img.shields.io/badge/Dart-22272E?style=for-the-badge&logo=dart&logoColor=2BB7F6">
+  <img src="https://img.shields.io/badge/Flutter-22272E?style=for-the-badge&logo=flutter&logoColor=66B1F1">
+</p>
 
-- _**Android Only**_
-- _**Alpha version**_
-- _**Supports Android 4.1+ (API Level 16+)**_
-- _**The `targetSdk` should be set to `31`**_
+<a href="https://pub.dev/packages/shared_storage"><h4 align="center"><samp>Install It</samp></h4></a>
 
-### Features
+## Documentation
 
-- Get top-level external/shared folders path from [`Environment` Android API](https://developer.android.com/reference/android/os/Environment)
+#### See the website for [documentation](https://lakscastro.github.io/shared-storage)
 
-This plugin allow us to get path of top-level shared folder (Downloads, DCIM, Videos, Audio) using the following Android API's
+All documentation is also available under `/docs` to each released version which is the data source of the website.
 
-```dart
-/// Get Android [downloads] top-level shared folder
-/// You can also create a reference to a custom directory as: `EnvironmentDirectory.custom('Custom Folder')`
-final sharedDirectory =
-    await getExternalStoragePublicDirectory(EnvironmentDirectory.downloads);
+You can contribute to the documentation by just editing these files through the GitHub web editor!
 
-print(sharedDirectory.path); /// `/storage/emulated/0/Download`
-```
+Latest changes are available on `master` branch and the actual latest published package version lives under `release` branch.
 
-- Get external/shared folders path from [`MediaStore` Android API](https://developer.android.com/training/data-storage/shared/media)
+All other branches are derivated from issues, new features or bug fixes.
 
-```dart
-/// Get Android [downloads] shared folder for Android 9+
-final sharedDirectory =
-    await getMediaStoreContentDirectory(MediaStoreCollection.downloads);
+## Contributors
 
-print(sharedDirectory.path); /// `/external/downloads`
-```
+These are the brilliant minds behind the development of this plugin!
 
-- Start `OPEN_DOCUMENT_TREE` activity to prompt user to select an folder to enable write and read access to be used by the `Storage Access Framework` API
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://lakscastro.github.io"><img src="https://avatars.githubusercontent.com/u/51419598?v=4?s=100" width="100px;" alt=""/><br /><sub><b>lask</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=lakscastro" title="Code">💻</a> <a href="#maintenance-lakscastro" title="Maintenance">🚧</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=lakscastro" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/ankitparmar007"><img src="https://avatars.githubusercontent.com/u/73648141?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ankitparmar007</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Aankitparmar007" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://www.bibliotecaortodoxa.ro"><img src="https://avatars.githubusercontent.com/u/1148228?v=4?s=100" width="100px;" alt=""/><br /><sub><b>www.bibliotecaortodoxa.ro</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=aplicatii-romanesti" title="Code">💻</a> <a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Aaplicatii-romanesti" title="Bug reports">🐛</a> <a href="#ideas-aplicatii-romanesti" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/dangilbert"><img src="https://avatars.githubusercontent.com/u/6799566?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dangilbert</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=dangilbert" title="Code">💻</a> <a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Adangilbert" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/dhaval-k-simformsolutions"><img src="https://avatars.githubusercontent.com/u/90894202?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dhaval-k-simformsolutions</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Adhaval-k-simformsolutions" title="Bug reports">🐛</a> <a href="#ideas-dhaval-k-simformsolutions" title="Ideas, Planning, & Feedback">🤔</a></td>
+  </tr>
+</table>
 
-```dart
-/// Get permissions to manage an Android directory
-final selectedUriDir = await openDocumentTree();
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
 
-print(selectedUriDir);
-```
-
-- Create a new file using the `SAF` API
-
-```dart
-/// Create a new file using the `SAF` API
-final newDocumentFile = await createDocumentFile(
-  mimeType: '	text/plain',
-  content: 'My Plain Text Comment Created by shared_storage plugin',
-  displayName: 'CreatedBySharedStorageFlutterPlugin',
-  directory: anySelectedUriByTheOpenDocumentTreeAPI,
-);
-
-print(newDocumentFile);
-```
-
-- Get all persisted [URI]s by the `openDocumentTree` API, from `SAF` API
-
-```dart
-/// You have [write] and [read] access to all persisted [URI]s
-final listOfPersistedUris = await persistedUriPermissions();
-
-print(listOfPersistedUris);
-```
-
-- Revoke a current persisted [URI], from `SAF` API
-
-```dart
-/// Can be any [URI] returned by the `persistedUriPermissions`
-final uri = ...;
-
-/// After calling this, you no longer has access to the [uri]
-await releasePersistableUriPermission(uri);
-```
-
-- Convenient method to know if a given [uri] is a persisted `uri` ("persisted uri" means that you have `write` and `read` access to the `uri` even if devices reboot)
-
-```dart
-/// Can be any [URI], but the method will only return [true] if the [uri]
-/// is also present in the list returned by `persistedUriPermissions`
-final uri = ...;
-
-/// Verify if you have [write] and [read] access to a given [uri]
-final isPersisted = await isPersistedUri(uri);
-```
-
-### Android API's
-
-Most Flutter plugins uses Android API's under the hood. So this plugin do the same, and to retrieve Android shared folder paths the following API's are being used:
-
-[`🔗android.os.Environment`](https://developer.android.com/reference/android/os/Environment#summary) [`🔗android.provider.MediaStore`](https://developer.android.com/reference/android/provider/MediaStore#summary) [`🔗android.provider.DocumentsProvider`](https://developer.android.com/guide/topics/providers/document-provider)
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 <br>
+
+<samp>
 
 <h2 align="center">
   Open Source
@@ -105,5 +66,7 @@ Most Flutter plugins uses Android API's under the hood. So this plugin do the sa
 </p>
 <p align="center">Shared Storage <a href="https://github.com/LaksCastro/shared-storage/blob/master/LICENSE.md">is MIT licensed 💖</a></p>
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/51419598/141711483-9b0f9f2b-a46d-4de1-a15f-c6c99b552ef4.png" width="35" />
+  <img src="https://user-images.githubusercontent.com/51419598/161439601-fc228a0d-d09d-4dbb-b5a3-ebc5dbcf9f46.png" width="35" />
 </p>
+  
+</samp>
