@@ -94,7 +94,7 @@ final Stream<PartialDocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.l
 onNewFileLoaded.listen((file) => files.add(file), onDone: () => print('All files were loaded'));
 ```
 
-## <samp>openDocumentFile</samp>
+### <samp>openDocumentFile</samp>
 
 Open a file uri in a external app, by starting a new activity with `ACTION_VIEW` Intent.
 
@@ -106,7 +106,7 @@ final Uri fileUri = ...
 await openDocumentFile(fileUri);
 ```
 
-## <samp>getDocumentContent</samp>
+### <samp>getDocumentContent</samp>
 
 Read a document file from its uri by opening a input stream and returning its bytes.
 
