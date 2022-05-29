@@ -44,7 +44,7 @@ To operate (read, delete, update, create) a file or folder within a directory, y
 
 ## API Labeling
 
-See the label [reference here](/docs/Usage/API%20Labeling.md).
+See the label [reference here](../Usage/API%20Labeling.md).
 
 ## API reference
 
