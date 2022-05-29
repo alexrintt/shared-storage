@@ -1,5 +1,3 @@
-## API Labeling
-
 When refering to the docs you'll usually see some labels before the method/class names.
 
 They are label which identifies where the API came from.
