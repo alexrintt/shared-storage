@@ -1,5 +1,5 @@
 name: Publish new plugin version
-on:
+on: 
   push:
     branches:
       - release
@@ -12,10 +12,19 @@ jobs:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
 
+      - name: Create credentials file
+        run: echo $PUB_CREDENTIALS > ~/pub-credentials.json
+        env:
+          PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}
+
+      - name: Add credentials to Dart folder
+        run: |
+          mkdir -p ${XDG_CONFIG_HOME:-${HOME:-default}}/dart
+          touch ${XDG_CONFIG_HOME:-${HOME:-default}}/dart/pub-credentials.json
+          cp ~/pub-credentials.json ${XDG_CONFIG_HOME:-${HOME:-default}}/dart/pub-credentials.json
+        env:
+          PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}
+
       - name: Publish
-        uses: sakebook/actions-flutter-pub-publisher@v1.3.1
-        with:
-          credential: ${{ secrets.PUB_CREDENTIALS }}
-          flutter_package: true
-          skip_test: true
-          dry_run: true
+        run: dart pub publish --force
+
