@@ -1,7 +1,7 @@
 {
   "files": [
     "README.md",
-    "docs/Getting Started.md"
+    "docs/index.md"
   ],
   "imageSize": 100,
   "contributorsPerLine": 7,
