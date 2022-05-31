@@ -201,7 +201,7 @@ fun traverseDirectoryEntries(
       while (cursor.moveToNext()) {
         val data = mutableMapOf<String, Any>()
 
-        for (column in columns) {
+        for (column in projection) {
           data[column] = cursorHandlerOf(typeOfColumn(column)!!)(
             cursor,
             cursor.getColumnIndexOrThrow(column)

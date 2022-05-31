@@ -159,7 +159,7 @@ class _FolderFileListState extends State<FolderFileList> {
       DocumentFileColumn.displayName,
       DocumentFileColumn.size,
       DocumentFileColumn.lastModified,
-      DocumentFileColumn.id,
+      // DocumentFileColumn.id,
       DocumentFileColumn.mimeType,
     ];
 
