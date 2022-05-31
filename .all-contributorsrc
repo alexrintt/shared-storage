@@ -1,7 +1,7 @@
 {
   "files": [
     "README.md",
-    "docs/Getting Started.md"
+    "docs/index.md"
   ],
   "imageSize": 100,
   "contributorsPerLine": 7,
@@ -57,6 +57,15 @@
       "contributions": [
         "bug",
         "ideas"
+      ]
+    },
+    {
+      "login": "EternityForest",
+      "name": "Daniel Dunn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/758047?v=4",
+      "profile": "https://eternityforest.com",
+      "contributions": [
+        "bug"
       ]
     }
   ],

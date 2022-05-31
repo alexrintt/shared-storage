@@ -159,6 +159,7 @@ class _FolderFileListState extends State<FolderFileList> {
       DocumentFileColumn.displayName,
       DocumentFileColumn.size,
       DocumentFileColumn.lastModified,
+      // Optional column (this can't be removed because it's required to list files)
       DocumentFileColumn.id,
       DocumentFileColumn.mimeType,
     ];

@@ -8,14 +8,12 @@ import android.os.Build
 import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.RequiresApi
-import androidx.annotation.RestrictTo
 import androidx.documentfile.provider.DocumentFile
 import io.lakscastro.sharedstorage.plugin.API_19
 import io.lakscastro.sharedstorage.plugin.API_21
 import io.lakscastro.sharedstorage.plugin.API_24
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
-import java.io.File
 
 /**
  * Helper class to make more easy to handle callbacks using Kotlin syntax
@@ -174,12 +172,17 @@ fun traverseDirectoryEntries(
   while (dirNodes.isNotEmpty()) {
     val (parent, children) = dirNodes.removeAt(0)
 
-    val requiredColumns = if (rootOnly) emptyArray() else arrayOf(
-      DocumentsContract.Document.COLUMN_MIME_TYPE,
-      DocumentsContract.Document.COLUMN_DOCUMENT_ID
-    )
+    val requiredColumns =
+      if (rootOnly) emptyArray() else arrayOf(DocumentsContract.Document.COLUMN_MIME_TYPE)
 
-    val projection = arrayOf(*columns, *requiredColumns).toSet().toTypedArray()
+    val intrinsicColumns =
+      arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
+
+    val projection = arrayOf(
+      *columns,
+      *requiredColumns,
+      *intrinsicColumns
+    ).toSet().toTypedArray()
 
     val cursor = contentResolver.query(
       children,
@@ -198,7 +201,7 @@ fun traverseDirectoryEntries(
       while (cursor.moveToNext()) {
         val data = mutableMapOf<String, Any>()
 
-        for (column in columns) {
+        for (column in projection) {
           data[column] = cursorHandlerOf(typeOfColumn(column)!!)(
             cursor,
             cursor.getColumnIndexOrThrow(column)
@@ -220,7 +223,7 @@ fun traverseDirectoryEntries(
           )
         )
 
-        if (isDirectory != null && isDirectory && !rootOnly) {
+        if (isDirectory == true && !rootOnly) {
           val nextChildren =
             DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
 
