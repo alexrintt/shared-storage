@@ -68,7 +68,7 @@ if (grantedUri != null) {
 
 This method list files lazily **over a granted uri:**
 
-> **Info** `DocumentFileColumn.id` is optional. It is required to fetch the file list from native API. So it is enabled regardless if you include this column or not. And this applies only to this API (`listFiles`).
+> **Note** `DocumentFileColumn.id` is optional. It is required to fetch the file list from native API. So it is enabled regardless if you include this column or not. And this applies only to this API (`listFiles`).
 
 ```dart
 /// *Must* be a granted uri from `openDocumentTree`
