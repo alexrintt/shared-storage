@@ -1,3 +1,10 @@
+## 0.3.1
+
+Minor improvements and bug fixes:
+
+- Crash when ommiting `DocumentFileColumn.id` column on `listFiles` API. Thanks to @EternityForest.
+- Updated docs to info that now `DocumentFileColumn.id` column is optional when calling `listFiles`.
+
 ## 0.3.0
 
 Major release focused on support for `Storage Access Framework`.
