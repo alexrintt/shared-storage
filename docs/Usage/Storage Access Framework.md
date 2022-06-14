@@ -71,7 +71,7 @@ This method list files lazily **over a granted uri:**
 > **Note** `DocumentFileColumn.id` is optional. It is required to fetch the file list from native API. So it is enabled regardless if you include this column or not. And this applies only to this API (`listFiles`).
 
 ```dart
-/// *Must* be a granted uri from `openDocumentTree`
+/// *Must* be a granted uri from `openDocumentTree`, or a URI representing a child under such a granted uri.
 final Uri myGrantedUri = ...
 final DocumentFile? documentFileOfMyGrantedUri = await myGrantedUri.toDocumentFile();
 
@@ -597,6 +597,7 @@ Internal type (class). Usually they are only to keep a safe typing and are not u
 This class represents but is not the mirror of the original [`DocumentFile`](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile).
 
 This class is not intended to be instantiated, and it is only used for typing and convenient purposes.
+
 
 ### <samp>QueryMetadata</samp>
 

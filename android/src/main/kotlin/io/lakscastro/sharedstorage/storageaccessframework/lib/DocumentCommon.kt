@@ -43,6 +43,8 @@ fun documentFromSingleUri(context: Context, uri: Uri): DocumentFile? {
   return DocumentFile.fromSingleUri(context, documentUri)
 }
 
+
+
 /**
  * Generate the `DocumentFile` reference from string `uri`
  */
@@ -161,12 +163,24 @@ fun traverseDirectoryEntries(
   rootOnly: Boolean,
   block: (data: Map<String, Any>, isLast: Boolean) -> Unit
 ): Boolean {
-  val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
-    rootUri,
-    DocumentsContract.getTreeDocumentId(rootUri)
-  )
 
-  /// Keep track of our directory hierarchy
+  var childrenUritmp: Uri?;
+
+  // https://stackoverflow.com/questions/41096332/issues-traversing-through-directory-hierarchy-with-android-storage-access-framew
+  // Credit to user: Foobnix
+  // If we were to always use getTreeDocumentId, it would apparently always only list the top level folder even if you request a subfolder
+  try {
+      // for childs and sub child dirs
+       childrenUritmp = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getDocumentId(rootUri));
+  } catch (e: Exception) {
+      // for parent dir
+       childrenUritmp = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getTreeDocumentId(rootUri));
+  }
+
+  // TODO(@EternityForest, @lakscastro): Remove this variable and use: `val childrenUri = try { ... } catch (e: Exception) { ... }`
+  val childrenUri = childrenUritmp as Uri;
+
+  // Keep track of our directory hierarchy
   val dirNodes = mutableListOf<Pair<Uri, Uri>>(Pair(rootUri, childrenUri))
 
   while (dirNodes.isNotEmpty()) {
@@ -187,7 +201,7 @@ fun traverseDirectoryEntries(
     val cursor = contentResolver.query(
       children,
       projection,
-      /// TODO: Add support for `selection`, `selectionArgs` and `sortOrder`
+      // TODO: Add support for `selection`, `selectionArgs` and `sortOrder`
       null,
       null,
       null
@@ -267,7 +281,7 @@ fun bitmapToBase64(bitmap: Bitmap): String {
 }
 
 /**
- * Trick to verify if is a tree URi even not in API 26+
+ * Trick to verify if is a tree URI even not in API 26+
  */
 fun isTreeUri(uri: Uri): Boolean {
   if (Build.VERSION.SDK_INT >= API_24) {
