@@ -97,10 +97,6 @@ class DocumentFile {
   /// {@macro sharedstorage.saf.canWrite}
   Future<bool?> canWrite() async => saf.canWrite(uri);
 
-  /// {@macro sharedstorage.saf.listFiles}
-  Stream<PartialDocumentFile> listFiles(List<DocumentFileColumn> columns) =>
-      saf.listFiles(uri, columns: columns);
-
   /// {@macro sharedstorage.saf.exists}
   Future<bool?> exists() => saf.exists(uri);
 

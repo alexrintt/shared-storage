@@ -50,7 +50,12 @@ class _PersistedUriCardState extends State<PersistedUriCard> {
   void _openListFilesPage() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FolderFileList(uri: widget.permissionUri.uri),
+        builder: (context) => FolderFileList(
+          uri: widget.permissionUri.uri,
+
+          rootUri: widget.permissionUri
+              .uri, // Since the persisted uri is the root uri itself we use the same uri for both: target listing uri and the granted root uri
+        ),
       ),
     );
   }

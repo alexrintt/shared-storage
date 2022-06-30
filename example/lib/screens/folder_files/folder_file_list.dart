@@ -10,9 +10,14 @@ import '../../widgets/simple_card.dart';
 import 'folder_file_card.dart';
 
 class FolderFileList extends StatefulWidget {
-  const FolderFileList({Key? key, required this.uri}) : super(key: key);
+  const FolderFileList({
+    Key? key,
+    required this.uri,
+    required this.rootUri,
+  }) : super(key: key);
 
   final Uri uri;
+  final Uri rootUri;
 
   @override
   _FolderFileListState createState() => _FolderFileListState();
@@ -153,18 +158,21 @@ class _FolderFileListState extends State<FolderFileList> {
       return setState(() => _files = []);
     }
 
-    final documentUri = await widget.uri.toDocumentFile();
+    final folderUri = widget.uri;
 
     const columns = [
       DocumentFileColumn.displayName,
       DocumentFileColumn.size,
       DocumentFileColumn.lastModified,
-      // Optional column (this can't be removed because it's required to list files)
-      DocumentFileColumn.id,
       DocumentFileColumn.mimeType,
+      // The column below is a optional column (this can't be removed because it's required to list files)
+      DocumentFileColumn.id,
     ];
 
-    _listener = documentUri?.listFiles(columns).listen(
+    final fileListStream =
+        listFiles(folderUri, columns: columns, rootUri: widget.rootUri);
+
+    _listener = fileListStream.listen(
       (file) {
         /// Append new files to the current file list
         _files = [...?_files, file];

@@ -75,10 +75,10 @@ class _FolderFileCardState extends State<FolderFileCard> {
     super.dispose();
   }
 
-  void _openFolderFileListPage(Uri uri) {
+  void _openFolderFileListPage(Uri uri, {required Uri rootUri}) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FolderFileList(uri: uri),
+        builder: (context) => FolderFileList(uri: uri, rootUri: rootUri),
       ),
     );
   }
@@ -164,12 +164,10 @@ class _FolderFileCardState extends State<FolderFileCard> {
                 'Open Directory',
                 onTap: () async {
                   if (_isDirectory) {
-                    final uri = await buildTreeDocumentUri(
-                      file.metadata!.rootUri!.authority,
-                      file.data![DocumentFileColumn.id] as String,
+                    _openFolderFileListPage(
+                      file.metadata!.uri!,
+                      rootUri: file.metadata!.rootUri!,
                     );
-
-                    _openFolderFileListPage(uri!);
                   }
                 },
               ),

@@ -11,6 +11,8 @@ const val EXCEPTION_CANT_OPEN_DOCUMENT_FILE =
 const val EXCEPTION_ACTIVITY_NOT_FOUND = "EXCEPTION_ACTIVITY_NOT_FOUND"
 const val EXCEPTION_CANT_OPEN_FILE_DUE_SECURITY_POLICY =
   "EXCEPTION_CANT_OPEN_FILE_DUE_SECURITY_POLICY"
+const val EXCEPTION_INVALID_ARGUMENTS =
+  "EXCEPTION_INVALID_ARGUMENTS"
 
 /**
  * Others
@@ -41,16 +43,12 @@ const val FIND_FILE = "findFile"
 const val COPY = "copy"
 const val LAST_MODIFIED = "lastModified"
 const val GET_DOCUMENT_THUMBNAIL = "getDocumentThumbnail"
-const val BUILD_DOCUMENT_URI_USING_TREE = "buildDocumentUriUsingTree"
-const val BUILD_DOCUMENT_URI = "buildDocumentUri"
-const val BUILD_TREE_DOCUMENT_URI = "buildTreeDocumentUri"
 const val CHILD = "child"
 
 /**
  * Available DocumentFileHelper Method Channel APIs
  */
 const val OPEN_DOCUMENT_FILE = "openDocumentFile"
-const val GET_REAL_PATH_FROM_URI = "getRealPathFromUri"
 
 /**
  * Available Event Channels APIs

@@ -68,6 +68,39 @@ fun documentFromUri(
 }
 
 /**
+ * Generate the `DocumentFile` reference of a child
+ * document (subfolder of a granted Uri) from URI `uri`
+ */
+@RequiresApi(API_21)
+fun childDocumentFromUri(
+  context: Context,
+  uri: Uri
+): DocumentFile? {
+  val documentId = DocumentsContract.getDocumentId(uri)
+  val documentUri = if (isTreeUri(uri)) {
+    DocumentsContract.buildDocumentUri(uri.authority, documentId)
+  } else {
+    DocumentsContract.buildDocumentUri(uri.authority, documentId)
+  }
+
+  return if (isTreeUri(uri)) {
+    DocumentFile.fromTreeUri(context, uri)
+  } else {
+    DocumentFile.fromSingleUri(context, uri)
+  }
+}
+
+/**
+ * Generate the `DocumentFile` reference of a child
+ * document (subfolder of a granted Uri) from URI `uri`
+ */
+@RequiresApi(API_21)
+fun childDocumentFromUri(
+  context: Context,
+  uri: String
+): DocumentFile? = childDocumentFromUri(context, Uri.parse(uri))
+
+/**
  * Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
  * from plugin results, like:
  * ```dart
@@ -158,30 +191,19 @@ fun closeQuietly(closeable: Closeable?) {
 @RequiresApi(API_21)
 fun traverseDirectoryEntries(
   contentResolver: ContentResolver,
-  rootUri: Uri,
+  targetUri: Uri,
   columns: Array<String>,
   rootOnly: Boolean,
+  rootUri: Uri,
   block: (data: Map<String, Any>, isLast: Boolean) -> Unit
 ): Boolean {
-
-  var childrenUritmp: Uri?;
-
-  // https://stackoverflow.com/questions/41096332/issues-traversing-through-directory-hierarchy-with-android-storage-access-framew
-  // Credit to user: Foobnix
-  // If we were to always use getTreeDocumentId, it would apparently always only list the top level folder even if you request a subfolder
-  try {
-      // for childs and sub child dirs
-       childrenUritmp = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getDocumentId(rootUri));
-  } catch (e: Exception) {
-      // for parent dir
-       childrenUritmp = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getTreeDocumentId(rootUri));
-  }
-
-  // TODO(@EternityForest, @lakscastro): Remove this variable and use: `val childrenUri = try { ... } catch (e: Exception) { ... }`
-  val childrenUri = childrenUritmp as Uri;
+  var childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
+    rootUri,
+    DocumentsContract.getDocumentId(targetUri)
+  )
 
   // Keep track of our directory hierarchy
-  val dirNodes = mutableListOf<Pair<Uri, Uri>>(Pair(rootUri, childrenUri))
+  val dirNodes = mutableListOf(Pair(targetUri, childrenUri))
 
   while (dirNodes.isNotEmpty()) {
     val (parent, children) = dirNodes.removeAt(0)
@@ -239,7 +261,7 @@ fun traverseDirectoryEntries(
 
         if (isDirectory == true && !rootOnly) {
           val nextChildren =
-            DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
+            DocumentsContract.buildChildDocumentsUriUsingTree(targetUri, id)
 
           val nextNode = Pair(uri, nextChildren)
 
@@ -248,7 +270,7 @@ fun traverseDirectoryEntries(
 
         block(
           createCursorRowMap(
-            rootUri,
+            targetUri,
             parent,
             uri,
             data,

@@ -13,7 +13,8 @@ import io.lakscastro.sharedstorage.plugin.API_21
 import io.lakscastro.sharedstorage.plugin.ActivityListener
 import io.lakscastro.sharedstorage.plugin.Listenable
 import io.lakscastro.sharedstorage.plugin.notSupported
-import io.lakscastro.sharedstorage.storageaccessframework.lib.*
+import io.lakscastro.sharedstorage.storageaccessframework.lib.GET_DOCUMENT_THUMBNAIL
+import io.lakscastro.sharedstorage.storageaccessframework.lib.bitmapToBase64
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,53 +52,17 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
 
               val data =
                   mapOf(
-                      "base64" to base64,
-                      "uri" to "$uri",
-                      "width" to bitmap.width,
-                      "height" to bitmap.height,
-                      "byteCount" to bitmap.byteCount,
-                      "density" to bitmap.density
+                    "base64" to base64,
+                    "uri" to "$uri",
+                    "width" to bitmap.width,
+                    "height" to bitmap.height,
+                    "byteCount" to bitmap.byteCount,
+                    "density" to bitmap.density
                   )
 
               launch(Dispatchers.Main) { result.success(data) }
             }
           }
-        } else {
-          result.notSupported(call.method, API_21)
-        }
-      }
-      BUILD_DOCUMENT_URI_USING_TREE -> {
-        val treeUri = Uri.parse(call.argument<String>("treeUri"))
-        val documentId = call.argument<String>("documentId")
-
-        if (Build.VERSION.SDK_INT >= API_21) {
-          val documentUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, documentId)
-
-          result.success("$documentUri")
-        } else {
-          result.notImplemented()
-        }
-      }
-      BUILD_DOCUMENT_URI -> {
-        val authority = call.argument<String>("authority")
-        val documentId = call.argument<String>("documentId")
-
-        if (Build.VERSION.SDK_INT >= API_21) {
-          val documentUri = DocumentsContract.buildDocumentUri(authority, documentId)
-
-          result.success("$documentUri")
-        } else {
-          result.notSupported(call.method, API_21)
-        }
-      }
-      BUILD_TREE_DOCUMENT_URI -> {
-        val authority = call.argument<String>("authority")
-        val documentId = call.argument<String>("documentId")
-
-        if (Build.VERSION.SDK_INT >= API_21) {
-          val treeDocumentUri = DocumentsContract.buildTreeDocumentUri(authority, documentId)
-
-          result.success("$treeDocumentUri")
         } else {
           result.notSupported(call.method, API_21)
         }

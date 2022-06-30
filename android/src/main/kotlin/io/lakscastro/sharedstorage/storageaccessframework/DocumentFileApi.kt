@@ -14,13 +14,13 @@ import io.lakscastro.sharedstorage.ROOT_CHANNEL
 import io.lakscastro.sharedstorage.SharedStoragePlugin
 import io.lakscastro.sharedstorage.plugin.*
 import io.lakscastro.sharedstorage.storageaccessframework.lib.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 /**
  * Aimed to implement strictly only the APIs already available from the native and original
@@ -75,57 +75,73 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             )
           }
       PERSISTED_URI_PERMISSIONS ->
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            persistedUriPermissions(result)
-          }
+        persistedUriPermissions(result)
       RELEASE_PERSISTABLE_URI_PERMISSION ->
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            releasePersistableUriPermission(result, call.argument<String?>("uri") as String)
-          }
+        releasePersistableUriPermission(
+          result,
+          call.argument<String?>("uri") as String
+        )
       FROM_TREE_URI ->
-          if (Build.VERSION.SDK_INT >= API_21) {
-            result.success(
-                createDocumentFileMap(
-                    documentFromUri(plugin.context, call.argument<String?>("uri") as String)
-                )
+        if (Build.VERSION.SDK_INT >= API_21) {
+          result.success(
+            createDocumentFileMap(
+              documentFromUri(
+                plugin.context,
+                call.argument<String?>("uri") as String
+              )
             )
-          }
+          )
+        }
       CAN_WRITE ->
-          if (Build.VERSION.SDK_INT >= API_21) {
-            result.success(
-                documentFromUri(plugin.context, call.argument<String?>("uri") as String)?.canWrite()
-            )
-          }
+        if (Build.VERSION.SDK_INT >= API_21) {
+          result.success(
+            documentFromUri(
+              plugin.context,
+              call.argument<String?>("uri") as String
+            )?.canWrite()
+          )
+        }
       CAN_READ ->
-          if (Build.VERSION.SDK_INT >= API_21) {
-            val uri = call.argument<String?>("uri") as String
+        if (Build.VERSION.SDK_INT >= API_21) {
+          val uri = call.argument<String?>("uri") as String
 
-            result.success(documentFromUri(plugin.context, uri)?.canRead())
-          }
+          result.success(documentFromUri(plugin.context, uri)?.canRead())
+        }
       LENGTH ->
           if (Build.VERSION.SDK_INT >= API_21) {
             result.success(
-                documentFromUri(plugin.context, call.argument<String?>("uri") as String)?.length()
+              documentFromUri(
+                plugin.context,
+                call.argument<String?>("uri") as String
+              )?.length()
             )
           }
       EXISTS ->
           if (Build.VERSION.SDK_INT >= API_21) {
             result.success(
-                documentFromUri(plugin.context, call.argument<String?>("uri") as String)?.exists()
+              documentFromUri(
+                plugin.context,
+                call.argument<String?>("uri") as String
+              )?.exists()
             )
           }
       DELETE ->
           if (Build.VERSION.SDK_INT >= API_21) {
             result.success(
-                documentFromUri(plugin.context, call.argument<String?>("uri") as String)?.delete()
+              documentFromUri(
+                plugin.context,
+                call.argument<String?>("uri") as String
+              )?.delete()
             )
           }
       LAST_MODIFIED ->
           if (Build.VERSION.SDK_INT >= API_21) {
-            result.success(
-                documentFromUri(plugin.context, call.argument<String?>("uri") as String)
-                    ?.lastModified()
+            val document = documentFromUri(
+              plugin.context,
+              call.argument<String?>("uri") as String
             )
+
+            result.success(document?.lastModified())
           }
       CREATE_DIRECTORY -> {
         if (Build.VERSION.SDK_INT >= API_21) {
@@ -146,7 +162,12 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           val displayName = call.argument<String?>("displayName") as String
 
           result.success(
-              createDocumentFileMap(documentFromUri(plugin.context, uri)?.findFile(displayName))
+            createDocumentFileMap(
+              documentFromUri(
+                plugin.context,
+                uri
+              )?.findFile(displayName)
+            )
           )
         }
       }
@@ -165,9 +186,9 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           }
         } else {
           result.notSupported(
-              RENAME_TO,
-              API_21,
-              mapOf("uri" to "$uri", "destination" to "$destination")
+            RENAME_TO,
+            API_21,
+            mapOf("uri" to "$uri", "destination" to "$destination")
           )
         }
       }
@@ -180,8 +201,13 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
             val success = renameTo(displayName)
 
             result.success(
-                if (success) createDocumentFileMap(documentFromUri(plugin.context, this.uri)!!)
-                else null
+              if (success) createDocumentFileMap(
+                documentFromUri(
+                  plugin.context,
+                  this.uri
+                )!!
+              )
+              else null
             )
           }
         } else {
@@ -235,9 +261,9 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
             if (Build.VERSION.SDK_INT >= API_26) {
               putExtra(
-                  if (Build.VERSION.SDK_INT >= API_26) DocumentsContract.EXTRA_INITIAL_URI
-                  else DOCUMENTS_CONTRACT_EXTRA_INITIAL_URI,
-                  tree?.uri
+                if (Build.VERSION.SDK_INT >= API_26) DocumentsContract.EXTRA_INITIAL_URI
+                else DOCUMENTS_CONTRACT_EXTRA_INITIAL_URI,
+                tree?.uri
               )
             }
           }
@@ -380,7 +406,9 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     eventSink = events
 
     when (args["event"]) {
-      LIST_FILES -> listFilesEvent(eventSink, args)
+      LIST_FILES -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        listFilesEvent(eventSink, args)
+      }
     }
   }
 
@@ -390,31 +418,41 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
    *
    * Useful to read files under a `uri` with a large set of children
    */
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
   private fun listFilesEvent(eventSink: EventChannel.EventSink?, args: Map<*, *>) {
     if (eventSink == null) return
 
-    val document =
-        if (Build.VERSION.SDK_INT >= API_24) {
-          documentFromUri(plugin.context, args["uri"] as String) ?: return
-        } else {
-          null
-        }
+    val columns = args["columns"] as List<*>
+    val rootUri =
+      Uri.parse(args["rootUri"] as String) // Must be a Uri you have access over (granted by OPEN_DOCUMENT_TREE intent)
+    val uri = Uri.parse(args["uri"] as String)
+
+    val documentId = try {
+      DocumentsContract.getDocumentId(uri)
+    } catch (e: IllegalArgumentException) {
+      DocumentsContract.getTreeDocumentId(uri)
+    }
+    val documentUri =
+      DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
+    val document = DocumentFile.fromTreeUri(plugin.context, documentUri)
 
     if (document == null) {
       eventSink.error(
-          EXCEPTION_NOT_SUPPORTED,
-          "Android SDK must be greater or equal than [Build.VERSION_CODES.N]",
-          "Got (Build.VERSION.SDK_INT): ${Build.VERSION.SDK_INT}"
+        EXCEPTION_NOT_SUPPORTED,
+        "Android SDK must be greater or equal than [Build.VERSION_CODES.N]",
+        "Got (Build.VERSION.SDK_INT): ${Build.VERSION.SDK_INT}"
       )
     } else {
-      val columns = args["columns"] as List<*>
-
       if (!document.canRead()) {
         val error = "You cannot read a URI that you don't have read permissions"
 
         Log.d("NO PERMISSION!!!", error)
 
-        eventSink.error(EXCEPTION_MISSING_PERMISSIONS, error, mapOf("uri" to args["uri"]))
+        eventSink.error(
+          EXCEPTION_MISSING_PERMISSIONS,
+          error,
+          mapOf("uri" to args["uri"])
+        )
 
         eventSink.endOfStream()
       } else {
@@ -422,13 +460,14 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           CoroutineScope(Dispatchers.IO).launch {
             try {
               traverseDirectoryEntries(
-                  plugin.context.contentResolver,
-                  rootOnly = true,
-                  rootUri = document.uri,
-                  columns =
-                      columns
-                          .map { parseDocumentFileColumn(parseDocumentFileColumn(it as String)!!) }
-                          .toTypedArray()
+                plugin.context.contentResolver,
+                rootOnly = true,
+                targetUri = document.uri,
+                rootUri = rootUri,
+                columns =
+                columns
+                  .map { parseDocumentFileColumn(parseDocumentFileColumn(it as String)!!) }
+                  .toTypedArray()
               ) { data, _ -> launch(Dispatchers.Main) { eventSink.success(data) } }
             } finally {
               launch(Dispatchers.Main) { eventSink.endOfStream() }
