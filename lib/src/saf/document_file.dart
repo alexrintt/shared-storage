@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 
 import '../common/functional_extender.dart';
-import 'document_file_column.dart';
-import 'partial_document_file.dart';
 import 'saf.dart' as saf;
 
 extension UriDocumentFileUtils on Uri {
