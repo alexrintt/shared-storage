@@ -16,36 +16,6 @@ import java.io.ByteArrayOutputStream
 import java.io.Closeable
 
 /**
- * Helper class to make more easy to handle callbacks using Kotlin syntax
- */
-data class CallbackHandler<T>(
-  var onSuccess: (T.() -> Unit)? = null,
-  var onEnd: (() -> Unit)? = null
-)
-
-/**
- * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
- */
-@RequiresApi(API_21)
-fun documentFromSingleUri(context: Context, uri: String): DocumentFile? =
-  documentFromSingleUri(context, Uri.parse(uri))
-
-/**
- * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
- */
-@RequiresApi(API_21)
-fun documentFromSingleUri(context: Context, uri: Uri): DocumentFile? {
-  val documentUri = DocumentsContract.buildDocumentUri(
-    uri.authority,
-    DocumentsContract.getDocumentId(uri)
-  )
-
-  return DocumentFile.fromSingleUri(context, documentUri)
-}
-
-
-
-/**
  * Generate the `DocumentFile` reference from string `uri`
  */
 @RequiresApi(API_21)
@@ -67,38 +37,6 @@ fun documentFromUri(
   }
 }
 
-/**
- * Generate the `DocumentFile` reference of a child
- * document (subfolder of a granted Uri) from URI `uri`
- */
-@RequiresApi(API_21)
-fun childDocumentFromUri(
-  context: Context,
-  uri: Uri
-): DocumentFile? {
-  val documentId = DocumentsContract.getDocumentId(uri)
-  val documentUri = if (isTreeUri(uri)) {
-    DocumentsContract.buildDocumentUri(uri.authority, documentId)
-  } else {
-    DocumentsContract.buildDocumentUri(uri.authority, documentId)
-  }
-
-  return if (isTreeUri(uri)) {
-    DocumentFile.fromTreeUri(context, uri)
-  } else {
-    DocumentFile.fromSingleUri(context, uri)
-  }
-}
-
-/**
- * Generate the `DocumentFile` reference of a child
- * document (subfolder of a granted Uri) from URI `uri`
- */
-@RequiresApi(API_21)
-fun childDocumentFromUri(
-  context: Context,
-  uri: String
-): DocumentFile? = childDocumentFromUri(context, Uri.parse(uri))
 
 /**
  * Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
@@ -197,7 +135,7 @@ fun traverseDirectoryEntries(
   rootUri: Uri,
   block: (data: Map<String, Any>, isLast: Boolean) -> Unit
 ): Boolean {
-  var childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
+  val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
     rootUri,
     DocumentsContract.getDocumentId(targetUri)
   )

@@ -3,25 +3,18 @@ package io.lakscastro.sharedstorage.storageaccessframework.lib
 /**
  * Exceptions
  */
-const val EXCEPTION_PARENT_DOCUMENT_MUST_BE_DIRECTORY =
-  "EXCEPTION_PARENT_DOCUMENT_MUST_BE_DIRECTORY"
 const val EXCEPTION_MISSING_PERMISSIONS = "EXCEPTION_MISSING_PERMISSIONS"
 const val EXCEPTION_CANT_OPEN_DOCUMENT_FILE =
   "EXCEPTION_CANT_OPEN_DOCUMENT_FILE"
 const val EXCEPTION_ACTIVITY_NOT_FOUND = "EXCEPTION_ACTIVITY_NOT_FOUND"
 const val EXCEPTION_CANT_OPEN_FILE_DUE_SECURITY_POLICY =
   "EXCEPTION_CANT_OPEN_FILE_DUE_SECURITY_POLICY"
-const val EXCEPTION_INVALID_ARGUMENTS =
-  "EXCEPTION_INVALID_ARGUMENTS"
 
 /**
  * Others
  */
 const val DOCUMENTS_CONTRACT_EXTRA_INITIAL_URI =
   "android.provider.extra.INITIAL_URI"
-
-const val PLUGIN_FILE_PROVIDER_PACKAGE_NAME =
-  "fileprovider.io.lakscastro.sharedstorage.storageaccessframework.lib"
 
 /**
  * Available DocumentFile Method Channel APIs
