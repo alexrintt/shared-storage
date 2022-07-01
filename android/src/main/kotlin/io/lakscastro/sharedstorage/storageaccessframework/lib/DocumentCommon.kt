@@ -83,7 +83,6 @@ fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
  * ```
  */
 fun createCursorRowMap(
-  rootUri: Uri,
   parentUri: Uri,
   uri: Uri,
   data: Map<String, Any>,
@@ -105,7 +104,6 @@ fun createCursorRowMap(
     "data" to formattedData,
     "metadata" to mapOf(
       "parentUri" to "$parentUri",
-      "rootUri" to "$rootUri",
       "isDirectory" to isDirectory,
       "uri" to "$uri"
     )
@@ -132,12 +130,22 @@ fun traverseDirectoryEntries(
   targetUri: Uri,
   columns: Array<String>,
   rootOnly: Boolean,
-  rootUri: Uri,
   block: (data: Map<String, Any>, isLast: Boolean) -> Unit
 ): Boolean {
+  val documentId = try {
+    DocumentsContract.getDocumentId(targetUri)
+  } catch(e: IllegalArgumentException) {
+    DocumentsContract.getTreeDocumentId(targetUri)
+  }
+  val treeDocumentId = DocumentsContract.getTreeDocumentId(targetUri)
+
+  val rootUri = DocumentsContract.buildTreeDocumentUri(
+    targetUri.authority,
+    treeDocumentId
+  )
   val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
     rootUri,
-    DocumentsContract.getDocumentId(targetUri)
+    documentId
   )
 
   // Keep track of our directory hierarchy
@@ -191,7 +199,7 @@ fun traverseDirectoryEntries(
         val isDirectory = if (mimeType != null) isDirectory(mimeType) else null
 
         val uri = DocumentsContract.buildDocumentUriUsingTree(
-          parent,
+          rootUri,
           DocumentsContract.getDocumentId(
             DocumentsContract.buildDocumentUri(parent.authority, id)
           )
@@ -208,7 +216,6 @@ fun traverseDirectoryEntries(
 
         block(
           createCursorRowMap(
-            targetUri,
             parent,
             uri,
             data,

@@ -423,18 +423,8 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     if (eventSink == null) return
 
     val columns = args["columns"] as List<*>
-    val rootUri =
-      Uri.parse(args["rootUri"] as String) // Must be a Uri you have access over (granted by OPEN_DOCUMENT_TREE intent)
     val uri = Uri.parse(args["uri"] as String)
-
-    val documentId = try {
-      DocumentsContract.getDocumentId(uri)
-    } catch (e: IllegalArgumentException) {
-      DocumentsContract.getTreeDocumentId(uri)
-    }
-    val documentUri =
-      DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
-    val document = DocumentFile.fromTreeUri(plugin.context, documentUri)
+    val document = DocumentFile.fromTreeUri(plugin.context, uri)
 
     if (document == null) {
       eventSink.error(
@@ -463,7 +453,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
                 plugin.context.contentResolver,
                 rootOnly = true,
                 targetUri = document.uri,
-                rootUri = rootUri,
                 columns =
                 columns
                   .map { parseDocumentFileColumn(parseDocumentFileColumn(it as String)!!) }

@@ -13,11 +13,9 @@ class FolderFileList extends StatefulWidget {
   const FolderFileList({
     Key? key,
     required this.uri,
-    required this.rootUri,
   }) : super(key: key);
 
   final Uri uri;
-  final Uri rootUri;
 
   @override
   _FolderFileListState createState() => _FolderFileListState();
@@ -169,8 +167,7 @@ class _FolderFileListState extends State<FolderFileList> {
       DocumentFileColumn.id,
     ];
 
-    final fileListStream =
-        listFiles(folderUri, columns: columns, rootUri: widget.rootUri);
+    final fileListStream = listFiles(folderUri, columns: columns);
 
     _listener = fileListStream.listen(
       (file) {

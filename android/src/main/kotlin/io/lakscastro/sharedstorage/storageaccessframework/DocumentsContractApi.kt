@@ -31,12 +31,9 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
     when (call.method) {
       GET_DOCUMENT_THUMBNAIL -> {
         if (Build.VERSION.SDK_INT >= API_21) {
-          val rootUri = Uri.parse(call.argument("rootUri"))
-          val documentId = call.argument<String>("documentId")
+          val uri = Uri.parse(call.argument("uri"))
           val width = call.argument<Int>("width")!!
           val height = call.argument<Int>("height")!!
-
-          val uri = DocumentsContract.buildDocumentUriUsingTree(rootUri, documentId)
 
           val bitmap =
               DocumentsContract.getDocumentThumbnail(

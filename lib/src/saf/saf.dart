@@ -102,14 +102,12 @@ Future<bool?> canWrite(Uri uri) async => kDocumentFileChannel
 /// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#getDocumentThumbnail(android.content.ContentResolver,%20android.net.Uri,%20android.graphics.Point,%20android.os.CancellationSignal)).
 /// {@endtemplate}
 Future<DocumentBitmap?> getDocumentThumbnail({
-  required Uri rootUri,
-  required String documentId,
+  required Uri uri,
   required double width,
   required double height,
 }) async {
   final args = <String, dynamic>{
-    'rootUri': '$rootUri',
-    'documentId': documentId,
+    'uri': '$uri',
     'width': width,
     'height': height,
   };
@@ -148,13 +146,11 @@ Future<DocumentBitmap?> getDocumentThumbnail({
 Stream<PartialDocumentFile> listFiles(
   Uri uri, {
   required List<DocumentFileColumn> columns,
-  required Uri rootUri,
 }) {
   final args = <String, dynamic>{
     'uri': '$uri',
     'event': 'listFiles',
     'columns': columns.map((e) => '$e').toList(),
-    'rootUri': '$rootUri',
   };
 
   final onCursorRowResult =

@@ -33,14 +33,12 @@ class _FolderFileCardState extends State<FolderFileCard> {
   Uint8List? imageBytes;
 
   Future<void> _loadThumbnailIfAvailable() async {
-    final rootUri = file.metadata?.rootUri;
-    final documentId = file.data?[DocumentFileColumn.id] as String?;
+    final uri = file.metadata?.uri;
 
-    if (rootUri == null || documentId == null) return;
+    if (uri == null) return;
 
     final bitmap = await getDocumentThumbnail(
-      rootUri: rootUri,
-      documentId: documentId,
+      uri: uri,
       width: _size.width,
       height: _size.height,
     );
@@ -75,10 +73,10 @@ class _FolderFileCardState extends State<FolderFileCard> {
     super.dispose();
   }
 
-  void _openFolderFileListPage(Uri uri, {required Uri rootUri}) {
+  void _openFolderFileListPage(Uri uri) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FolderFileList(uri: uri, rootUri: rootUri),
+        builder: (context) => FolderFileList(uri: uri),
       ),
     );
   }
@@ -153,7 +151,6 @@ class _FolderFileCardState extends State<FolderFileCard> {
             'summary': '${file.data?[DocumentFileColumn.summary]}',
             'id': '${file.data?[DocumentFileColumn.id]}',
             'parentUri': '${file.metadata?.parentUri}',
-            'rootUri': '${file.metadata?.rootUri}',
             'uri': '${file.metadata?.uri}',
           },
         ),
@@ -166,7 +163,6 @@ class _FolderFileCardState extends State<FolderFileCard> {
                   if (_isDirectory) {
                     _openFolderFileListPage(
                       file.metadata!.uri!,
-                      rootUri: file.metadata!.rootUri!,
                     );
                   }
                 },
