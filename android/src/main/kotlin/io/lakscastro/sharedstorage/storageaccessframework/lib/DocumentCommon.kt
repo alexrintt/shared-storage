@@ -16,36 +16,6 @@ import java.io.ByteArrayOutputStream
 import java.io.Closeable
 
 /**
- * Helper class to make more easy to handle callbacks using Kotlin syntax
- */
-data class CallbackHandler<T>(
-  var onSuccess: (T.() -> Unit)? = null,
-  var onEnd: (() -> Unit)? = null
-)
-
-/**
- * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
- */
-@RequiresApi(API_21)
-fun documentFromSingleUri(context: Context, uri: String): DocumentFile? =
-  documentFromSingleUri(context, Uri.parse(uri))
-
-/**
- * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
- */
-@RequiresApi(API_21)
-fun documentFromSingleUri(context: Context, uri: Uri): DocumentFile? {
-  val documentUri = DocumentsContract.buildDocumentUri(
-    uri.authority,
-    DocumentsContract.getDocumentId(uri)
-  )
-
-  return DocumentFile.fromSingleUri(context, documentUri)
-}
-
-
-
-/**
  * Generate the `DocumentFile` reference from string `uri`
  */
 @RequiresApi(API_21)
@@ -66,6 +36,7 @@ fun documentFromUri(
     DocumentFile.fromSingleUri(context, uri)
   }
 }
+
 
 /**
  * Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
@@ -112,7 +83,6 @@ fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
  * ```
  */
 fun createCursorRowMap(
-  rootUri: Uri,
   parentUri: Uri,
   uri: Uri,
   data: Map<String, Any>,
@@ -134,7 +104,6 @@ fun createCursorRowMap(
     "data" to formattedData,
     "metadata" to mapOf(
       "parentUri" to "$parentUri",
-      "rootUri" to "$rootUri",
       "isDirectory" to isDirectory,
       "uri" to "$uri"
     )
@@ -158,30 +127,29 @@ fun closeQuietly(closeable: Closeable?) {
 @RequiresApi(API_21)
 fun traverseDirectoryEntries(
   contentResolver: ContentResolver,
-  rootUri: Uri,
+  targetUri: Uri,
   columns: Array<String>,
   rootOnly: Boolean,
   block: (data: Map<String, Any>, isLast: Boolean) -> Unit
 ): Boolean {
-
-  var childrenUritmp: Uri?;
-
-  // https://stackoverflow.com/questions/41096332/issues-traversing-through-directory-hierarchy-with-android-storage-access-framew
-  // Credit to user: Foobnix
-  // If we were to always use getTreeDocumentId, it would apparently always only list the top level folder even if you request a subfolder
-  try {
-      // for childs and sub child dirs
-       childrenUritmp = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getDocumentId(rootUri));
-  } catch (e: Exception) {
-      // for parent dir
-       childrenUritmp = DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, DocumentsContract.getTreeDocumentId(rootUri));
+  val documentId = try {
+    DocumentsContract.getDocumentId(targetUri)
+  } catch(e: IllegalArgumentException) {
+    DocumentsContract.getTreeDocumentId(targetUri)
   }
+  val treeDocumentId = DocumentsContract.getTreeDocumentId(targetUri)
 
-  // TODO(@EternityForest, @lakscastro): Remove this variable and use: `val childrenUri = try { ... } catch (e: Exception) { ... }`
-  val childrenUri = childrenUritmp as Uri;
+  val rootUri = DocumentsContract.buildTreeDocumentUri(
+    targetUri.authority,
+    treeDocumentId
+  )
+  val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
+    rootUri,
+    documentId
+  )
 
   // Keep track of our directory hierarchy
-  val dirNodes = mutableListOf<Pair<Uri, Uri>>(Pair(rootUri, childrenUri))
+  val dirNodes = mutableListOf(Pair(targetUri, childrenUri))
 
   while (dirNodes.isNotEmpty()) {
     val (parent, children) = dirNodes.removeAt(0)
@@ -231,7 +199,7 @@ fun traverseDirectoryEntries(
         val isDirectory = if (mimeType != null) isDirectory(mimeType) else null
 
         val uri = DocumentsContract.buildDocumentUriUsingTree(
-          parent,
+          rootUri,
           DocumentsContract.getDocumentId(
             DocumentsContract.buildDocumentUri(parent.authority, id)
           )
@@ -239,7 +207,7 @@ fun traverseDirectoryEntries(
 
         if (isDirectory == true && !rootOnly) {
           val nextChildren =
-            DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
+            DocumentsContract.buildChildDocumentsUriUsingTree(targetUri, id)
 
           val nextNode = Pair(uri, nextChildren)
 
@@ -248,7 +216,6 @@ fun traverseDirectoryEntries(
 
         block(
           createCursorRowMap(
-            rootUri,
             parent,
             uri,
             data,
