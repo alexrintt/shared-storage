@@ -4,16 +4,16 @@ import 'package:shared_storage/saf.dart';
 
 import '../../theme/spacing.dart';
 import '../../widgets/light_text.dart';
-import 'persisted_uri_card.dart';
+import 'granted_uri_card.dart';
 
-class PersistedUriList extends StatefulWidget {
-  const PersistedUriList({Key? key}) : super(key: key);
+class GrantedUrisPage extends StatefulWidget {
+  const GrantedUrisPage({Key? key}) : super(key: key);
 
   @override
-  _PersistedUriListState createState() => _PersistedUriListState();
+  _GrantedUrisPageState createState() => _GrantedUrisPageState();
 }
 
-class _PersistedUriListState extends State<PersistedUriList> {
+class _GrantedUrisPageState extends State<GrantedUrisPage> {
   List<UriPermission>? persistedPermissionUris;
 
   @override
@@ -81,7 +81,7 @@ class _PersistedUriListState extends State<PersistedUriList> {
                         _buildNoFolderAllowedYetWarning()
                       else
                         for (final permissionUri in persistedPermissionUris!)
-                          PersistedUriCard(
+                          GrantedUriCard(
                             permissionUri: permissionUri,
                             onChange: _loadPersistedUriPermissions,
                           )

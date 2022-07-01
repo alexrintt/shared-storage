@@ -7,10 +7,10 @@ import '../../theme/spacing.dart';
 import '../../widgets/buttons.dart';
 import '../../widgets/light_text.dart';
 import '../../widgets/simple_card.dart';
-import 'folder_file_card.dart';
+import 'file_explorer_card.dart';
 
-class FolderFileList extends StatefulWidget {
-  const FolderFileList({
+class FileExplorerPage extends StatefulWidget {
+  const FileExplorerPage({
     Key? key,
     required this.uri,
   }) : super(key: key);
@@ -18,10 +18,10 @@ class FolderFileList extends StatefulWidget {
   final Uri uri;
 
   @override
-  _FolderFileListState createState() => _FolderFileListState();
+  _FileExplorerPageState createState() => _FileExplorerPageState();
 }
 
-class _FolderFileListState extends State<FolderFileList> {
+class _FileExplorerPageState extends State<FileExplorerPage> {
   List<PartialDocumentFile>? _files;
 
   late bool _hasPermission;
@@ -91,7 +91,7 @@ class _FolderFileListState extends State<FolderFileList> {
                   (context, index) {
                     final file = _files![index];
 
-                    return FolderFileCard(
+                    return FileExplorerCard(
                       partialFile: file,
                       didUpdateDocument: (document) {
                         if (document == null) {

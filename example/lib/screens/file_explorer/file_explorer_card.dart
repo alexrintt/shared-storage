@@ -9,10 +9,10 @@ import '../../theme/spacing.dart';
 import '../../widgets/buttons.dart';
 import '../../widgets/key_value_text.dart';
 import '../../widgets/simple_card.dart';
-import 'folder_file_list.dart';
+import 'file_explorer_page.dart';
 
-class FolderFileCard extends StatefulWidget {
-  const FolderFileCard({
+class FileExplorerCard extends StatefulWidget {
+  const FileExplorerCard({
     Key? key,
     required this.partialFile,
     required this.didUpdateDocument,
@@ -22,10 +22,10 @@ class FolderFileCard extends StatefulWidget {
   final void Function(PartialDocumentFile?) didUpdateDocument;
 
   @override
-  _FolderFileCardState createState() => _FolderFileCardState();
+  _FileExplorerCardState createState() => _FileExplorerCardState();
 }
 
-class _FolderFileCardState extends State<FolderFileCard> {
+class _FileExplorerCardState extends State<FileExplorerCard> {
   PartialDocumentFile get file => widget.partialFile;
 
   static const _size = Size.square(150);
@@ -58,7 +58,7 @@ class _FolderFileCardState extends State<FolderFileCard> {
   }
 
   @override
-  void didUpdateWidget(covariant FolderFileCard oldWidget) {
+  void didUpdateWidget(covariant FileExplorerCard oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.partialFile.data?[DocumentFileColumn.id] !=
@@ -76,7 +76,7 @@ class _FolderFileCardState extends State<FolderFileCard> {
   void _openFolderFileListPage(Uri uri) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FolderFileList(uri: uri),
+        builder: (context) => FileExplorerPage(uri: uri),
       ),
     );
   }
