@@ -163,7 +163,9 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
       DocumentFileColumn.size,
       DocumentFileColumn.lastModified,
       DocumentFileColumn.mimeType,
-      // The column below is a optional column (this can't be removed because it's required to list files)
+      // The column below is a optional column
+      // you can wether include or not here and
+      // it will be always available on the results
       DocumentFileColumn.id,
     ];
 
