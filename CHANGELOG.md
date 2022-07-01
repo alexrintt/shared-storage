@@ -1,3 +1,22 @@
+## 0.4.0
+
+Fix the current behavior of `listFiles` and `openDocumentFile` API.
+
+### Improvements
+
+- It's now possible to list contents of all subfolders of a granted Uri opened from `openDocumentTree` ([@EternityForest](https://github.com/EternityForest)).
+- Now `ACTION_VIEW` intent builder through `openDocumentFile` API was fixed. So it's now possible to open any file of any kind in third party apps without needing specify the mime type.
+
+### Breaking changes
+
+- Removed Android specific APIs:
+  - `DocumentFile.listFiles` (Now it's only available globally).
+  - `buildDocumentUriUsingTree` removed due high coupling with Android API (Android specific API that are not useful on any other platforms).
+  - `buildDocumentUri` removed due high coupling with Android API (Android specific API that are not useful on any other platforms).
+  - `buildTreeDocumentUri` removed due high coupling with Android API (Android specific API that are not useful on any other platforms).
+- `getDocumentThumbnail` now receives only the `uri` param instead of a `rootUri` and a `documentId`.
+- `rootUri` field from `QueryMetadata` was removed due API ambiguity: there's no such concept in the Android API and this is not required by it to work well.
+
 ## 0.3.1
 
 Minor improvements and bug fixes:

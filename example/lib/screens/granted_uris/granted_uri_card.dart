@@ -7,8 +7,8 @@ import '../../widgets/key_value_text.dart';
 import '../../widgets/simple_card.dart';
 import '../folder_files/folder_file_list.dart';
 
-class PersistedUriCard extends StatefulWidget {
-  const PersistedUriCard({
+class GrantedUriCard extends StatefulWidget {
+  const GrantedUriCard({
     Key? key,
     required this.permissionUri,
     required this.onChange,
@@ -18,10 +18,10 @@ class PersistedUriCard extends StatefulWidget {
   final VoidCallback onChange;
 
   @override
-  _PersistedUriCardState createState() => _PersistedUriCardState();
+  _GrantedUriCardState createState() => _GrantedUriCardState();
 }
 
-class _PersistedUriCardState extends State<PersistedUriCard> {
+class _GrantedUriCardState extends State<GrantedUriCard> {
   Future<void> _appendSampleFile(Uri parentUri) async {
     /// Create a new file inside the `parentUri`
     final documentFile = await parentUri.toDocumentFile();

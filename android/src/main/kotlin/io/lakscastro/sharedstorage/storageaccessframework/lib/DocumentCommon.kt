@@ -16,34 +16,6 @@ import java.io.ByteArrayOutputStream
 import java.io.Closeable
 
 /**
- * Helper class to make more easy to handle callbacks using Kotlin syntax
- */
-data class CallbackHandler<T>(
-  var onSuccess: (T.() -> Unit)? = null,
-  var onEnd: (() -> Unit)? = null
-)
-
-/**
- * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
- */
-@RequiresApi(API_21)
-fun documentFromSingleUri(context: Context, uri: String): DocumentFile? =
-  documentFromSingleUri(context, Uri.parse(uri))
-
-/**
- * Generate the `DocumentFile` reference from string `uri` (Single `DocumentFile`)
- */
-@RequiresApi(API_21)
-fun documentFromSingleUri(context: Context, uri: Uri): DocumentFile? {
-  val documentUri = DocumentsContract.buildDocumentUri(
-    uri.authority,
-    DocumentsContract.getDocumentId(uri)
-  )
-
-  return DocumentFile.fromSingleUri(context, documentUri)
-}
-
-/**
  * Generate the `DocumentFile` reference from string `uri`
  */
 @RequiresApi(API_21)
@@ -64,6 +36,7 @@ fun documentFromUri(
     DocumentFile.fromSingleUri(context, uri)
   }
 }
+
 
 /**
  * Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
@@ -110,7 +83,6 @@ fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
  * ```
  */
 fun createCursorRowMap(
-  rootUri: Uri,
   parentUri: Uri,
   uri: Uri,
   data: Map<String, Any>,
@@ -132,7 +104,6 @@ fun createCursorRowMap(
     "data" to formattedData,
     "metadata" to mapOf(
       "parentUri" to "$parentUri",
-      "rootUri" to "$rootUri",
       "isDirectory" to isDirectory,
       "uri" to "$uri"
     )
@@ -156,18 +127,29 @@ fun closeQuietly(closeable: Closeable?) {
 @RequiresApi(API_21)
 fun traverseDirectoryEntries(
   contentResolver: ContentResolver,
-  rootUri: Uri,
+  targetUri: Uri,
   columns: Array<String>,
   rootOnly: Boolean,
   block: (data: Map<String, Any>, isLast: Boolean) -> Unit
 ): Boolean {
+  val documentId = try {
+    DocumentsContract.getDocumentId(targetUri)
+  } catch(e: IllegalArgumentException) {
+    DocumentsContract.getTreeDocumentId(targetUri)
+  }
+  val treeDocumentId = DocumentsContract.getTreeDocumentId(targetUri)
+
+  val rootUri = DocumentsContract.buildTreeDocumentUri(
+    targetUri.authority,
+    treeDocumentId
+  )
   val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(
     rootUri,
-    DocumentsContract.getTreeDocumentId(rootUri)
+    documentId
   )
 
-  /// Keep track of our directory hierarchy
-  val dirNodes = mutableListOf<Pair<Uri, Uri>>(Pair(rootUri, childrenUri))
+  // Keep track of our directory hierarchy
+  val dirNodes = mutableListOf(Pair(targetUri, childrenUri))
 
   while (dirNodes.isNotEmpty()) {
     val (parent, children) = dirNodes.removeAt(0)
@@ -187,7 +169,7 @@ fun traverseDirectoryEntries(
     val cursor = contentResolver.query(
       children,
       projection,
-      /// TODO: Add support for `selection`, `selectionArgs` and `sortOrder`
+      // TODO: Add support for `selection`, `selectionArgs` and `sortOrder`
       null,
       null,
       null
@@ -217,7 +199,7 @@ fun traverseDirectoryEntries(
         val isDirectory = if (mimeType != null) isDirectory(mimeType) else null
 
         val uri = DocumentsContract.buildDocumentUriUsingTree(
-          parent,
+          rootUri,
           DocumentsContract.getDocumentId(
             DocumentsContract.buildDocumentUri(parent.authority, id)
           )
@@ -225,7 +207,7 @@ fun traverseDirectoryEntries(
 
         if (isDirectory == true && !rootOnly) {
           val nextChildren =
-            DocumentsContract.buildChildDocumentsUriUsingTree(rootUri, id)
+            DocumentsContract.buildChildDocumentsUriUsingTree(targetUri, id)
 
           val nextNode = Pair(uri, nextChildren)
 
@@ -234,7 +216,6 @@ fun traverseDirectoryEntries(
 
         block(
           createCursorRowMap(
-            rootUri,
             parent,
             uri,
             data,
@@ -267,7 +248,7 @@ fun bitmapToBase64(bitmap: Bitmap): String {
 }
 
 /**
- * Trick to verify if is a tree URi even not in API 26+
+ * Trick to verify if is a tree URI even not in API 26+
  */
 fun isTreeUri(uri: Uri): Boolean {
   if (Build.VERSION.SDK_INT >= API_24) {

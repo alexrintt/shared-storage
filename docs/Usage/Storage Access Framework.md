@@ -71,7 +71,7 @@ This method list files lazily **over a granted uri:**
 > **Note** `DocumentFileColumn.id` is optional. It is required to fetch the file list from native API. So it is enabled regardless if you include this column or not. And this applies only to this API (`listFiles`).
 
 ```dart
-/// *Must* be a granted uri from `openDocumentTree`
+/// *Must* be a granted uri from `openDocumentTree`, or a URI representing a child under such a granted uri.
 final Uri myGrantedUri = ...
 final DocumentFile? documentFileOfMyGrantedUri = await myGrantedUri.toDocumentFile();
 
@@ -319,56 +319,6 @@ const List<DocumentFileColumn> columns = <DocumentFileColumn>[
 ];
 
 final Stream<PartialDocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.listFiles(columns);
-```
-
-### <samp>buildDocumentUriUsingTree</samp>
-
-<samp>Mirror of [`DocumentsContract.buildDocumentUriUsingTree`](<https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUriUsingTree(android.net.Uri,%20java.lang.String)>)</samp>
-
-This is typically used to access documents under a user-selected directory tree, since it doesn't require the user to separately confirm each new document access.
-
-For details refer to the [original docs](<https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUriUsingTree(android.net.Uri,%20java.lang.String)>).
-
-```dart
-final Uri treeUri = ...
-
-final PartialDocumentFile partialDocumentFile = ...
-
-final String documentId = partialFile.data![DocumentFileColumn.id]!;
-
-final Uri? documentUri = await buildDocumentUriUsingTree(treeUri, documentId);
-```
-
-### <samp>buildDocumentUri</samp>
-
-<samp>Mirror of [`DocumentsContract.buildDocumentUri`](<https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri(java.lang.String,%20java.lang.String)>)</samp>
-
-Less common method. Use it when you need to (e.g some SAF tutorial/API point to this method or you want a custom authority when building the document file).
-
-For details refer to the [original docs](<https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri(java.lang.String,%20java.lang.String)>).
-
-```dart
-final String customAuthority = ...
-final String documentId = ...
-
-final Uri? documentUri = await buildDocumentUri(customAuthority, documentId);
-```
-
-### <samp>buildTreeDocumentUri</samp>
-
-<samp>Mirror of [`DocumentsContract.buildTreeDocumentUri`](<https://developer.android.com/reference/android/provider/DocumentsContract#buildTreeDocumentUri(java.lang.String,%20java.lang.String)>)</samp>
-
-Less common method. Use it when you need to (e.g some SAF tutorial/API point to this method or you want a custom authority when building the document file).
-
-Build URI representing access to descendant documents of the given [`Document#COLUMN_DOCUMENT_ID`](https://developer.android.com/reference/android/provider/DocumentsContract.Document#COLUMN_DOCUMENT_ID).
-
-For details refer to the [original docs](<https://developer.android.com/reference/android/provider/DocumentsContract#buildTreeDocumentUri(java.lang.String,%20java.lang.String)>).
-
-```dart
-final String customAuthority = ...
-final String documentId = ...
-
-final Uri? documentUri = await buildDocumentUri(customAuthority, documentId);
 ```
 
 ### <samp>delete</samp>

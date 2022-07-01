@@ -65,7 +65,9 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/758047?v=4",
       "profile": "https://eternityforest.com",
       "contributions": [
-        "bug"
+        "bug",
+        "code",
+        "doc"
       ]
     }
   ],

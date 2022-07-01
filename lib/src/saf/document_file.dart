@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 
 import '../common/functional_extender.dart';
-import 'document_file_column.dart';
-import 'partial_document_file.dart';
 import 'saf.dart' as saf;
 
 extension UriDocumentFileUtils on Uri {
@@ -96,10 +94,6 @@ class DocumentFile {
 
   /// {@macro sharedstorage.saf.canWrite}
   Future<bool?> canWrite() async => saf.canWrite(uri);
-
-  /// {@macro sharedstorage.saf.listFiles}
-  Stream<PartialDocumentFile> listFiles(List<DocumentFileColumn> columns) =>
-      saf.listFiles(uri, columns: columns);
 
   /// {@macro sharedstorage.saf.exists}
   Future<bool?> exists() => saf.exists(uri);

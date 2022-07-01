@@ -102,14 +102,12 @@ Future<bool?> canWrite(Uri uri) async => kDocumentFileChannel
 /// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#getDocumentThumbnail(android.content.ContentResolver,%20android.net.Uri,%20android.graphics.Point,%20android.os.CancellationSignal)).
 /// {@endtemplate}
 Future<DocumentBitmap?> getDocumentThumbnail({
-  required Uri rootUri,
-  required String documentId,
+  required Uri uri,
   required double width,
   required double height,
 }) async {
   final args = <String, dynamic>{
-    'rootUri': '$rootUri',
-    'documentId': documentId,
+    'uri': '$uri',
     'width': width,
     'height': height,
   };
@@ -172,63 +170,6 @@ Stream<PartialDocumentFile> listFiles(
 /// {@endtemplate}
 Future<bool?> exists(Uri uri) async => kDocumentFileChannel
     .invokeMethod<bool>('exists', <String, String>{'uri': '$uri'});
-
-/// {@template sharedstorage.saf.buildDocumentUriUsingTree}
-/// Equivalent to `DocumentsContract.buildDocumentUriUsingTree`.
-///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUriUsingTree%28android.net.Uri,%20java.lang.String%29).
-/// {@endtemplate}
-Future<Uri?> buildDocumentUriUsingTree(Uri treeUri, String documentId) async {
-  final args = <String, String>{
-    'treeUri': '$treeUri',
-    'documentId': documentId,
-  };
-
-  final uri = await kDocumentsContractChannel.invokeMethod<String>(
-    'buildDocumentUriUsingTree',
-    args,
-  );
-
-  return uri?.apply((u) => Uri.parse(u));
-}
-
-/// {@template sharedstorage.saf.buildDocumentUri}
-/// Equivalent to `DocumentsContract.buildDocumentUri`.
-///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29).
-/// {@endtemplate}
-Future<Uri?> buildDocumentUri(String authority, String documentId) async {
-  final args = <String, String>{
-    'authority': authority,
-    'documentId': documentId,
-  };
-
-  final uri = await kDocumentsContractChannel.invokeMethod<String>(
-    'buildDocumentUri',
-    args,
-  );
-
-  return uri?.apply((u) => Uri.parse(u));
-}
-
-/// {@template sharedstorage.saf.buildDocumentUri}
-/// Equivalent to `DocumentsContract.buildDocumentUri`.
-///
-/// [Refer to details](https://developer.android.com/reference/android/provider/DocumentsContract#buildDocumentUri%28java.lang.String,%20java.lang.String%29).
-/// {@endtemplate}
-Future<Uri?> buildTreeDocumentUri(String authority, String documentId) async {
-  final args = <String, String>{
-    'authority': authority,
-    'documentId': documentId,
-  };
-
-  final uri = await kDocumentsContractChannel.invokeMethod<String>(
-    'buildTreeDocumentUri',
-    args,
-  );
-
-  return uri?.apply((u) => Uri.parse(u));
-}
 
 /// {@template sharedstorage.saf.delete}
 /// Equivalent to `DocumentFile.delete`.
