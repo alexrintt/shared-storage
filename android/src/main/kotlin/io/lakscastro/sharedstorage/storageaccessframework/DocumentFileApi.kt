@@ -418,7 +418,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
    *
    * Useful to read files under a `uri` with a large set of children
    */
-  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
   private fun listFilesEvent(eventSink: EventChannel.EventSink?, args: Map<*, *>) {
     if (eventSink == null) return
 
