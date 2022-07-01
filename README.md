@@ -22,11 +22,13 @@
 
 ## Documentation
 
-#### See the website for [documentation](https://lakscastro.github.io/shared-storage)
+See the website for [documentation](https://lakscastro.github.io/shared-storage).
 
 All documentation is also available under `/docs` to each released version which is the data source of the website.
 
 You can contribute to the documentation by just editing these files through the GitHub web editor!
+
+To check all ways you can contribute to this package see [Contributing/Ways to contribute](https://lakscastro.github.io/shared-storage/Contributing/Ways%20to%20contribute/).
 
 Latest changes are available on `master` branch and the actual latest published package version lives under `release` branch.
 
