@@ -4,8 +4,8 @@ on:
   pull_request:
     types: [opened, reopened, review_requested]
     branches:
-      - "release/**"
-      - "master/**"
+      - "release"
+      - "master"
   push:
     branches:
       - master
@@ -22,10 +22,6 @@ jobs:
           flutter-version: "2.10.0"
           channel: "stable"
       - run: flutter --version
-      - name: Checkout to target branch
-        run: |
-          git fetch
-          git checkout ${{ github.ref_name }}
       - name: Fetch packages
         run: flutter pub get
 

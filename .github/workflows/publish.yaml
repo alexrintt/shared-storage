@@ -8,6 +8,7 @@ on:
   push:
     branches:
       - release
+      - master
 
 jobs:
   publish:
@@ -16,11 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
-
-      - name: Checkout to target branch
-        run: |
-          git fetch
-          git checkout ${{ github.ref_name }}
 
       - name: Run static dart analysis with fatal infos
         run: dart analyze --fatal-infos
