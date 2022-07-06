@@ -1,5 +1,9 @@
 name: Publish new plugin version
 on:
+  workflow_run:
+    workflows: ["Perform static code analysis through Dart CLI"]
+    types:
+      - completed
   workflow_dispatch:
   push:
     branches:
@@ -35,4 +39,4 @@ jobs:
           PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}
 
       - name: Publish
-        run: dart pub publish --force
+        run: dart pub publish --dry-run
