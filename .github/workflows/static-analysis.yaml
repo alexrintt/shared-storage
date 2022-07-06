@@ -18,11 +18,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
-
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "2.10.0"
+          channel: "stable"
+      - run: flutter --version
       - name: Checkout to target branch
         run: |
           git fetch
           git checkout ${{ github.ref_name }}
+      - name: Fetch packages
+        run: flutter pub get
 
       - name: Run static dart analysis with fatal infos
         run: dart analyze --fatal-infos
