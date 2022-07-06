@@ -1,6 +1,10 @@
 name: Build MkDocs
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Publish new plugin version"]
+    types:
+      - completed
   push:
     branches:
       - release
