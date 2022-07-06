@@ -4,7 +4,6 @@ on:
   pull_request:
     types: [opened, reopened, review_requested]
     branches:
-      - "release"
       - "master"
   push:
     branches:
@@ -21,9 +20,7 @@ jobs:
         with:
           flutter-version: "2.10.0"
           channel: "stable"
-      - run: flutter --version
-      - name: Fetch packages
-        run: flutter pub get
-
-      - name: Run static dart analysis with fatal infos
-        run: flutter analyze --fatal-infos
+      - run: |
+        flutter --version
+        flutter pub get
+        flutter analyze --fatal-infos
