@@ -5,7 +5,7 @@ import '../../theme/spacing.dart';
 import '../../widgets/buttons.dart';
 import '../../widgets/key_value_text.dart';
 import '../../widgets/simple_card.dart';
-import '../folder_files/folder_file_list.dart';
+import '../file_explorer/file_explorer_page.dart';
 
 class GrantedUriCard extends StatefulWidget {
   const GrantedUriCard({
@@ -50,7 +50,7 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
   void _openListFilesPage() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FolderFileList(uri: widget.permissionUri.uri),
+        builder: (context) => FileExplorerPage(uri: widget.permissionUri.uri),
       ),
     );
   }
