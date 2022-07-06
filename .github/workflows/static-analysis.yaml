@@ -4,8 +4,8 @@ on:
   pull_request:
     types: [opened, reopened, review_requested]
     branches:
-      - "release/**"
-      - "master/**"
+      - "release"
+      - "master"
   push:
     branches:
       - master
