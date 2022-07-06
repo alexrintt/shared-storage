@@ -1,4 +1,4 @@
-name: Publish new plugin version
+name: Perform static code analysis through Dart CLI
 on:
   workflow_dispatch:
   pull_request:
