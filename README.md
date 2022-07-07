@@ -51,6 +51,9 @@ These are the brilliant minds behind the development of this plugin!
     <td align="center"><a href="https://eternityforest.com"><img src="https://avatars.githubusercontent.com/u/758047?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Dunn</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/issues?q=author%3AEternityForest" title="Bug reports">🐛</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=EternityForest" title="Code">💻</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=EternityForest" title="Documentation">📖</a></td>
     <td align="center"><a href="http://jfaltis.de"><img src="https://avatars.githubusercontent.com/u/45465572?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jfaltis</b></sub></a><br /><a href="#question-jfaltis" title="Answering Questions">💬</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/for"><img src="https://avatars.githubusercontent.com/u/7262123?v=4?s=100" width="100px;" alt=""/><br /><sub><b>John</b></sub></a><br /><a href="#question-for" title="Answering Questions">💬</a> <a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Afor" title="Bug reports">🐛</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
