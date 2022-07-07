@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/persisted_uris/persisted_uri_list.dart';
+import 'screens/granted_uris/granted_uris_page.dart';
 
 /// TODO: Add examples using [Environment] and [MediaStore] API
 void main() => runApp(const Root());
@@ -14,6 +14,6 @@ class Root extends StatefulWidget {
 class _RootState extends State<Root> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: PersistedUriList());
+    return const MaterialApp(home: GrantedUrisPage());
   }
 }

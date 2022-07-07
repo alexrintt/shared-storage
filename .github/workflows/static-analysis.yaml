@@ -1,16 +1,14 @@
-name: Build MkDocs
+name: Perform static code analysis through Dart CLI
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Publish new plugin version"]
-    types:
-      - completed
+  pull_request:
   push:
     branches:
+      - master
       - release
 
 jobs:
-  sync:
+  static_analysis:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,10 +21,3 @@ jobs:
           flutter --version
           flutter pub get
           flutter analyze --fatal-infos
-
-      - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CONFIG_FILE: mkdocs.yaml
-          EXTRA_PACKAGES: build-base
