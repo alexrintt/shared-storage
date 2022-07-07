@@ -1,5 +1,5 @@
 name: shared_storage
-description: "Flutter plugin to get Android shared folders like DCIM, Downloads, Video, Audio. Works with Android 4.1 (API Level 16+)"
+description: "Flutter plugin to work with external storage."
 version: 0.4.1
 homepage: https://github.com/lakscastro/shared-storage
 repository: https://github.com/lakscastro/shared-storage
