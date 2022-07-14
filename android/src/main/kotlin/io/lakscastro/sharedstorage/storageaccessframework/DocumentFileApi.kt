@@ -74,6 +74,13 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
                 call.argument<ByteArray>("content")!!
             )
           }
+      WRITE_TO_FILE ->
+          writeToFile(
+              result,
+              call.argument<String>("uri")!!,
+              call.argument<ByteArray>("content")!!,
+              call.argument<String>("mode")!!
+          )
       PERSISTED_URI_PERMISSIONS ->
         persistedUriPermissions(result)
       RELEASE_PERSISTABLE_URI_PERMISSION ->
@@ -308,6 +315,25 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
         block(createdFileDocument)
       }
+    }
+  }
+
+  private fun writeToFile(
+    result: MethodChannel.Result,
+    uri: String,
+    content: ByteArray,
+    mode: String,
+  ) {
+    try {
+      plugin.context.contentResolver.openOutputStream(Uri.parse(uri), mode)?.apply {
+        write(content)
+        flush()
+        close()
+
+        result.success(true)
+      }
+    } catch (e: Exception) {
+      result.success(false)
     }
   }
 
