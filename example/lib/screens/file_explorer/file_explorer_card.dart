@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -85,6 +87,12 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
 
   bool get _isDirectory => file.metadata?.isDirectory ?? false;
 
+  int _generateLuckNumber() {
+    final random = Random();
+
+    return random.nextInt(1000);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SimpleCard(
@@ -105,9 +113,19 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
                   return Image.memory(content!);
                 }
 
+                final contentAsString = String.fromCharCodes(content!);
+
+                final fileIsEmpty = contentAsString.isEmpty;
+
                 return Container(
                   padding: k8dp.all,
-                  child: Text(String.fromCharCodes(content!)),
+                  child: Text(
+                    fileIsEmpty ? 'This file is empty' : contentAsString,
+                    style: TextStyle(
+                      color: fileIsEmpty ? Colors.black26 : null,
+                      fontStyle: fileIsEmpty ? FontStyle.italic : null,
+                    ),
+                  ),
                 );
               },
             );
@@ -173,7 +191,6 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
                 final uri = widget.partialFile.metadata!.uri!;
 
                 try {
-                  // OpenFile.open('/sdcard/example.txt');
                   final launched = await openDocumentFile(uri);
 
                   if (launched ?? false) {
@@ -198,13 +215,46 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
                 }
               },
             ),
-            if (!_isDirectory)
+            if (!_isDirectory) ...[
               DangerButton(
                 'Write to File',
                 onTap: () async {
-                  await writeToFile(widget.partialFile.metadata!.uri!, content: 'Hello World!');
+                  await writeToFile(
+                    widget.partialFile.metadata!.uri!,
+                    content:
+                        'Hello World! Your luck number is: ${_generateLuckNumber()}',
+                    mode: FileMode.write,
+                  );
                 },
               ),
+              DangerButton(
+                'Append to file',
+                onTap: () async {
+                  final contents = await getDocumentContentAsString(
+                    widget.partialFile.metadata!.uri!,
+                  );
+
+                  final prependWithNewLine = contents?.isNotEmpty ?? true;
+
+                  await writeToFile(
+                    widget.partialFile.metadata!.uri!,
+                    content:
+                        "${prependWithNewLine ? '\n' : ''}You file got bigger! Here's your luck number: ${_generateLuckNumber()}",
+                    mode: FileMode.append,
+                  );
+                },
+              ),
+              DangerButton(
+                'Erase file content',
+                onTap: () async {
+                  await writeToFile(
+                    widget.partialFile.metadata!.uri!,
+                    content: '',
+                    mode: FileMode.write,
+                  );
+                },
+              ),
+            ],
           ],
         ),
       ],
