@@ -223,7 +223,7 @@ Write to a file using raw bytes `Uint8List`.
 
 Given the document uri, opens the file in the specified `mode` and writes the `bytes` to it.
 
-`mode` represents the mode in which the file will be opened for writing. Use `FileMode.write` for truncating and `FileMode.append` for appending to the file.
+`mode` represents the mode in which the file will be opened for writing. Use `FileMode.write` for truncating (overwrite) and `FileMode.append` for appending to the file.
 
 ```dart
 final Uri documentUri = ...
@@ -576,7 +576,6 @@ You should provide either `content` or `bytes`, if both `bytes` will be used.
 
 `mode` represents the mode in which the file will be opened for writing. Use `FileMode.write` for truncating and `FileMode.append` for appending to the file.
 
-
 ```dart
 final Uri documentUri = ...
 final String fileContent = 'My File Content';
@@ -596,14 +595,14 @@ final bool? success = writeToFile(
 );
 
 /// Write to a file using a [Uint8List] as file contents [bytes]
-final DocumentFile? createdFile = writeToFile(
+final bool? success = writeToFile(
   documentUri,
   content: Uint8List.fromList(fileContent.codeUnits),
   mode: FileMode.write,
 );
 
 /// Append to a file using a [Uint8List] as file contents [bytes]
-final DocumentFile? createdFile = writeToFile(
+final bool? success = writeToFile(
   documentUri,
   content: Uint8List.fromList(fileContent.codeUnits),
   mode: FileMode.append,

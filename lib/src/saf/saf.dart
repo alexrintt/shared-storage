@@ -202,7 +202,7 @@ Future<DocumentFile?> createDirectory(Uri parentUri, String displayName) async {
 }
 
 /// {@template sharedstorage.saf.createFile}
-/// Convenient method to create files using either String or raw bytes.
+/// Convenient method to create files using either [String] or raw bytes [Uint8List].
 ///
 /// Under the hood this method calls `createFileAsString` or `createFileAsBytes`
 /// depending on which argument is passed.
@@ -283,7 +283,7 @@ Future<DocumentFile?> createFileAsString(
 }
 
 /// {@template sharedstorage.saf.writeToFile}
-/// Convenient method to write to a file using either String or raw bytes.
+/// Convenient method to write to a file using either [String] or raw bytes [Uint8List].
 ///
 /// Under the hood this method calls `writeToFileAsString` or `writeToFileAsBytes`
 /// depending on which argument is passed.
@@ -327,14 +327,11 @@ Future<bool?> writeToFileAsBytes(
   required Uint8List bytes,
   FileMode? mode,
 }) async {
-  var writeMode = 'wt';
-
-  if (mode == FileMode.append || mode == FileMode.writeOnlyAppend) {
-    writeMode = 'wa';
-  }
+  final writeMode =
+      mode == FileMode.append || mode == FileMode.writeOnlyAppend ? 'wa' : 'wt';
 
   final args = <String, dynamic>{
-    'uri': uri.toString(),
+    'uri': '$uri',
     'content': bytes,
     'mode': writeMode,
   };
@@ -344,7 +341,7 @@ Future<bool?> writeToFileAsBytes(
 
 /// {@template sharedstorage.saf.writeToFileAsString}
 /// Convenient method to write to a file.
-/// using `content` as String instead Uint8List.
+/// using `content` as [String] instead [Uint8List].
 /// {@endtemplate}
 Future<bool?> writeToFileAsString(
   Uri uri, {

@@ -322,7 +322,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     result: MethodChannel.Result,
     uri: String,
     content: ByteArray,
-    mode: String,
+    mode: String
   ) {
     try {
       plugin.context.contentResolver.openOutputStream(Uri.parse(uri), mode)?.apply {
