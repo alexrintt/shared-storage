@@ -303,6 +303,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       plugin.context.contentResolver.openOutputStream(this)?.apply {
         write(content)
         flush()
+        close()
 
         val createdFileDocument = documentFromUri(plugin.context, createdFile.uri)
 
