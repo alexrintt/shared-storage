@@ -126,17 +126,7 @@ print(String.fromCharCodes(fileContent));
 
 ### <samp>getRealPathFromUri</samp>
 
-Helper method to generate the file path of the given `uri`. This returns the real path to work with native old `File` API instead Uris, be aware this approach is no longer supported on Android 10+ (API 29+) and though new, this API is **marked as deprecated** and should be migrated to a _scoped-storage_ approach.
-
-See [Get real path from URI, Android KitKat new storage access framework](https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175#20559175) for details.
-
-```dart
-final Uri uri = ...;
-
-final String? filePath = await getRealPathFromUri(myUri);
-
-final File file = File(filePath);
-```
+Removed since `v0.5.0`, this is not compliant with latest privacy-friendly APIs so it was removed.
 
 ## Mirror methods
 

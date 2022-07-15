@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.storageaccessframework.lib
+package io.lakscastro.sharedstorage.plugin.lib
 
 /**
  * Exceptions

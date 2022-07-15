@@ -6,22 +6,14 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import io.lakscastro.sharedstorage.environment.EnvironmentApi
-import io.lakscastro.sharedstorage.mediastore.MediaStoreApi
-import io.lakscastro.sharedstorage.storageaccessframework.StorageAccessFrameworkApi
+import io.lakscastro.sharedstorage.plugin.SharedStorageApi
 
 const val ROOT_CHANNEL = "io.lakscastro.plugins/sharedstorage"
 
 /** Flutter plugin Kotlin implementation `SharedStoragePlugin` */
 class SharedStoragePlugin : FlutterPlugin, ActivityAware {
-  /** `Environment` API channel */
-  private val environmentApi = EnvironmentApi(this)
-
-  /** `MediaStore` API channel */
-  private val mediaStoreApi = MediaStoreApi(this)
-
   /** `DocumentFile` API channel */
-  private val storageAccessFrameworkApi = StorageAccessFrameworkApi(this)
+  private val sharedStorageApi = SharedStorageApi(this)
 
   lateinit var context: Context
   var binding: ActivityPluginBinding? = null
@@ -30,25 +22,21 @@ class SharedStoragePlugin : FlutterPlugin, ActivityAware {
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPluginBinding) {
     context = flutterPluginBinding.applicationContext
 
-    environmentApi.startListening(flutterPluginBinding.binaryMessenger)
-    mediaStoreApi.startListening(flutterPluginBinding.binaryMessenger)
-    storageAccessFrameworkApi.startListening(flutterPluginBinding.binaryMessenger)
+    sharedStorageApi.startListening(flutterPluginBinding.binaryMessenger)
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     this.binding = binding
 
-    storageAccessFrameworkApi.startListeningToActivity()
+    sharedStorageApi.startListeningToActivity()
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPluginBinding) {
-    environmentApi.stopListening()
-    mediaStoreApi.stopListening()
-    storageAccessFrameworkApi.stopListening()
+    sharedStorageApi.stopListening()
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
-    storageAccessFrameworkApi.stopListeningToActivity()
+    sharedStorageApi.stopListeningToActivity()
   }
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {

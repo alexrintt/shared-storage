@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_storage/saf.dart';
+import 'package:shared_storage/shared_storage.dart';
 
 import '../../theme/spacing.dart';
 import '../../widgets/light_text.dart';

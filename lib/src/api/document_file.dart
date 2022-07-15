@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import '../common/functional_extender.dart';
+import '../common/annotation.dart';
 import 'saf.dart' as saf;
 
 extension UriDocumentFileUtils on Uri {
@@ -75,7 +75,7 @@ class DocumentFile {
   static Future<DocumentFile?> fromTreeUri(Uri uri) => saf.fromTreeUri(uri);
 
   /// {@macro sharedstorage.saf.child}
-  @willbemovedsoon
+  @deprecated
   Future<DocumentFile?> child(
     String path, {
     bool requiresWriteAccess = false,

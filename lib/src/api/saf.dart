@@ -2,10 +2,15 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import '../../saf.dart';
 import '../channels.dart';
+import '../common/annotation.dart';
 import '../common/functional_extender.dart';
-import 'common.dart';
+import '../common/invoke_map_method.dart';
+import 'document_bitmap.dart';
+import 'document_file.dart';
+import 'document_file_column.dart';
+import 'partial_document_file.dart';
+import 'uri_permission.dart';
 
 /// {@template sharedstorage.saf.openDocumentTree}
 /// Start Activity Action: Allow the user to pick a directory subtree.
@@ -113,8 +118,10 @@ Future<DocumentBitmap?> getDocumentThumbnail({
     'height': height,
   };
 
-  final bitmap = await kDocumentsContractChannel
-      .invokeMapMethod<String, dynamic>('getDocumentThumbnail', args);
+  final bitmap = await kDocumentFileChannel.invokeMapMethod<String, dynamic>(
+    'getDocumentThumbnail',
+    args,
+  );
 
   return bitmap?.apply((b) => DocumentBitmap.fromMap(b));
 }
@@ -435,7 +442,7 @@ Future<DocumentFile?> fromTreeUri(Uri uri) async =>
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29)
 /// {@endtemplate}
-@willbemovedsoon
+@deprecated
 Future<DocumentFile?> child(
   Uri uri,
   String path, {
@@ -462,8 +469,7 @@ Future<DocumentFile?> child(
 /// Returns `true` if launched successfully otherwise `false`.
 /// {@endtemplate}
 Future<bool?> openDocumentFile(Uri uri) async {
-  final successfullyLaunched =
-      await kDocumentFileHelperChannel.invokeMethod<bool>(
+  final successfullyLaunched = await kDocumentFileChannel.invokeMethod<bool>(
     'openDocumentFile',
     <String, String>{'uri': '$uri'},
   );
@@ -517,12 +523,3 @@ Future<String?> getDocumentContentAsString(
 
   return bytes?.apply((a) => String.fromCharCodes(a));
 }
-
-/// {@template sharedstorage.saf.getDocumentContentAsString}
-/// Helper method to generate the file path of the given `uri`
-///
-/// See [Get real path from URI, Android KitKat new storage access framework](https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175#20559175)
-/// for details.
-/// {@endtemplate}
-Future<String?> getRealPathFromUri(Uri uri) async => kDocumentFileHelperChannel
-    .invokeMethod('getRealPathFromUri', <String, String>{'uri': '$uri'});

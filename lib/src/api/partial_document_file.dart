@@ -1,4 +1,4 @@
-import '../../saf.dart';
+import 'document_file_column.dart';
 
 /// Represent the same entity as `DocumentFile` but will be lazily loaded
 /// by `listFiles` method with dynamic
