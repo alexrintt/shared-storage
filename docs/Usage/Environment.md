@@ -1,22 +1,8 @@
 ## Import package
 
-```dart
-import 'package:shared_storage/environment.dart' as environment;
-```
+This module is no longer available after `v0.5.0`, if you are using this consider filling a issue with your use-case.
 
-> **Note** Be aware that if you import the package `import '...' as environment;` (strongly recommended) you should prefix all method calls with `environment`, example:
-
-```dart
-environment.getRootDirectory(...);
-environment.getExternalStoragePublicDirectory(...);
-```
-
-But if you import without alias `import '...';` (Not recommeded because can conflict with other method/package names) you should use directly as functions:
-
-```dart
-getRootDirectory(...);
-getExternalStoragePublicDirectory(...);
-```
+This was removed since it was not compliant with latest Android privacy APIs (Android 9+).
 
 ## Mirror methods
 

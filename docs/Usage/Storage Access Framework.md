@@ -1,7 +1,7 @@
 ## Import package
 
 ```dart
-import 'package:shared_storage/saf.dart' as saf;
+import 'package:shared_storage/shared_storage.dart';
 ```
 
 > **Note** Be aware that if you import the package `import '...' as saf;` (strongly recommended) you should prefix all method calls with `saf`, example:
