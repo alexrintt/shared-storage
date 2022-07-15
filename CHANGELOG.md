@@ -1,10 +1,22 @@
+## 0.4.2
+
+Minimal hotfix:
+
+- Closes the `OutputStream` when creating a file [#61](https://github.com/lakscastro/shared-storage/issues/61), [#86](https://github.com/lakscastro/shared-storage/pull/86) (@jfaltis).
+
+## 0.4.1
+
+Minimal hotfix of the example project:
+
+- Fix build error of the example project. Reported at [#70](https://github.com/lakscastro/shared-storage/issues/70) and fixed by [#72](https://github.com/lakscastro/shared-storage/pull/72) (@jfaltis).
+
 ## 0.4.0
 
 Fix the current behavior of `listFiles` and `openDocumentFile` API.
 
 ### Improvements
 
-- It's now possible to list contents of all subfolders of a granted Uri opened from `openDocumentTree` ([@EternityForest](https://github.com/EternityForest)).
+- It's now possible to list contents of all subfolders of a granted Uri opened from `openDocumentTree` (@EternityForest).
 - Now `ACTION_VIEW` intent builder through `openDocumentFile` API was fixed. So it's now possible to open any file of any kind in third party apps without needing specify the mime type.
 
 ### Breaking changes
