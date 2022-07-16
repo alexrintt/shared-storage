@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import '../common/functional_extender.dart';
@@ -154,6 +155,41 @@ class DocumentFile {
         mimeType: mimeType,
         displayName: displayName,
         content: content,
+      );
+  
+  /// {@macro sharedstorage.saf.writeToFileAsBytes}
+  Future<bool?> writeToFileAsBytes({
+    required Uint8List bytes,
+    FileMode? mode,
+  }) =>
+      saf.writeToFileAsBytes(
+        uri,
+        bytes: bytes,
+        mode: mode,
+      );
+
+  /// {@macro sharedstorage.saf.writeToFile}
+  Future<bool?> writeToFile({
+    String? content,
+    Uint8List? bytes,
+    FileMode? mode,
+  }) =>
+      saf.writeToFile(
+        uri,
+        content: content,
+        bytes: bytes,
+        mode: mode,
+      );
+
+  /// Alias for [writeToFile] with [content] param
+  Future<bool?> writeToFileAsString({
+    required String content,
+    FileMode? mode,
+  }) =>
+      saf.writeToFile(
+        uri,
+        content: content,
+        mode: mode,
       );
 
   /// {@macro sharedstorage.saf.length}
