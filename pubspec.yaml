@@ -1,6 +1,6 @@
 name: shared_storage
 description: "Flutter plugin to work with external storage and privacy-friendly APIs."
-version: 0.4.2
+version: 0.5.0
 homepage: https://github.com/lakscastro/shared-storage
 repository: https://github.com/lakscastro/shared-storage
 issue_tracker: https://github.com/lakscastro/shared-storage/issues
