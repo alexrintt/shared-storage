@@ -198,6 +198,13 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
                 }
               },
             ),
+            if (!_isDirectory)
+              DangerButton(
+                'Write to File',
+                onTap: () async {
+                  await writeToFile(widget.partialFile.metadata!.uri!, content: 'Hello World!');
+                },
+              ),
           ],
         ),
       ],
