@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_storage/saf.dart';
 
 import '../../theme/spacing.dart';
@@ -24,13 +23,9 @@ class _GrantedUrisPageState extends State<GrantedUrisPage> {
   }
 
   Future<void> _loadPersistedUriPermissions() async {
-    final status = await Permission.storage.request();
+    persistedPermissionUris = await persistedUriPermissions();
 
-    if (status.isGranted) {
-      persistedPermissionUris = await persistedUriPermissions();
-
-      setState(() => {});
-    }
+    if (mounted) setState(() => {});
   }
 
   /// Prompt user with a folder picker (Available for Android 5.0+)

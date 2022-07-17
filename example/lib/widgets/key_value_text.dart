@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
 
+/// Use the entry value as [Widget] to use a [WidgetSpan] and [Text] to use a [InlineSpan]
 class KeyValueText extends StatefulWidget {
   const KeyValueText({Key? key, required this.entries}) : super(key: key);
 
-  final Map<String, String> entries;
+  final Map<String, Object> entries;
 
   @override
   _KeyValueTextState createState() => _KeyValueTextState();
 }
 
 class _KeyValueTextState extends State<KeyValueText> {
-  TextSpan _buildTextSpan(String key, String value) {
+  TextSpan _buildTextSpan(String key, Object value) {
     return TextSpan(
       children: [
         TextSpan(
           text: '$key: ',
         ),
-        TextSpan(
-          text: '$value\n',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            decoration: TextDecoration.underline,
+        if (value is Widget)
+          WidgetSpan(
+            child: value,
+            alignment: PlaceholderAlignment.middle,
+          )
+        else if (value is String)
+          TextSpan(
+            text: value,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              decoration: TextDecoration.underline,
+            ),
           ),
-        ),
+        const TextSpan(text: '\n'),
       ],
     );
   }
@@ -35,7 +43,7 @@ class _KeyValueTextState extends State<KeyValueText> {
           for (final key in widget.entries.keys)
             _buildTextSpan(
               key,
-              '${widget.entries[key]}',
+              widget.entries[key]!,
             ),
         ],
       ),

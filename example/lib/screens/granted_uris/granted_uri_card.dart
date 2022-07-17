@@ -55,41 +55,48 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
     );
   }
 
+  Widget _buildAvailableActions() {
+    return Wrap(
+      children: [
+        ActionButton(
+          'Create Sample File',
+          onTap: () => _appendSampleFile(
+            widget.permissionUri.uri,
+          ),
+        ),
+        ActionButton(
+          'Open Tree Here',
+          onTap: () => openDocumentTree(initialUri: widget.permissionUri.uri),
+        ),
+        Padding(padding: k2dp.all),
+        DangerButton(
+          'Revoke',
+          onTap: () => _revokeUri(
+            widget.permissionUri.uri,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGrantedUriMetadata() {
+    return KeyValueText(
+      entries: {
+        'isWritePermission': '${widget.permissionUri.isWritePermission}',
+        'isReadPermission': '${widget.permissionUri.isReadPermission}',
+        'persistedTime': '${widget.permissionUri.persistedTime}',
+        'uri': Uri.decodeFull('${widget.permissionUri.uri}'),
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SimpleCard(
       onTap: _openListFilesPage,
       children: [
-        KeyValueText(
-          entries: {
-            'isWritePermission': '${widget.permissionUri.isWritePermission}',
-            'isReadPermission': '${widget.permissionUri.isReadPermission}',
-            'persistedTime': '${widget.permissionUri.persistedTime}',
-            'uri': '${widget.permissionUri.uri}',
-          },
-        ),
-        Wrap(
-          children: [
-            ActionButton(
-              'Create Sample File',
-              onTap: () => _appendSampleFile(
-                widget.permissionUri.uri,
-              ),
-            ),
-            ActionButton(
-              'Open Tree Here',
-              onTap: () =>
-                  openDocumentTree(initialUri: widget.permissionUri.uri),
-            ),
-            Padding(padding: k2dp.all),
-            DangerButton(
-              'Revoke',
-              onTap: () => _revokeUri(
-                widget.permissionUri.uri,
-              ),
-            ),
-          ],
-        ),
+        _buildGrantedUriMetadata(),
+        _buildAvailableActions(),
       ],
     );
   }
