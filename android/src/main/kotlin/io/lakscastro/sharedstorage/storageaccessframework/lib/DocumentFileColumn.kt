@@ -16,7 +16,8 @@ enum class DocumentFileColumn {
 
 enum class DocumentFileColumnType {
   LONG,
-  STRING
+  STRING,
+  INT
 }
 
 fun parseDocumentFileColumn(column: String): DocumentFileColumn? {
@@ -66,7 +67,8 @@ fun typeOfColumn(column: String): DocumentFileColumnType? {
     DocumentsContract.Document.COLUMN_MIME_TYPE to DocumentFileColumnType.STRING,
     DocumentsContract.Document.COLUMN_SIZE to DocumentFileColumnType.LONG,
     DocumentsContract.Document.COLUMN_SUMMARY to DocumentFileColumnType.STRING,
-    DocumentsContract.Document.COLUMN_LAST_MODIFIED to DocumentFileColumnType.LONG
+    DocumentsContract.Document.COLUMN_LAST_MODIFIED to DocumentFileColumnType.LONG,
+    DocumentsContract.Document.COLUMN_FLAGS to DocumentFileColumnType.INT
   )
 
   return values[column]
@@ -76,5 +78,6 @@ fun cursorHandlerOf(type: DocumentFileColumnType): (Cursor, Int) -> Any {
   when(type) {
     DocumentFileColumnType.LONG -> { return { cursor, index -> cursor.getLong(index) } }
     DocumentFileColumnType.STRING -> { return { cursor, index -> cursor.getString(index) } }
+    DocumentFileColumnType.INT -> { return { cursor, index -> cursor.getInt(index) } }
   }
 }

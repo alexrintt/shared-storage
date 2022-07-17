@@ -35,30 +35,31 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
           val width = call.argument<Int>("width")!!
           val height = call.argument<Int>("height")!!
 
-          val bitmap =
-              DocumentsContract.getDocumentThumbnail(
-                  plugin.context.contentResolver,
-                  uri,
-                  Point(width, height),
-                  null
-              )
+          val bitmap = DocumentsContract.getDocumentThumbnail(
+            plugin.context.contentResolver,
+            uri,
+            Point(width, height),
+            null
+          )
 
-          CoroutineScope(Dispatchers.Default).launch {
-            if (bitmap != null) {
+          if (bitmap != null) {
+            CoroutineScope(Dispatchers.Default).launch {
               val base64 = bitmapToBase64(bitmap)
 
               val data =
-                  mapOf(
-                    "base64" to base64,
-                    "uri" to "$uri",
-                    "width" to bitmap.width,
-                    "height" to bitmap.height,
-                    "byteCount" to bitmap.byteCount,
-                    "density" to bitmap.density
-                  )
+                mapOf(
+                  "base64" to base64,
+                  "uri" to "$uri",
+                  "width" to bitmap.width,
+                  "height" to bitmap.height,
+                  "byteCount" to bitmap.byteCount,
+                  "density" to bitmap.density
+                )
 
               launch(Dispatchers.Main) { result.success(data) }
             }
+          } else {
+            result.success(null)
           }
         } else {
           result.notSupported(call.method, API_21)

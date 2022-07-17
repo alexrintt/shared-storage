@@ -144,7 +144,7 @@ Future<DocumentBitmap?> getDocumentThumbnail({
 ///
 /// [Refer to details](https://stackoverflow.com/questions/41096332/issues-traversing-through-directory-hierarchy-with-android-storage-access-framew).
 /// {@endtemplate}
-Stream<PartialDocumentFile> listFiles(
+Stream<DocumentFile> listFiles(
   Uri uri, {
   required List<DocumentFileColumn> columns,
 }) {
@@ -157,9 +157,7 @@ Stream<PartialDocumentFile> listFiles(
   final onCursorRowResult =
       kDocumentFileEventChannel.receiveBroadcastStream(args);
 
-  return onCursorRowResult
-      .map((e) => PartialDocumentFile.fromMap(Map.from(e as Map)))
-      .cast<PartialDocumentFile>();
+  return onCursorRowResult.map((e) => DocumentFile.fromMap(Map.from(e as Map)));
 }
 
 /// {@template sharedstorage.saf.exists}
@@ -214,13 +212,8 @@ Future<DocumentFile?> createFile(
   required String mimeType,
   required String displayName,
   Uint8List? bytes,
-  String? content,
+  String content = '',
 }) {
-  assert(
-    bytes != null || content != null,
-    '''Either [bytes] or [content] should be provided''',
-  );
-
   return bytes != null
       ? createFileAsBytes(
           parentUri,
@@ -232,7 +225,7 @@ Future<DocumentFile?> createFile(
           parentUri,
           mimeType: mimeType,
           displayName: displayName,
-          content: content!,
+          content: content,
         );
 }
 

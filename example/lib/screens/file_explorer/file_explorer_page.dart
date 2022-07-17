@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
 import 'package:shared_storage/saf.dart';
 
 import '../../theme/spacing.dart';
 import '../../widgets/buttons.dart';
 import '../../widgets/light_text.dart';
 import '../../widgets/simple_card.dart';
+import '../../widgets/text_field_dialog.dart';
 import 'file_explorer_card.dart';
 
 class FileExplorerPage extends StatefulWidget {
@@ -22,11 +24,11 @@ class FileExplorerPage extends StatefulWidget {
 }
 
 class _FileExplorerPageState extends State<FileExplorerPage> {
-  List<PartialDocumentFile>? _files;
+  List<DocumentFile>? _files;
 
   late bool _hasPermission;
 
-  StreamSubscription<PartialDocumentFile>? _listener;
+  StreamSubscription<DocumentFile>? _listener;
 
   Future<void> _grantAccess() async {
     final uri = await openDocumentTree(initialUri: widget.uri);
@@ -38,98 +40,142 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
     _loadFiles();
   }
 
+  Widget _buildNoPermissionWarning() {
+    return SliverPadding(
+      padding: k6dp.eb,
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          [
+            SimpleCard(
+              onTap: () => {},
+              children: [
+                Center(
+                  child: LightText(
+                    'No permission granted to this folder\n\n${widget.uri}\n',
+                  ),
+                ),
+                Center(
+                  child: ActionButton(
+                    'Grant Access',
+                    onTap: _grantAccess,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _createCustomDocument() async {
+    final filename = await showDialog<String>(
+      context: context,
+      builder: (context) => const TextFieldDialog(
+        hintText: 'File name:',
+        labelText: 'My Text File',
+        suffixText: '.txt',
+        actionText: 'Create',
+      ),
+    );
+
+    if (filename == null) return;
+
+    final createdFile = await createFile(
+      widget.uri,
+      mimeType: 'text/plain',
+      displayName: filename,
+    );
+
+    if (createdFile != null) {
+      _files?.add(createdFile);
+
+      if (mounted) setState(() {});
+    }
+  }
+
+  Widget _buildCreateDocumentButton() {
+    return SliverPadding(
+      padding: k6dp.eb,
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          [
+            Center(
+              child: ActionButton(
+                'Create a custom document',
+                onTap: _createCustomDocument,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _didUpdateDocument(
+    DocumentFile before,
+    DocumentFile? after,
+  ) {
+    if (after == null) {
+      _files?.removeWhere((doc) => doc.id == before.id);
+
+      if (mounted) setState(() {});
+    }
+  }
+
+  Widget _buildDocumentList() {
+    return SliverPadding(
+      padding: k6dp.et,
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final file = _files![index];
+
+            return FileExplorerCard(
+              documentFile: file,
+              didUpdateDocument: (document) =>
+                  _didUpdateDocument(file, document),
+            );
+          },
+          childCount: _files!.length,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyFolderWarning() {
+    return SliverPadding(
+      padding: k6dp.eb,
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          [
+            SimpleCard(
+              onTap: () => {},
+              children: const [
+                Center(
+                  child: LightText(
+                    'Empty folder',
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildFileList() {
     return CustomScrollView(
       slivers: [
         if (!_hasPermission)
-          SliverPadding(
-            padding: k6dp.eb,
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  SimpleCard(
-                    onTap: () => {},
-                    children: [
-                      Center(
-                        child: LightText(
-                          'No permission granted to this folder\n\n${widget.uri}\n',
-                        ),
-                      ),
-                      Center(
-                        child: ActionButton(
-                          'Grant Access',
-                          onTap: _grantAccess,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          )
+          _buildNoPermissionWarning()
         else ...[
-          SliverPadding(
-            padding: k6dp.eb,
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  Center(
-                    child: ActionButton(
-                      'Create a custom document',
-                      onTap: () => {},
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          _buildCreateDocumentButton(),
           if (_files!.isNotEmpty)
-            SliverPadding(
-              padding: k6dp.et,
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final file = _files![index];
-
-                    return FileExplorerCard(
-                      partialFile: file,
-                      didUpdateDocument: (document) {
-                        if (document == null) {
-                          _files?.removeWhere(
-                            (doc) =>
-                                doc.data?[DocumentFileColumn.id] ==
-                                file.data?[DocumentFileColumn.id],
-                          );
-
-                          if (mounted) setState(() {});
-                        }
-                      },
-                    );
-                  },
-                  childCount: _files!.length,
-                ),
-              ),
-            )
+            _buildDocumentList()
           else
-            SliverPadding(
-              padding: k6dp.eb,
-              sliver: SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    SimpleCard(
-                      onTap: () => {},
-                      children: const [
-                        Center(
-                          child: LightText(
-                            'Empty folder',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
+            _buildEmptyFolderWarning(),
         ]
       ],
     );
