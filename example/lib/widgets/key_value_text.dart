@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Use the entry value as [Widget] to use a [WidgetSpan] and [Text] to use a [InlineSpan]
+/// Use the entry value as [Widget] to use a [WidgetSpan] and [Text] to use a [TextSpan]
 class KeyValueText extends StatefulWidget {
   const KeyValueText({Key? key, required this.entries}) : super(key: key);
 
