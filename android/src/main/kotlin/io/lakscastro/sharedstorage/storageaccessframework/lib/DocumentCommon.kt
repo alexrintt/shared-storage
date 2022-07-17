@@ -215,7 +215,7 @@ fun traverseDirectoryEntries(
             } else {
               false
             },
-            type = data[DocumentsContract.Document.COLUMN_MIME_TYPE] as String,
+            type = data[DocumentsContract.Document.COLUMN_MIME_TYPE] as String?,
             size = data[DocumentsContract.Document.COLUMN_SIZE] as Long?,
             lastModified = data[DocumentsContract.Document.COLUMN_LAST_MODIFIED] as Long?
           ),
