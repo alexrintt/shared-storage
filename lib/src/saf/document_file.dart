@@ -228,6 +228,7 @@ class DocumentFile {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'uri': '$uri',
       'parentUri': '$parentUri',
       'isDirectory': isDirectory,
@@ -235,6 +236,8 @@ class DocumentFile {
       'isVirtual': isVirtual,
       'name': name,
       'type': type,
+      'size': size,
+      'lastModified': lastModified?.millisecondsSinceEpoch,
     };
   }
 
