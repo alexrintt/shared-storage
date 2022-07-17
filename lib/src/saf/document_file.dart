@@ -110,8 +110,8 @@ class DocumentFile {
   /// Alias/shortname for [openDocumentFile]
   Future<bool?> open() => openDocumentFile();
 
-  /// {@macro sharedstorage.saf.canWrite}
-  Future<bool?> canRead() async => saf.canWrite(uri);
+  /// {@macro sharedstorage.saf.canRead}
+  Future<bool?> canRead() async => saf.canRead(uri);
 
   /// {@macro sharedstorage.saf.canWrite}
   Future<bool?> canWrite() async => saf.canWrite(uri);
