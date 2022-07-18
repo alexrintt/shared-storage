@@ -89,9 +89,9 @@ const List<DocumentFileColumn> columns = <DocumentFileColumn>[
   DocumentFileColumn.mimeType,
 ];
 
-final List<PartialDocumentFile> files = [];
+final List<DocumentFile> files = [];
 
-final Stream<PartialDocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.listFiles(columns);
+final Stream<DocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.listFiles(columns);
 
 onNewFileLoaded.listen((file) => files.add(file), onDone: () => print('All files were loaded'));
 ```
@@ -299,7 +299,7 @@ Returns the image thumbnail of a given `uri`, if any (e.g documents that can sho
 
 ```dart
 final Uint8List? imageBytes;
-final PartialDocumentFile file = ...
+final DocumentFile file = ...
 
 final Uri? rootUri = file.metadata?.rootUri;
 final String? documentId = file.data?[DocumentFileColumn.id] as String?;
@@ -345,7 +345,7 @@ const List<DocumentFileColumn> columns = <DocumentFileColumn>[
   DocumentFileColumn.mimeType,
 ];
 
-final Stream<PartialDocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.listFiles(columns);
+final Stream<DocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.listFiles(columns);
 ```
 
 ### <samp>delete</samp>
@@ -645,7 +645,7 @@ This class is not intended to be instantiated, and it is only used for typing an
 
 ### <samp>QueryMetadata</samp>
 
-This class wraps useful metadata of the source queries returned by the `PartialDocumentFile`.
+This class wraps useful metadata of the source queries returned by the `DocumentFile`.
 
 This class is not intended to be instantiated, and it is only used for typing and convenience purposes.
 
