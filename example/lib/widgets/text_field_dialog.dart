@@ -51,7 +51,7 @@ class _TextFieldDialogState extends State<TextFieldDialog> {
         ),
       ),
       actions: <Widget>[
-        DangerButton(
+        Button(
           'Cancel',
           onTap: () => Navigator.pop<String>(context),
         ),
