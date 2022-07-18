@@ -129,7 +129,7 @@ Future<DocumentBitmap?> getDocumentThumbnail({
 /// ```dart
 /// /// Usage:
 ///
-/// final myState = <PartialDocumentFile>[];
+/// final myState = <DocumentFile>[];
 ///
 /// final onDocumentFile = listFiles(myUri, [DocumentFileColumn.id]);
 ///
