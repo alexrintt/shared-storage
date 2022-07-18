@@ -1,3 +1,39 @@
+## 0.5.0
+
+This release contains:
+
+- Major breaking changes.
+- New API to edit existing files.
+- Example project improvements.
+- Bug fixes.
+
+To see details, refer to rollup PR [#100](https://github.com/lakscastro/shared-storage/pull/100).
+
+### New
+
+- Added `writeToFile`, `writeToFileAsString` and `writeToFileAsBytes` APIs to allow overwrite existing files by appending (`FileMode.append`) or truncating `FileMode.write` (@jfaltis).
+
+### Breaking changes
+
+- `listFiles` it's now returns a `Stream<DocumentFile>` instead of `Stream<PartialDocumentFile>`.
+- `DocumentFile.lastModified` it's now returns a `DateTime?` instead of `Future<DateTime?>` (removed the asynchronous plugin call).
+- All `DocumentFile` class fields are now nullable except by `DocumentFile.uri`.
+- `createFile` doesn't requires `content` or `bytes` anymore, it's now possible to just create the file reference without defining the file data, it'll be a empty `String` by default.
+
+### Bug fixes
+
+- `DocumentFile.canRead` it's now calling the right API (`canRead`) instead of the similar one (`canWrite`).
+- [Fix](https://github.com/lakscastro/shared-storage/pull/100/files#diff-6f516633fcc1095b16ad5e0cc2a2c9711ee903cb115835d703f3c0ccfd6e0d31R38-R62) infinite loading of `getDocumentThumbnail` API when thumbnail is not available.
+
+### Example project
+
+- The example project is no longer dependant of `permission_handler` plugin to request `storage` permission since it's already fully integrated with Storage Access Framework.
+- File cards have now a expanded and collapsed state instead of showing all data at once.
+- Icon thumbnails were added to `.apk` `image/*`, `video/*`, `text/plain` and `directories` to make easier to see what is the type of the file while navigating between the folders.
+- 4 new buttons were added related to `writeToFile` API: _Write to file_ (Overwrite file contents with a predefined string), _Append to file_ (Append a predefined string to the end of the file), _Ease file content_ (Self explanatory: erase it's data but do not delete the file) and _Edit file content_ (Prompt the user with a text field to define the new file content), all buttons requires confirmation since **it can cause data loss**.
+- It's now possible to create a file with a custom name through the UI (_Create a custom document_ action button on top center of the file list page).
+- File card now shows the decoded uris to fix the visual pollution.
+
 ## 0.4.2
 
 Minimal hotfix:
@@ -40,7 +76,7 @@ Minor improvements and bug fixes:
 
 Major release focused on support for `Storage Access Framework`.
 
-### Breaking Changes
+### Breaking changes
 
 - `minSdkVersion` set to `19`.
 - `getMediaStoreContentDirectory` return type changed to `Uri`.
@@ -50,7 +86,7 @@ Major release focused on support for `Storage Access Framework`.
   - `import 'package:shared_storage/media_store.dart' as mediastore;` to enable **Media Store** API.
   - `import 'package:shared_storage/shared_storage' as sharedstorage;` if you want to import all above and as a single module (Not recommended because can conflict/override names/methods).
 
-### New Features
+### New
 
 See the label [reference here](/docs/Usage/API%20Labeling.md).
 

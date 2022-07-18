@@ -7,7 +7,7 @@ dependencies:
   shared_storage: v0.3.0
 ```
 
-## SDK Constraint
+## SDK constraint
 
 In `android\app\build.gradle` set `android.defaultConfig.minSdkVersion` to `19`:
 
@@ -22,7 +22,7 @@ android {
 }
 ```
 
-## Plugin Import
+## Plugin import
 
 Although this import is still supported:
 

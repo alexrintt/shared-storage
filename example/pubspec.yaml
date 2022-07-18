@@ -9,10 +9,10 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  fl_toast: ^3.1.0
   flutter:
     sdk: flutter
   lint: ^1.8.2
-  permission_handler: ^8.1.6
   shared_storage:
     # When depending on this package from a real application you should use:
     #   shared_storage: ^x.y.z

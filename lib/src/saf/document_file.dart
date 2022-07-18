@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import '../common/functional_extender.dart';
@@ -16,38 +17,58 @@ extension UriDocumentFileUtils on Uri {
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile)
 class DocumentFile {
   const DocumentFile({
+    required this.id,
+    required this.parentUri,
+    required this.size,
     required this.name,
     required this.type,
     required this.uri,
     required this.isDirectory,
     required this.isFile,
     required this.isVirtual,
+    required this.lastModified,
   });
 
   factory DocumentFile.fromMap(Map<String, dynamic> map) {
     return DocumentFile(
-      isDirectory: map['isDirectory'] as bool,
-      isFile: map['isFile'] as bool,
-      isVirtual: map['isVirtual'] as bool,
-      name: map['name'] as String,
+      parentUri: (map['parentUri'] as String?)?.apply((p) => Uri.parse(p)),
+      id: map['id'] as String?,
+      isDirectory: map['isDirectory'] as bool?,
+      isFile: map['isFile'] as bool?,
+      isVirtual: map['isVirtual'] as bool?,
+      name: map['name'] as String?,
       type: map['type'] as String?,
       uri: Uri.parse(map['uri'] as String),
+      size: map['size'] as int?,
+      lastModified: (map['lastModified'] as int?)
+          ?.apply((l) => DateTime.fromMillisecondsSinceEpoch(l)),
     );
   }
 
-  /// Display name of this document file, useful to show as a title in a list of files
-  final String name;
+  /// Display name of this document file, useful to show as a title in a list of files.
+  final String? name;
 
-  /// Mimetype of this document file, useful to determine how to display it
+  /// Mimetype of this document file, useful to determine how to display it.
   final String? type;
 
-  /// Path, URI, location of this document, it can exists or not, you should check by using `exists()` API
+  /// Path, URI, location of this document, it can exists or not, you should check by using `exists()` API.
   final Uri uri;
 
-  /// Whether this document is a directory or not
+  /// Uri of the parent document of [this] document.
+  final Uri? parentUri;
+
+  /// Generally represented as `primary:/Some/Resource` and can be used to identify the current document file.
   ///
-  /// Since it's a [DocumentFile], it can represent a folder/directory rather than a file
-  final bool isDirectory;
+  /// See [this diagram](https://raw.githubusercontent.com/anggrayudi/SimpleStorage/master/art/terminology.png) for details, source: [anggrayudi/SimpleStorage](https://github.com/anggrayudi/SimpleStorage).
+  final String? id;
+
+  /// Size of a document in bytes
+  final int? size;
+
+  /// Whether this document is a directory or not.
+  ///
+  /// Since it's a [DocumentFile], it can represent a folder/directory rather than a file.
+  final bool? isDirectory;
 
   /// Indicates if this [DocumentFile] represents a _file_.
   ///
@@ -61,14 +82,14 @@ class DocumentFile {
   /// This identifier is an opaque implementation detail of the provider, and as such it must not be parsed.
   ///
   /// [Android Reference](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#:~:text=androidx.documentfile.provider.DocumentFile,but%20it%20has%20substantial%20overhead.()
-  final bool isFile;
+  final bool? isFile;
 
   /// Indicates if this file represents a virtual document.
   ///
   /// What is a virtual document?
   /// - [Video answer](https://www.youtube.com/watch?v=4h7yCZt231Y)
   /// - [Text docs answer](https://developer.android.com/about/versions/nougat/android-7.0#virtual_files)
-  final bool isVirtual;
+  final bool? isVirtual;
 
   /// {@macro sharedstorage.saf.fromTreeUri}
   static Future<DocumentFile?> fromTreeUri(Uri uri) => saf.fromTreeUri(uri);
@@ -89,8 +110,8 @@ class DocumentFile {
   /// Alias/shortname for [openDocumentFile]
   Future<bool?> open() => openDocumentFile();
 
-  /// {@macro sharedstorage.saf.canWrite}
-  Future<bool?> canRead() async => saf.canWrite(uri);
+  /// {@macro sharedstorage.saf.canRead}
+  Future<bool?> canRead() async => saf.canRead(uri);
 
   /// {@macro sharedstorage.saf.canWrite}
   Future<bool?> canWrite() async => saf.canWrite(uri);
@@ -132,7 +153,7 @@ class DocumentFile {
   Future<DocumentFile?> createFile({
     required String mimeType,
     required String displayName,
-    String? content,
+    String content = '',
     Uint8List? bytes,
   }) =>
       saf.createFile(
@@ -156,11 +177,43 @@ class DocumentFile {
         content: content,
       );
 
-  /// {@macro sharedstorage.saf.length}
-  Future<int?> get length => saf.documentLength(uri);
+  /// {@macro sharedstorage.saf.writeToFileAsBytes}
+  Future<bool?> writeToFileAsBytes({
+    required Uint8List bytes,
+    FileMode? mode,
+  }) =>
+      saf.writeToFileAsBytes(
+        uri,
+        bytes: bytes,
+        mode: mode,
+      );
+
+  /// {@macro sharedstorage.saf.writeToFile}
+  Future<bool?> writeToFile({
+    String? content,
+    Uint8List? bytes,
+    FileMode? mode,
+  }) =>
+      saf.writeToFile(
+        uri,
+        content: content,
+        bytes: bytes,
+        mode: mode,
+      );
+
+  /// Alias for [writeToFile] with [content] param
+  Future<bool?> writeToFileAsString({
+    required String content,
+    FileMode? mode,
+  }) =>
+      saf.writeToFile(
+        uri,
+        content: content,
+        mode: mode,
+      );
 
   /// {@macro sharedstorage.saf.lastModified}
-  Future<DateTime?> get lastModified => saf.lastModified(uri);
+  final DateTime? lastModified;
 
   /// {@macro sharedstorage.saf.findFile}
   Future<DocumentFile?> findFile(String displayName) =>
@@ -175,12 +228,16 @@ class DocumentFile {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
+      'uri': '$uri',
+      'parentUri': '$parentUri',
       'isDirectory': isDirectory,
       'isFile': isFile,
       'isVirtual': isVirtual,
       'name': name,
       'type': type,
-      'uri': '$uri',
+      'size': size,
+      'lastModified': lastModified?.millisecondsSinceEpoch,
     };
   }
 
@@ -188,7 +245,9 @@ class DocumentFile {
   bool operator ==(Object other) {
     if (other is! DocumentFile) return false;
 
-    return isDirectory == other.isDirectory &&
+    return id == other.id &&
+        parentUri == other.parentUri &&
+        isDirectory == other.isDirectory &&
         isFile == other.isFile &&
         isVirtual == other.isVirtual &&
         name == other.name &&

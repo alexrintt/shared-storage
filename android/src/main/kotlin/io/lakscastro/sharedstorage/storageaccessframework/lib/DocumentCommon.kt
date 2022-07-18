@@ -39,74 +39,58 @@ fun documentFromUri(
 
 
 /**
+ * Convert a [DocumentFile] using the default method for map encoding
+ */
+fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
+  if (documentFile == null) return null
+
+  return createDocumentFileMap(
+    DocumentsContract.getDocumentId(documentFile.uri),
+    parentUri = documentFile.parentFile?.uri,
+    isDirectory = documentFile.isDirectory,
+    isFile = documentFile.isFile,
+    isVirtual = documentFile.isVirtual,
+    name = documentFile.name,
+    type = documentFile.type,
+    uri = documentFile.uri,
+    exists = documentFile.exists(),
+    size = documentFile.length(),
+    lastModified = documentFile.lastModified()
+  )
+}
+
+/**
  * Standard map encoding of a `DocumentFile` and must be used before returning any `DocumentFile`
  * from plugin results, like:
  * ```dart
  * result.success(createDocumentFileMap(documentFile))
  * ```
  */
-fun createDocumentFileMap(documentFile: DocumentFile?): Map<String, Any?>? {
-  if (documentFile == null) return null
-
-  return mapOf(
-    "isDirectory" to documentFile.isDirectory,
-    "isFile" to documentFile.isFile,
-    "isVirtual" to documentFile.isVirtual,
-    "name" to (documentFile.name ?: ""),
-    "type" to (documentFile.type ?: ""),
-    "uri" to "${documentFile.uri}",
-    "exists" to "${documentFile.exists()}"
-  )
-}
-
-
-/**
- * Standard map encoding of a row result of a `DocumentFile`
- * ```kt
- * result.success(createDocumentFileMap(documentFile))
- * ```
- *
- * Example:
- * ```py
- * input = {
- *   "last_modified": 2939496, # Key from DocumentsContract.Document.COLUMN_LAST_MODIFIED
- *   "_display_name": "MyFile" # Key from DocumentsContract.Document.COLUMN_DISPLAY_NAME
- * }
- *
- * output = createCursorRowMap(input)
- *
- * print(output)
- * {
- *   "lastModified": 2939496,
- *   "displayName": "MyFile"
- * }
- * ```
- */
-fun createCursorRowMap(
-  parentUri: Uri,
+fun createDocumentFileMap(
+  id: String?,
+  parentUri: Uri?,
+  isDirectory: Boolean?,
+  isFile: Boolean?,
+  isVirtual: Boolean?,
+  name: String?,
+  type: String?,
   uri: Uri,
-  data: Map<String, Any>,
-  isDirectory: Boolean?
-): Map<String, Any> {
-  val values = DocumentFileColumn.values()
-
-  val formattedData = mutableMapOf<String, Any>()
-
-  for (value in values) {
-    val key = parseDocumentFileColumn(value)
-
-    if (data[key] != null) {
-      formattedData[documentFileColumnToRawString(value)!!] = data[key]!!
-    }
-  }
-
+  exists: Boolean?,
+  size: Long?,
+  lastModified: Long?
+): Map<String, Any?> {
   return mapOf(
-    "data" to formattedData,
-    "metadata" to mapOf(
-      "parentUri" to "$parentUri",
-      "isDirectory" to isDirectory,
-      "uri" to "$uri"
-    )
+    "id" to id,
+    "parentUri" to "$parentUri",
+    "isDirectory" to isDirectory,
+    "isFile" to isFile,
+    "isVirtual" to isVirtual,
+    "name" to name,
+    "type" to type,
+    "uri" to "$uri",
+    "exists" to exists,
+    "size" to size,
+    "lastModified" to lastModified
   )
 }
 
@@ -130,7 +114,7 @@ fun traverseDirectoryEntries(
   targetUri: Uri,
   columns: Array<String>,
   rootOnly: Boolean,
-  block: (data: Map<String, Any>, isLast: Boolean) -> Unit
+  block: (data: Map<String, Any?>, isLast: Boolean) -> Unit
 ): Boolean {
   val documentId = try {
     DocumentsContract.getDocumentId(targetUri)
@@ -158,7 +142,10 @@ fun traverseDirectoryEntries(
       if (rootOnly) emptyArray() else arrayOf(DocumentsContract.Document.COLUMN_MIME_TYPE)
 
     val intrinsicColumns =
-      arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID)
+      arrayOf(
+        DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+        DocumentsContract.Document.COLUMN_FLAGS
+      )
 
     val projection = arrayOf(
       *columns,
@@ -215,11 +202,22 @@ fun traverseDirectoryEntries(
         }
 
         block(
-          createCursorRowMap(
-            parent,
-            uri,
-            data,
-            isDirectory = isDirectory
+          createDocumentFileMap(
+            parentUri = parent,
+            uri = uri,
+            name = data[DocumentsContract.Document.COLUMN_DISPLAY_NAME] as String?,
+            exists = true,
+            id = data[DocumentsContract.Document.COLUMN_DOCUMENT_ID] as String,
+            isDirectory = isDirectory == true,
+            isFile = isDirectory == false,
+            isVirtual = if (Build.VERSION.SDK_INT >= API_24) {
+              (data[DocumentsContract.Document.COLUMN_FLAGS] as Int and DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT) != 0
+            } else {
+              false
+            },
+            type = data[DocumentsContract.Document.COLUMN_MIME_TYPE] as String?,
+            size = data[DocumentsContract.Document.COLUMN_SIZE] as Long?,
+            lastModified = data[DocumentsContract.Document.COLUMN_LAST_MODIFIED] as Long?
           ),
           dirNodes.isEmpty() && cursor.isLast
         )

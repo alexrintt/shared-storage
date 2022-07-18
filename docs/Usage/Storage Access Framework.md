@@ -89,9 +89,9 @@ const List<DocumentFileColumn> columns = <DocumentFileColumn>[
   DocumentFileColumn.mimeType,
 ];
 
-final List<PartialDocumentFile> files = [];
+final List<DocumentFile> files = [];
 
-final Stream<PartialDocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.listFiles(columns);
+final Stream<DocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.listFiles(columns);
 
 onNewFileLoaded.listen((file) => files.add(file), onDone: () => print('All files were loaded'));
 ```
@@ -217,6 +217,33 @@ final DocumentFile? createdFile = createFileAsBytes(
 );
 ```
 
+### <samp>writeToFileAsBytes</samp>
+
+Write to a file using raw bytes `Uint8List`.
+
+Given the document uri, opens the file in the specified `mode` and writes the `bytes` to it.
+
+`mode` represents the mode in which the file will be opened for writing. Use `FileMode.write` for truncating (overwrite) and `FileMode.append` for appending to the file.
+
+```dart
+final Uri documentUri = ...
+final String fileContent = 'My File Content';
+
+/// Write to a file using a [Uint8List] as file contents [bytes]
+final bool? success = writeToFileAsBytes(
+  documentUri,
+  bytes: Uint8List.fromList(fileContent.codeUnits),
+  mode: FileMode.write,
+);
+
+/// Append to a file using a [Uint8List] as file contents [bytes]
+final bool? success = writeToFileAsBytes(
+  documentUri,
+  bytes: Uint8List.fromList(fileContent.codeUnits),
+  mode: FileMode.write,
+);
+```
+
 ### <samp>canRead</samp>
 
 <samp>Mirror of [`DocumentFile.canRead`](<https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canRead()>)</samp>
@@ -272,7 +299,7 @@ Returns the image thumbnail of a given `uri`, if any (e.g documents that can sho
 
 ```dart
 final Uint8List? imageBytes;
-final PartialDocumentFile file = ...
+final DocumentFile file = ...
 
 final Uri? rootUri = file.metadata?.rootUri;
 final String? documentId = file.data?[DocumentFileColumn.id] as String?;
@@ -318,7 +345,7 @@ const List<DocumentFileColumn> columns = <DocumentFileColumn>[
   DocumentFileColumn.mimeType,
 ];
 
-final Stream<PartialDocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.listFiles(columns);
+final Stream<DocumentFile> onNewFileLoaded = documentFileOfMyGrantedUri.listFiles(columns);
 ```
 
 ### <samp>delete</samp>
@@ -485,6 +512,31 @@ final DocumentFile? createdFile = createFileAsString(
 );
 ```
 
+### <samp>writeToFileAsString</samp>
+
+<samp>Alias for `writeToFileAsBytes`</samp>
+
+Convenient method to write to a file using `content` as `String` instead `Uint8List`.
+
+```dart
+final Uri documentUri = ...
+final String fileContent = 'My File Content';
+
+/// Write to a file using a [Uint8List] as file contents [bytes]
+final bool? success = writeToFileAsString(
+  documentUri,
+  content: fileContent,
+  mode: FileMode.write,
+);
+
+/// Append to a file using a [Uint8List] as file contents [bytes]
+final bool? success = writeToFileAsBytes(
+  documentUri,
+  content: fileContent,
+  mode: FileMode.write,
+);
+```
+
 ### <samp>createFile</samp>
 
 <samp>Alias for `createFileAsBytes` and `createFileAsString`</samp>
@@ -511,6 +563,49 @@ final DocumentFile? createdFile = createFile(
   mimeType: 'text/plain',
   displayName: 'Sample File Name',
   content: Uint8List.fromList(fileContent.codeUnits),
+);
+```
+
+### <samp>writeToFile</samp>
+
+<samp>Alias for `writeToFileAsBytes` and `writeToFileAsString`</samp>
+
+Convenient method to write to a file using `content` as `String` **or** `bytes` as `Uint8List`.
+
+You should provide either `content` or `bytes`, if both `bytes` will be used.
+
+`mode` represents the mode in which the file will be opened for writing. Use `FileMode.write` for truncating and `FileMode.append` for appending to the file.
+
+```dart
+final Uri documentUri = ...
+final String fileContent = 'My File Content';
+
+/// Write to a file using a [String] as file contents [content]
+final bool? success = writeToFile(
+  documentUri,
+  content: fileContent,
+  mode: FileMode.write,
+);
+
+/// Append to a file using a [String] as file contents [content]
+final bool? success = writeToFile(
+  documentUri,
+  content: fileContent,
+  mode: FileMode.append,
+);
+
+/// Write to a file using a [Uint8List] as file contents [bytes]
+final bool? success = writeToFile(
+  documentUri,
+  content: Uint8List.fromList(fileContent.codeUnits),
+  mode: FileMode.write,
+);
+
+/// Append to a file using a [Uint8List] as file contents [bytes]
+final bool? success = writeToFile(
+  documentUri,
+  content: Uint8List.fromList(fileContent.codeUnits),
+  mode: FileMode.append,
 );
 ```
 
@@ -550,7 +645,7 @@ This class is not intended to be instantiated, and it is only used for typing an
 
 ### <samp>QueryMetadata</samp>
 
-This class wraps useful metadata of the source queries returned by the `PartialDocumentFile`.
+This class wraps useful metadata of the source queries returned by the `DocumentFile`.
 
 This class is not intended to be instantiated, and it is only used for typing and convenience purposes.
 
