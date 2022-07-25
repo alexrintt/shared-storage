@@ -20,7 +20,7 @@ listFiles(...);
 
 ## Example project
 
-The example project does use of most of these APIs, that is available at [`/example`](https://github.com/lakscastro/shared-storage/tree/master/example)
+The example project does use of most of these APIs, that is available at [`/example`](https://github.com/alexrintt/shared-storage/tree/master/example)
 
 ## Concepts
 

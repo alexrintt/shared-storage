@@ -9,10 +9,10 @@
   "skipCi": true,
   "contributors": [
     {
-      "login": "lakscastro",
-      "name": "lask",
+      "login": "alexrintt",
+      "name": "Alex Rintt",
       "avatar_url": "https://avatars.githubusercontent.com/u/51419598?v=4",
-      "profile": "https://lakscastro.github.io",
+      "profile": "https://alexrintt.github.io",
       "contributions": [
         "code",
         "maintenance",
@@ -83,7 +83,7 @@
     }
   ],
   "projectName": "shared-storage",
-  "projectOwner": "lakscastro",
+  "projectOwner": "alexrintt",
   "repoType": "github",
   "repoHost": "https://github.com"
 }

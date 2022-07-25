@@ -329,7 +329,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
       if (_mimeTypeOrEmpty == kApkMime) {
         return showTextToast(
           text:
-              'Requesting to install a package (.apk) is not currently supported, to request this feature open an issue at github.com/lakscastro/shared-storage/issues',
+              'Requesting to install a package (.apk) is not currently supported, to request this feature open an issue at github.com/alexrintt/shared-storage/issues',
           context: context,
         );
       }

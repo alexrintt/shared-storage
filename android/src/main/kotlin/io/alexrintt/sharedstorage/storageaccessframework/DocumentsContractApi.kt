@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.storageaccessframework
+package io.alexrintt.sharedstorage.storageaccessframework
 
 import android.graphics.Point
 import android.net.Uri
@@ -7,14 +7,14 @@ import android.provider.DocumentsContract
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.lakscastro.sharedstorage.ROOT_CHANNEL
-import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.API_21
-import io.lakscastro.sharedstorage.plugin.ActivityListener
-import io.lakscastro.sharedstorage.plugin.Listenable
-import io.lakscastro.sharedstorage.plugin.notSupported
-import io.lakscastro.sharedstorage.storageaccessframework.lib.GET_DOCUMENT_THUMBNAIL
-import io.lakscastro.sharedstorage.storageaccessframework.lib.bitmapToBase64
+import io.alexrintt.sharedstorage.ROOT_CHANNEL
+import io.alexrintt.sharedstorage.SharedStoragePlugin
+import io.alexrintt.sharedstorage.plugin.API_21
+import io.alexrintt.sharedstorage.plugin.ActivityListener
+import io.alexrintt.sharedstorage.plugin.Listenable
+import io.alexrintt.sharedstorage.plugin.notSupported
+import io.alexrintt.sharedstorage.storageaccessframework.lib.GET_DOCUMENT_THUMBNAIL
+import io.alexrintt.sharedstorage.storageaccessframework.lib.bitmapToBase64
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

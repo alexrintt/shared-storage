@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.storageaccessframework
+package io.alexrintt.sharedstorage.storageaccessframework
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -6,11 +6,11 @@ import android.net.Uri
 import android.util.Log
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
-import io.lakscastro.sharedstorage.ROOT_CHANNEL
-import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.ActivityListener
-import io.lakscastro.sharedstorage.plugin.Listenable
-import io.lakscastro.sharedstorage.storageaccessframework.lib.*
+import io.alexrintt.sharedstorage.ROOT_CHANNEL
+import io.alexrintt.sharedstorage.SharedStoragePlugin
+import io.alexrintt.sharedstorage.plugin.ActivityListener
+import io.alexrintt.sharedstorage.plugin.Listenable
+import io.alexrintt.sharedstorage.storageaccessframework.lib.*
 
 /**
  * Aimed to be a class which takes the `DocumentFile` API and implement some APIs not supported
@@ -84,7 +84,7 @@ internal class DocumentFileHelperApi(private val plugin: SharedStoragePlugin) :
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
     when (requestCode) {
-      /** TODO(@lakscastro): Implement if required */
+      /** TODO(@alexrintt): Implement if required */
       else -> return true
     }
 
@@ -125,7 +125,7 @@ internal class DocumentFileHelperApi(private val plugin: SharedStoragePlugin) :
     eventSink = events
 
     when (args["event"]) {
-    /** TODO(@lakscastro): Implement if required */
+    /** TODO(@alexrintt): Implement if required */
     }
   }
 

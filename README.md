@@ -22,13 +22,13 @@
 
 ## Documentation
 
-See the website for [documentation](https://lakscastro.github.io/shared-storage).
+See the website for [documentation](https://alexrintt.github.io/shared-storage).
 
 All documentation is also available under `/docs` to each released version which is the data source of the website.
 
 You can contribute to the documentation by just editing these files through the GitHub web editor!
 
-To check all ways you can contribute to this package see [Contributing/Ways to contribute](https://lakscastro.github.io/shared-storage/Contributing/Ways%20to%20contribute/).
+To check all ways you can contribute to this package see [Contributing/Ways to contribute](https://alexrintt.github.io/shared-storage/Contributing/Ways%20to%20contribute/).
 
 Latest changes are available on `master` branch and the actual latest published package version lives under `release` branch.
 
@@ -43,13 +43,13 @@ These are the brilliant minds behind the development of this plugin!
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://lakscastro.github.io"><img src="https://avatars.githubusercontent.com/u/51419598?v=4?s=100" width="100px;" alt=""/><br /><sub><b>lask</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=lakscastro" title="Code">💻</a> <a href="#maintenance-lakscastro" title="Maintenance">🚧</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=lakscastro" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/ankitparmar007"><img src="https://avatars.githubusercontent.com/u/73648141?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ankitparmar007</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Aankitparmar007" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://www.bibliotecaortodoxa.ro"><img src="https://avatars.githubusercontent.com/u/1148228?v=4?s=100" width="100px;" alt=""/><br /><sub><b>www.bibliotecaortodoxa.ro</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=aplicatii-romanesti" title="Code">💻</a> <a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Aaplicatii-romanesti" title="Bug reports">🐛</a> <a href="#ideas-aplicatii-romanesti" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/dangilbert"><img src="https://avatars.githubusercontent.com/u/6799566?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dangilbert</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/commits?author=dangilbert" title="Code">💻</a> <a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Adangilbert" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/dhaval-k-simformsolutions"><img src="https://avatars.githubusercontent.com/u/90894202?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dhaval-k-simformsolutions</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Adhaval-k-simformsolutions" title="Bug reports">🐛</a> <a href="#ideas-dhaval-k-simformsolutions" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://eternityforest.com"><img src="https://avatars.githubusercontent.com/u/758047?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Dunn</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/issues?q=author%3AEternityForest" title="Bug reports">🐛</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=EternityForest" title="Code">💻</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=EternityForest" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://jfaltis.de"><img src="https://avatars.githubusercontent.com/u/45465572?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jfaltis</b></sub></a><br /><a href="https://github.com/lakscastro/shared-storage/issues?q=author%3Ajfaltis" title="Bug reports">🐛</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=jfaltis" title="Code">💻</a> <a href="https://github.com/lakscastro/shared-storage/commits?author=jfaltis" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://alexrintt.github.io"><img src="https://avatars.githubusercontent.com/u/51419598?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Rintt</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=alexrintt" title="Code">💻</a> <a href="#maintenance-alexrintt" title="Maintenance">🚧</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=alexrintt" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/ankitparmar007"><img src="https://avatars.githubusercontent.com/u/73648141?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ankitparmar007</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Aankitparmar007" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://www.bibliotecaortodoxa.ro"><img src="https://avatars.githubusercontent.com/u/1148228?v=4?s=100" width="100px;" alt=""/><br /><sub><b>www.bibliotecaortodoxa.ro</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=aplicatii-romanesti" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Aaplicatii-romanesti" title="Bug reports">🐛</a> <a href="#ideas-aplicatii-romanesti" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/dangilbert"><img src="https://avatars.githubusercontent.com/u/6799566?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dangilbert</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=dangilbert" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Adangilbert" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/dhaval-k-simformsolutions"><img src="https://avatars.githubusercontent.com/u/90894202?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dhaval-k-simformsolutions</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Adhaval-k-simformsolutions" title="Bug reports">🐛</a> <a href="#ideas-dhaval-k-simformsolutions" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://eternityforest.com"><img src="https://avatars.githubusercontent.com/u/758047?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Dunn</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3AEternityForest" title="Bug reports">🐛</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=EternityForest" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=EternityForest" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://jfaltis.de"><img src="https://avatars.githubusercontent.com/u/45465572?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jfaltis</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Ajfaltis" title="Bug reports">🐛</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=jfaltis" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=jfaltis" title="Documentation">📖</a></td>
   </tr>
 </table>
 
@@ -66,9 +66,9 @@ These are the brilliant minds behind the development of this plugin!
   Open Source
 </h2>
 <p align="center">
-  <sub>Copyright © 2021-present, Laks Castro.</sub>
+  <sub>Copyright © 2021-present, Alex Rintt.</sub>
 </p>
-<p align="center">Shared Storage <a href="https://github.com/LaksCastro/shared-storage/blob/master/LICENSE.md">is MIT licensed 💖</a></p>
+<p align="center">Shared Storage <a href="https://github.com/alexrintt/shared-storage/blob/master/LICENSE.md">is MIT licensed 💖</a></p>
 <p align="center">
   <img src="https://user-images.githubusercontent.com/51419598/161439601-fc228a0d-d09d-4dbb-b5a3-ebc5dbcf9f46.png" width="35" />
 </p>

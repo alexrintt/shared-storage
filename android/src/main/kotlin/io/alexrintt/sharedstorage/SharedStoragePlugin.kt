@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage
+package io.alexrintt.sharedstorage
 
 import android.content.Context
 import androidx.annotation.NonNull
@@ -6,11 +6,11 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import io.lakscastro.sharedstorage.environment.EnvironmentApi
-import io.lakscastro.sharedstorage.mediastore.MediaStoreApi
-import io.lakscastro.sharedstorage.storageaccessframework.StorageAccessFrameworkApi
+import io.alexrintt.sharedstorage.environment.EnvironmentApi
+import io.alexrintt.sharedstorage.mediastore.MediaStoreApi
+import io.alexrintt.sharedstorage.storageaccessframework.StorageAccessFrameworkApi
 
-const val ROOT_CHANNEL = "io.lakscastro.plugins/sharedstorage"
+const val ROOT_CHANNEL = "io.alexrintt.plugins/sharedstorage"
 
 /** Flutter plugin Kotlin implementation `SharedStoragePlugin` */
 class SharedStoragePlugin : FlutterPlugin, ActivityAware {
