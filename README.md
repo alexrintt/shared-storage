@@ -36,27 +36,12 @@ All other branches are derivated from issues, new features or bug fixes.
 
 ## Contributors
 
-These are the brilliant minds behind the development of this plugin!
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://alexrintt.github.io"><img src="https://avatars.githubusercontent.com/u/51419598?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Rintt</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=alexrintt" title="Code">💻</a> <a href="#maintenance-alexrintt" title="Maintenance">🚧</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=alexrintt" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/ankitparmar007"><img src="https://avatars.githubusercontent.com/u/73648141?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ankitparmar007</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Aankitparmar007" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://www.bibliotecaortodoxa.ro"><img src="https://avatars.githubusercontent.com/u/1148228?v=4?s=100" width="100px;" alt=""/><br /><sub><b>www.bibliotecaortodoxa.ro</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=aplicatii-romanesti" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Aaplicatii-romanesti" title="Bug reports">🐛</a> <a href="#ideas-aplicatii-romanesti" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/dangilbert"><img src="https://avatars.githubusercontent.com/u/6799566?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dangilbert</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=dangilbert" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Adangilbert" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/dhaval-k-simformsolutions"><img src="https://avatars.githubusercontent.com/u/90894202?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dhaval-k-simformsolutions</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Adhaval-k-simformsolutions" title="Bug reports">🐛</a> <a href="#ideas-dhaval-k-simformsolutions" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://eternityforest.com"><img src="https://avatars.githubusercontent.com/u/758047?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Dunn</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3AEternityForest" title="Bug reports">🐛</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=EternityForest" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=EternityForest" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://jfaltis.de"><img src="https://avatars.githubusercontent.com/u/45465572?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jfaltis</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Ajfaltis" title="Bug reports">🐛</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=jfaltis" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=jfaltis" title="Documentation">📖</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+- [jfaltis](https://github.com/jfaltis) fixed a memory leak and implemented an API to override existing files, thanks for you contribution!
+- [EternityForest](https://github.com/EternityForest) did fix a severe crash when the ID column was not provided and implemented a new feature to list all subfolders, thanks man!
+- Thanks [dhaval-k-simformsolutions](https://github.com/dhaval-k-simformsolutions) for taking time to submit bug reports related to duplicated file entries!
+- [dangilbert](https://github.com/dangilbert) pointed and fixed bug when the user doesn't select a folder, thanks man!
+- A huge thanks to [aplicatii-romanesti](https://www.bibliotecaortodoxa.ro/) for taking time to submit device specific issues and for supporting the project!
+- I would thanks [ankitparmar007](https://github.com/ankitparmar007) for discussing and requesting create file related APIs!
 
 <br>
 
