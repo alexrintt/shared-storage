@@ -126,11 +126,10 @@ class DocumentFile {
   Future<DocumentFile?> copy(Uri destination) => saf.copy(uri, destination);
 
   /// {@macro sharedstorage.saf.getDocumentContent}
-  Future<Uint8List?> getContent(Uri destination) => saf.getDocumentContent(uri);
+  Future<Uint8List?> getContent() => saf.getDocumentContent(uri);
 
   /// {@macro sharedstorage.saf.getContentAsString}
-  Future<String?> getContentAsString(Uri destination) =>
-      saf.getDocumentContentAsString(uri);
+  Future<String?> getContentAsString() => saf.getDocumentContentAsString(uri);
 
   /// {@macro sharedstorage.saf.createDirectory}
   Future<DocumentFile?> createDirectory(String displayName) =>
