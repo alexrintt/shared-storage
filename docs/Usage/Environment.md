@@ -1,14 +1,14 @@
 ## Import package
 
 ```dart
-import 'package:shared_storage/environment.dart' as environment;
+import 'package:shared_storage/shared_storage.dart' as shared_storage;
 ```
 
-> **Note** Be aware that if you import the package `import '...' as environment;` (strongly recommended) you should prefix all method calls with `environment`, example:
+Usage sample:
 
 ```dart
-environment.getRootDirectory(...);
-environment.getExternalStoragePublicDirectory(...);
+shared_storage.getRootDirectory(...);
+shared_storage.getExternalStoragePublicDirectory(...);
 ```
 
 But if you import without alias `import '...';` (Not recommeded because can conflict with other method/package names) you should use directly as functions:

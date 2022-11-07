@@ -1,3 +1,9 @@
+## Warning
+
+This labeling will be removed soon, I it will be replaced with a full original API as described in [#56](https://github.com/alexrintt/shared-storage/issues/56).
+
+## Labeling
+
 When refering to the docs you'll usually see some labels before the method/class names.
 
 They are label which identifies where the API came from.

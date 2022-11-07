@@ -1,3 +1,12 @@
+## 0.6.0
+
+This release contains a severe API fixes and some minor doc changes:
+
+### Breaking changes
+
+- Unused arguments in `DocumentFile.getContent` and `DocumentFile.getContentAsString`. [#107](https://github.com/alexrintt/shared-storage/issues/107).
+- Package import it's now done through a single import.
+
 ## 0.5.0
 
 This release contains:
