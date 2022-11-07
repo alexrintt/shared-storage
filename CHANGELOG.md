@@ -1,3 +1,12 @@
+## 0.6.0
+
+This release contains a severe API fixes and some minor doc changes:
+
+### Breaking changes
+
+- Unused arguments in `DocumentFile.getContent` and `DocumentFile.getContentAsString`. [#107](https://github.com/alexrintt/shared-storage/issues/107).
+- Package import it's now done through a single import.
+
 ## 0.5.0
 
 This release contains:
@@ -7,7 +16,7 @@ This release contains:
 - Example project improvements.
 - Bug fixes.
 
-To see details, refer to rollup PR [#100](https://github.com/lakscastro/shared-storage/pull/100).
+To see details, refer to rollup PR [#100](https://github.com/alexrintt/shared-storage/pull/100).
 
 ### New
 
@@ -23,7 +32,7 @@ To see details, refer to rollup PR [#100](https://github.com/lakscastro/shared-s
 ### Bug fixes
 
 - `DocumentFile.canRead` it's now calling the right API (`canRead`) instead of the similar one (`canWrite`).
-- [Fix](https://github.com/lakscastro/shared-storage/pull/100/files#diff-6f516633fcc1095b16ad5e0cc2a2c9711ee903cb115835d703f3c0ccfd6e0d31R38-R62) infinite loading of `getDocumentThumbnail` API when thumbnail is not available.
+- [Fix](https://github.com/alexrintt/shared-storage/pull/100/files#diff-6f516633fcc1095b16ad5e0cc2a2c9711ee903cb115835d703f3c0ccfd6e0d31R38-R62) infinite loading of `getDocumentThumbnail` API when thumbnail is not available.
 
 ### Example project
 
@@ -38,13 +47,13 @@ To see details, refer to rollup PR [#100](https://github.com/lakscastro/shared-s
 
 Minimal hotfix:
 
-- Closes the `OutputStream` when creating a file [#61](https://github.com/lakscastro/shared-storage/issues/61), [#86](https://github.com/lakscastro/shared-storage/pull/86) (@jfaltis).
+- Closes the `OutputStream` when creating a file [#61](https://github.com/alexrintt/shared-storage/issues/61), [#86](https://github.com/alexrintt/shared-storage/pull/86) (@jfaltis).
 
 ## 0.4.1
 
 Minimal hotfix of the example project:
 
-- Fix build error of the example project. Reported at [#70](https://github.com/lakscastro/shared-storage/issues/70) and fixed by [#72](https://github.com/lakscastro/shared-storage/pull/72) (@jfaltis).
+- Fix build error of the example project. Reported at [#70](https://github.com/alexrintt/shared-storage/issues/70) and fixed by [#72](https://github.com/alexrintt/shared-storage/pull/72) (@jfaltis).
 
 ## 0.4.0
 

@@ -1,13 +1,13 @@
 ## Import package
 
 ```dart
-import 'package:shared_storage/media_store.dart' as mediastore;
+import 'package:shared_storage/shared_storage.dart' as shared_storage;
 ```
 
-> **Note** Be aware that if you import the package `import '...' as mediastore;` (strongly recommended) you should prefix all method calls with `mediastore`, example:
+Usage sample:
 
 ```dart
-mediastore.getMediaStoreContentDirectory(...);
+shared_storage.getMediaStoreContentDirectory(...);
 ```
 
 But if you import without alias `import '...';` (Not recommeded because can conflict with other method/package names) you should use directly as functions:

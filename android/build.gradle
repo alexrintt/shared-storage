@@ -1,4 +1,4 @@
-group 'io.lakscastro.sharedstorage'
+group 'io.alexrintt.sharedstorage'
 version '1.0-SNAPSHOT'
 
 buildscript {

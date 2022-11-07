@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.plugin
+package io.alexrintt.sharedstorage.plugin
 
 import android.os.Build
 import io.flutter.plugin.common.MethodChannel

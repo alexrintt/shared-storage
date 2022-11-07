@@ -1,14 +1,14 @@
-package io.lakscastro.sharedstorage.mediastore
+package io.alexrintt.sharedstorage.mediastore
 
 import android.os.Build
 import android.provider.MediaStore
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.lakscastro.sharedstorage.ROOT_CHANNEL
-import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.API_29
-import io.lakscastro.sharedstorage.plugin.Listenable
+import io.alexrintt.sharedstorage.ROOT_CHANNEL
+import io.alexrintt.sharedstorage.SharedStoragePlugin
+import io.alexrintt.sharedstorage.plugin.API_29
+import io.alexrintt.sharedstorage.plugin.Listenable
 
 class MediaStoreApi(val plugin: SharedStoragePlugin) : MethodChannel.MethodCallHandler, Listenable {
   private var channel: MethodChannel? = null

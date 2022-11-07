@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-const kRootChannel = 'io.lakscastro.plugins/sharedstorage';
+const kRootChannel = 'io.alexrintt.plugins/sharedstorage';
 
 /// `MethodChannels` of this plugin. Flutter use this to communicate with native Android
 

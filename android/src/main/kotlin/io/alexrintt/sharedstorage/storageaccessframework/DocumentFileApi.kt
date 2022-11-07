@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.storageaccessframework
+package io.alexrintt.sharedstorage.storageaccessframework
 
 import android.content.Intent
 import android.net.Uri
@@ -10,10 +10,10 @@ import androidx.documentfile.provider.DocumentFile
 import com.anggrayudi.storage.file.child
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
-import io.lakscastro.sharedstorage.ROOT_CHANNEL
-import io.lakscastro.sharedstorage.SharedStoragePlugin
-import io.lakscastro.sharedstorage.plugin.*
-import io.lakscastro.sharedstorage.storageaccessframework.lib.*
+import io.alexrintt.sharedstorage.ROOT_CHANNEL
+import io.alexrintt.sharedstorage.SharedStoragePlugin
+import io.alexrintt.sharedstorage.plugin.*
+import io.alexrintt.sharedstorage.storageaccessframework.lib.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

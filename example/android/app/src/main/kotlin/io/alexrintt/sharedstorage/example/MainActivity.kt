@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.example
+package io.alexrintt.sharedstorage.example
 
 import io.flutter.embedding.android.FlutterActivity
 

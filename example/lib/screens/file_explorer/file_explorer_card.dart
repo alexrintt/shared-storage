@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_storage/saf.dart';
+import 'package:shared_storage/shared_storage.dart';
 
 import '../../theme/spacing.dart';
 import '../../utils/apply_if_not_null.dart';
@@ -329,7 +329,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
       if (_mimeTypeOrEmpty == kApkMime) {
         return showTextToast(
           text:
-              'Requesting to install a package (.apk) is not currently supported, to request this feature open an issue at github.com/lakscastro/shared-storage/issues',
+              'Requesting to install a package (.apk) is not currently supported, to request this feature open an issue at github.com/alexrintt/shared-storage/issues',
           context: context,
         );
       }

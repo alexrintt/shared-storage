@@ -1,14 +1,14 @@
 ## Import package
 
 ```dart
-import 'package:shared_storage/saf.dart' as saf;
+import 'package:shared_storage/shared_storage.dart' as saf;
 ```
 
-> **Note** Be aware that if you import the package `import '...' as saf;` (strongly recommended) you should prefix all method calls with `saf`, example:
+Usage sample:
 
 ```dart
-saf.openDocumentTree(...);
-saf.listFiles(...);
+shared_storage.openDocumentTree(...);
+shared_storage.listFiles(...);
 ```
 
 But if you import without alias `import '...';` (Not recommeded because can conflict with other method/package names) you should use directly as functions:
@@ -20,7 +20,7 @@ listFiles(...);
 
 ## Example project
 
-The example project does use of most of these APIs, that is available at [`/example`](https://github.com/lakscastro/shared-storage/tree/master/example)
+The example project does use of most of these APIs, that is available at [`/example`](https://github.com/alexrintt/shared-storage/tree/master/example)
 
 ## Concepts
 

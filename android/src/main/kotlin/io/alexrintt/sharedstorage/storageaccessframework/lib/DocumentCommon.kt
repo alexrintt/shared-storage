@@ -1,4 +1,4 @@
-package io.lakscastro.sharedstorage.storageaccessframework.lib
+package io.alexrintt.sharedstorage.storageaccessframework.lib
 
 import android.content.ContentResolver
 import android.content.Context
@@ -9,9 +9,9 @@ import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
-import io.lakscastro.sharedstorage.plugin.API_19
-import io.lakscastro.sharedstorage.plugin.API_21
-import io.lakscastro.sharedstorage.plugin.API_24
+import io.alexrintt.sharedstorage.plugin.API_19
+import io.alexrintt.sharedstorage.plugin.API_21
+import io.alexrintt.sharedstorage.plugin.API_24
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 
