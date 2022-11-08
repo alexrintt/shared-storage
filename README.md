@@ -36,7 +36,7 @@ All other branches are derivated from issues, new features or bug fixes.
 
 ## Contributors
 
-- [jfaltis](https://github.com/jfaltis) fixed a memory leak and implemented an API to override existing files, thanks for you contribution!
+- [jfaltis](https://github.com/jfaltis) fixed a memory leak and implemented an API to override existing files, thanks for your contribution!
 - [EternityForest](https://github.com/EternityForest) did fix a severe crash when the ID column was not provided and implemented a new feature to list all subfolders, thanks man!
 - Thanks [dhaval-k-simformsolutions](https://github.com/dhaval-k-simformsolutions) for taking time to submit bug reports related to duplicated file entries!
 - [dangilbert](https://github.com/dangilbert) pointed and fixed bug when the user doesn't select a folder, thanks man!
