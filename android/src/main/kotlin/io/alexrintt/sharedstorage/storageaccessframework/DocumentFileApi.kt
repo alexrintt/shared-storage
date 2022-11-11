@@ -7,6 +7,7 @@ import android.provider.DocumentsContract
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
+import com.anggrayudi.storage.extension.isTreeDocumentFile
 import com.anggrayudi.storage.file.child
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
@@ -256,7 +257,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
   @RequiresApi(API_21)
   private fun openDocument(call: MethodCall, result: MethodChannel.Result) {
-
     val initialUri = call.argument<String>("initialUri")
 
     val intent =
@@ -380,7 +380,8 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
                   "isReadPermission" to it.isReadPermission,
                   "isWritePermission" to it.isWritePermission,
                   "persistedTime" to it.persistedTime,
-                  "uri" to "${it.uri}"
+                  "uri" to "${it.uri}",
+                  "isTreeDocumentFile" to it.uri.isTreeDocumentFile
               )
             }
             .toList()
@@ -404,16 +405,19 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         val pendingResult = pendingResults[OPEN_DOCUMENT_TREE_CODE] ?: return false
 
         val grantWritePermission = pendingResult.first.argument<Boolean>("grantWritePermission")!!
+        val persistablePermission = pendingResult.first.argument<Boolean>("persistablePermission")!!
 
         try {
           val uri = data?.data
 
           if (uri != null) {
-            plugin.context.contentResolver.takePersistableUriPermission(
+            if (persistablePermission) {
+              plugin.context.contentResolver.takePersistableUriPermission(
                 uri,
                 if (grantWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 else Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
+              )
+            }
 
             pendingResult.second.success("$uri")
 
@@ -428,6 +432,9 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       OPEN_DOCUMENT_CODE -> {
         val pendingResult = pendingResults[OPEN_DOCUMENT_CODE] ?: return false
 
+        val grantWritePermission = pendingResult.first.argument<Boolean>("grantWritePermission")!!
+        val persistablePermission = pendingResult.first.argument<Boolean>("persistablePermission")!!
+
         try {
           // if data.clipData not null, uriList from data.clipData, else uriList is data.data
           val uriList = data?.clipData?.let {
@@ -435,6 +442,16 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           } ?: data?.data?.let { listOf(it) }
 
           if (uriList != null) {
+            if (persistablePermission) {
+              for (uri in uriList) {
+                plugin.context.contentResolver.takePersistableUriPermission(
+                  uri,
+                  if (grantWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                  else Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+              }
+            }
+
             pendingResult.second.success(uriList.map { "$it" })
 
             return true
