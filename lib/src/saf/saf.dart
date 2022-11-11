@@ -35,6 +35,26 @@ Future<Uri?> openDocumentTree({
   return selectedDirectoryUri?.apply((e) => Uri.parse(e));
 }
 
+/// [Refer to details](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT).
+Future<List<Uri>?> openDocument({
+  Uri? initialUri,
+  String mimeType = '*/*',
+  bool multiple = false,
+}) async {
+  const kOpenDocument = 'openDocument';
+
+  final args = <String, dynamic>{
+    if (initialUri != null) 'initialUri': '$initialUri',
+    'mimeType': mimeType,
+    'multiple': multiple,
+  };
+
+  final selectedUriList =
+      await kDocumentFileChannel.invokeListMethod(kOpenDocument, args);
+
+  return selectedUriList?.apply((e) => e.map((e) => Uri.parse(e as String)).toList());
+}
+
 /// {@template sharedstorage.saf.persistedUriPermissions}
 /// Returns an `List<Uri>` with all persisted [Uri]
 ///
