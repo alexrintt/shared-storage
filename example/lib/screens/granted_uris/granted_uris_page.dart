@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_storage/shared_storage.dart';
 
 import '../../theme/spacing.dart';
+import '../../utils/disabled_text_style.dart';
 import '../../widgets/light_text.dart';
 import 'granted_uri_card.dart';
 
@@ -13,7 +14,13 @@ class GrantedUrisPage extends StatefulWidget {
 }
 
 class _GrantedUrisPageState extends State<GrantedUrisPage> {
-  List<UriPermission>? persistedPermissionUris;
+  List<UriPermission>? __persistedPermissionUris;
+  List<UriPermission>? get _persistedPermissionUris {
+    if (__persistedPermissionUris == null) return null;
+
+    return List.from(__persistedPermissionUris!)
+      ..sort((a, z) => z.persistedTime - a.persistedTime);
+  }
 
   @override
   void initState() {
@@ -23,7 +30,7 @@ class _GrantedUrisPageState extends State<GrantedUrisPage> {
   }
 
   Future<void> _loadPersistedUriPermissions() async {
-    persistedPermissionUris = await persistedUriPermissions();
+    __persistedPermissionUris = await persistedUriPermissions();
 
     if (mounted) setState(() => {});
   }
@@ -38,6 +45,20 @@ class _GrantedUrisPageState extends State<GrantedUrisPage> {
     await openDocumentTree(initialUri: Uri.parse(kWppStatusFolder));
 
     /// TODO: Add broadcast listener to be aware when a Uri permission changes
+    await _loadPersistedUriPermissions();
+  }
+
+  Future<void> _openDocument() async {
+    const kDownloadsFolder =
+        'content://com.android.externalstorage.documents/tree/primary%3ADownloads/document/primary%3ADownloads';
+
+    final List<Uri>? selectedDocumentUris = await openDocument(
+      initialUri: Uri.parse(kDownloadsFolder),
+      multiple: true,
+    );
+
+    if (selectedDocumentUris == null) return;
+
     await _loadPersistedUriPermissions();
   }
 
@@ -66,22 +87,39 @@ class _GrantedUrisPageState extends State<GrantedUrisPage> {
                 delegate: SliverChildListDelegate(
                   [
                     Center(
-                      child: TextButton(
-                        onPressed: _openDocumentTree,
-                        child: const Text('New allowed folder'),
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        runAlignment: WrapAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: _openDocumentTree,
+                            child: const Text('New allowed folder'),
+                          ),
+                          const Padding(padding: EdgeInsets.all(k2dp)),
+                          TextButton(
+                            onPressed: _openDocument,
+                            child: const Text('New allowed files'),
+                          ),
+                        ],
                       ),
                     ),
-                    if (persistedPermissionUris != null)
-                      if (persistedPermissionUris!.isEmpty)
+                    if (_persistedPermissionUris != null)
+                      if (_persistedPermissionUris!.isEmpty)
                         _buildNoFolderAllowedYetWarning()
                       else
-                        for (final permissionUri in persistedPermissionUris!)
+                        for (final permissionUri in _persistedPermissionUris!)
                           GrantedUriCard(
                             permissionUri: permissionUri,
                             onChange: _loadPersistedUriPermissions,
                           )
                     else
-                      const Text('Loading...'),
+                      Center(
+                        child: Text(
+                          'Loading...',
+                          style: disabledTextStyle(),
+                        ),
+                      ),
                   ],
                 ),
               ),

@@ -3,15 +3,13 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_storage/shared_storage.dart';
 
-import '../../theme/spacing.dart';
 import '../../utils/apply_if_not_null.dart';
 import '../../utils/confirm_decorator.dart';
 import '../../utils/disabled_text_style.dart';
+import '../../utils/document_file_utils.dart';
 import '../../utils/format_bytes.dart';
 import '../../utils/inline_span.dart';
 import '../../utils/mime_types.dart';
@@ -241,7 +239,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
   }
 
   Widget _buildOpenWithButton() =>
-      Button('Open with', onTap: _openFileWithExternalApp);
+      Button('Open with', onTap: _currentUri.openWithExternalApp);
 
   Widget _buildDocumentSimplifiedTile() {
     return ListTile(
@@ -319,60 +317,6 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
 
   String get _mimeTypeOrEmpty => _file.type ?? '';
 
-  Future<void> _showFileContents() async {
-    if (_isDirectory) return;
-
-    const k10mb = 1024 * 1024 * 10;
-
-    if (!_mimeTypeOrEmpty.startsWith(kTextMime) &&
-        !_mimeTypeOrEmpty.startsWith(kImageMime)) {
-      if (_mimeTypeOrEmpty == kApkMime) {
-        return showTextToast(
-          text:
-              'Requesting to install a package (.apk) is not currently supported, to request this feature open an issue at github.com/alexrintt/shared-storage/issues',
-          context: context,
-        );
-      }
-
-      return _openFileWithExternalApp();
-    }
-
-    // Too long, will take too much time to read
-    if (_sizeInBytes > k10mb) {
-      return showTextToast(
-        text: 'File too long to open',
-        context: context,
-      );
-    }
-
-    content = await getDocumentContent(_file.uri);
-
-    if (content != null) {
-      final isImage = _mimeTypeOrEmpty.startsWith(kImageMime);
-
-      await showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          if (isImage) {
-            return Image.memory(content!);
-          }
-
-          final contentAsString = String.fromCharCodes(content!);
-
-          final fileIsEmpty = contentAsString.isEmpty;
-
-          return Container(
-            padding: k8dp.all,
-            child: Text(
-              fileIsEmpty ? 'This file is empty' : contentAsString,
-              style: fileIsEmpty ? disabledTextStyle() : null,
-            ),
-          );
-        },
-      );
-    }
-  }
-
   Future<void> _deleteDocument() async {
     final deleted = await delete(_currentUri);
 
@@ -436,24 +380,6 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     }
   }
 
-  Future<void> _openFileWithExternalApp() async {
-    final uri = _currentUri;
-
-    try {
-      final launched = await openDocumentFile(uri);
-
-      if (launched ?? false) {
-        print('Successfully opened $uri');
-      } else {
-        print('Failed to launch $uri');
-      }
-    } on PlatformException {
-      print(
-        "There's no activity associated with the file type of this Uri: $uri",
-      );
-    }
-  }
-
   Future<void> _openDirectory() async {
     if (_isDirectory) {
       _openFolderFileListPage(_file.uri);
@@ -463,7 +389,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
   @override
   Widget build(BuildContext context) {
     return SimpleCard(
-      onTap: _isDirectory ? _openDirectory : _showFileContents,
+      onTap: _isDirectory ? _openDirectory : () => _file.showContents(context),
       children: [
         if (_expanded) ...[
           _buildThumbnail(size: 50),
