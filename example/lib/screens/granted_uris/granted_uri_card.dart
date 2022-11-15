@@ -67,10 +67,19 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
         ),
       ),
       ActionButton(
-        'Open tree here',
+        'Open file picker here',
         onTap: () => openDocumentTree(initialUri: widget.permissionUri.uri),
       )
     ];
+  }
+
+  @override
+  void didUpdateWidget(covariant GrantedUriCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    documentFile = null;
+    loading = false;
+    error = null;
   }
 
   DocumentFile? documentFile;
@@ -97,11 +106,17 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
     }
   }
 
+  VoidCallback get _onTapHandler => widget.permissionUri.isTreeDocumentFile
+      ? _openListFilesPage
+      : _showDocumentFileContents;
+
   List<Widget> _getDocumentAvailableOptions() {
     return [
       ActionButton(
-        'Open document',
-        onTap: _showDocumentFileContents,
+        widget.permissionUri.isTreeDocumentFile
+            ? 'Open folder'
+            : 'Open document',
+        onTap: _onTapHandler,
       ),
       ActionButton(
         'Load extra document data linked to this permission',
@@ -114,9 +129,8 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
     return Wrap(
       children: [
         if (widget.permissionUri.isTreeDocumentFile)
-          ..._getTreeAvailableOptions()
-        else
-          ..._getDocumentAvailableOptions(),
+          ..._getTreeAvailableOptions(),
+        ..._getDocumentAvailableOptions(),
         Padding(padding: k2dp.all),
         DangerButton(
           'Revoke',
@@ -143,9 +157,7 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
   @override
   Widget build(BuildContext context) {
     return SimpleCard(
-      onTap: widget.permissionUri.isTreeDocumentFile
-          ? _openListFilesPage
-          : _showDocumentFileContents,
+      onTap: _onTapHandler,
       children: [
         Padding(
           padding: k2dp.all.copyWith(top: k8dp, bottom: k8dp),

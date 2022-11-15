@@ -66,7 +66,7 @@ class _GrantedUrisPageState extends State<GrantedUrisPage> {
     return Padding(
       padding: k8dp.all,
       child: const Center(
-        child: LightText('No folders allowed yet'),
+        child: LightText('No folders or files allowed yet'),
       ),
     );
   }

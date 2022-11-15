@@ -113,7 +113,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
   }
 
   Widget _buildMimeTypeIconThumbnail(String mimeType, {double? size}) {
-    if (mimeType == kDirectoryMime) {
+    if (_isDirectory) {
       return Icon(Icons.folder, size: size, color: Colors.blueGrey);
     }
 
