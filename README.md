@@ -18,7 +18,7 @@
   <img src="https://img.shields.io/badge/Flutter-22272E?style=for-the-badge&logo=flutter&logoColor=66B1F1">
 </p>
 
-<a href="https://pub.dev/packages/shared_storage"><h4 align="center"><samp>Install It</samp></h4></a>
+<h4 align="center"><samp><a href="https://pub.dev/packages/shared_storage">Install It</a></samp></h4>
 
 ## Documentation
 
@@ -34,15 +34,20 @@ Latest changes are available on `master` branch and the actual latest published 
 
 All other branches are derivated from issues, new features or bug fixes.
 
+## Supporters
+
+- [aplicatii-romanesti](https://www.bibliotecaortodoxa.ro/) who bought me a whole month of caffeine!
+
 ## Contributors
 
-- [clragon](https://github.com/clragon) submitted a severe bug report and opened discussions around package architecture, thanks!
-- [jfaltis](https://github.com/jfaltis) fixed a memory leak and implemented an API to override existing files, thanks for your contribution!
-- [EternityForest](https://github.com/EternityForest) did fix a severe crash when the ID column was not provided and implemented a new feature to list all subfolders, thanks man!
-- Thanks [dhaval-k-simformsolutions](https://github.com/dhaval-k-simformsolutions) for taking time to submit bug reports related to duplicated file entries!
-- [dangilbert](https://github.com/dangilbert) pointed and fixed bug when the user doesn't select a folder, thanks man!
-- A huge thanks to [aplicatii-romanesti](https://www.bibliotecaortodoxa.ro/) for taking time to submit device specific issues and for supporting the project!
-- I would thanks [ankitparmar007](https://github.com/ankitparmar007) for discussing and requesting create file related APIs!
+- [honjow](https://github.com/honjow) contributed by [implementing `openDocument` Android API #110](https://github.com/alexrintt/shared-storage/pull/110) to pick single or multiple file URIs. Really helpful, thanks!
+- [clragon](https://github.com/clragon) submitted a severe [bug report #107](https://github.com/alexrintt/shared-storage/issues/107) and opened [discussions around package architecture #108](https://github.com/alexrintt/shared-storage/discussions/108), thanks!
+- [jfaltis](https://github.com/jfaltis) fixed [a memory leak #86](https://github.com/alexrintt/shared-storage/pull/86) and implemented an API to [override existing files #85](https://github.com/alexrintt/shared-storage/pull/85), thanks for your contribution!
+- [EternityForest](https://github.com/EternityForest) did [report a severe crash #50](https://github.com/alexrintt/shared-storage/issues/50) when the column ID was not provided and [implemented a new feature to list all subfolders #59](https://github.com/alexrintt/shared-storage/pull/59), thanks man!
+- Thanks [dhaval-k-simformsolutions](https://github.com/dhaval-k-simformsolutions) for taking time to submit [bug reports](https://github.com/alexrintt/shared-storage/issues?q=is%3Aissue+author%3Adhaval-k-simformsolutions) related to duplicated file entries!
+- [dangilbert](https://github.com/dangilbert) pointed and [fixed a bug #14](https://github.com/alexrintt/shared-storage/pull/14) when the user doesn't select a folder, thanks man!
+- A huge thanks to [aplicatii-romanesti](https://www.bibliotecaortodoxa.ro/) for taking time to submit [device specific issues](https://github.com/alexrintt/shared-storage/issues?q=author%3Aaplicatii-romanesti)!
+- I would thanks [ankitparmar007](https://github.com/ankitparmar007) for [discussing and requesting create file related APIs #20](https://github.com/alexrintt/shared-storage/issues/10)!
 
 <br>
 
