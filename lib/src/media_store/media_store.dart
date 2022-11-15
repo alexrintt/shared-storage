@@ -6,6 +6,9 @@ import 'media_store_collection.dart';
 /// Get the directory of a given [MediaStoreCollection]
 ///
 /// [Refer to details](https://developer.android.com/reference/android/provider/MediaStore#summary)
+@Deprecated(
+  'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+)
 Future<Uri?> getMediaStoreContentDirectory(
   MediaStoreCollection collection,
 ) async {

@@ -20,49 +20,76 @@ class EnvironmentDirectory {
   /// Available for Android [4.1 to 9.0]
   ///
   /// Equivalent to [Environment.DIRECTORY_ALARMS]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const alarms = EnvironmentDirectory._('$_kPrefix.Alarms');
 
   /// Available for Android [4.1 to 9]
   ///
   /// Equivalent to:
   /// - [Environment.DIRECTORY_DCIM] on Android [4.1 to 9]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const dcim = EnvironmentDirectory._('$_kPrefix.DCIM');
 
   /// Available for Android [4.1 to 9]
   ///
   /// Equivalent to:
   /// - [Environment.DIRECTORY_DOWNLOADS] on Android [4.1 to 9]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const downloads = EnvironmentDirectory._('$_kPrefix.Downloads');
 
   /// Available for Android [4.1 to 9]
   ///
   /// - [Environment.DIRECTORY_MOVIES] on Android [4.1 to 9]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const movies = EnvironmentDirectory._('$_kPrefix.Movies');
 
   /// Available for Android [4.1 to 9]
   ///
   /// - [Environment.DIRECTORY_MUSIC] on Android [4.1 to 9]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const music = EnvironmentDirectory._('$_kPrefix.Music');
 
   /// Available for Android [4.1 to 9]
   ///
   /// - [Environment.DIRECTORY_NOTIFICATIONS] on Android [4.1 to 9]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const notifications =
       EnvironmentDirectory._('$_kPrefix.Notifications');
 
   /// Available for Android [4.1 to 9]
   ///
   /// - [Environment.DIRECTORY_PICTURES] on Android [4.1 to 9]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const pictures = EnvironmentDirectory._('$_kPrefix.Pictures');
 
   /// Available for Android [4.1 to 9]
   ///
   /// - [Environment.DIRECTORY_PODCASTS] on Android [4.1 to 9]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const podcasts = EnvironmentDirectory._('$_kPrefix.Podcasts');
 
   /// Available for Android [4.1 to 9]
   ///
   /// - [Environment.DIRECTORY_RINGTONES] on Android [4.1 to 9]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const ringtones = EnvironmentDirectory._('$_kPrefix.Ringtones');
 
   @override
