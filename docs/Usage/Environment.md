@@ -1,3 +1,5 @@
+> **WARNING** This API is deprecated and will be removed soon. If you need it, please open an issue with your use-case to include in the next release as part of the new original cross-platform API.
+
 ## Import package
 
 ```dart

@@ -64,6 +64,46 @@ if (grantedUri != null) {
 }
 ```
 
+### <samp>openDocument</samp>
+
+Same as `openDocumentTree` but for file URIs, you can request user to select a file and filter by:
+
+- Single or multiple files.
+- Mime type.
+
+You can also specify if you want a one-time operation (`persistablePermission` = false) and if you don't need write access (`grantWritePermission` = false).
+
+```dart
+const kDownloadsFolder =
+    'content://com.android.externalstorage.documents/tree/primary%3ADownloads/document/primary%3ADownloads';
+
+final List<Uri>? selectedDocumentUris = await openDocument(
+  // if you have a previously saved URI,
+  // you can use the specify the tree you user will see at startup of the file picker.
+  initialUri: Uri.parse(kDownloadsFolder),
+
+  // whether or not allow the user select multiple files.
+  multiple: true,
+
+  // whether or not the selected URIs should be persisted across app and device reboots.
+  persistablePermission: true,
+
+  // whether or not grant write permission required to edit file metadata (name) and it's contents.
+  grantWritePermission: true,
+
+  // whether or not filter by mime type.
+  mimeType: 'image/*' // default '*/*'
+);
+
+if (selectedDocumentUris == null) {
+  return print('User cancelled the operation.');
+}
+
+// If [selectedDocumentUris] are [persistablePermission]s then it will be returned by this function
+// along with any another URIs you've got permission over.
+final List<UriPermission> persistedUris = await persistedUriPermissions();
+```
+
 ### <samp>listFiles</samp>
 
 This method list files lazily **over a granted uri:**
