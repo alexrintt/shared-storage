@@ -7,6 +7,7 @@ import android.provider.DocumentsContract
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
+import com.anggrayudi.storage.extension.isTreeDocumentFile
 import com.anggrayudi.storage.file.child
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
@@ -60,6 +61,10 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           result.notSupported(call.method, API_21)
         }
       }
+      OPEN_DOCUMENT ->
+        if (Build.VERSION.SDK_INT >= API_21) {
+          openDocument(call, result)
+        }
       OPEN_DOCUMENT_TREE ->
           if (Build.VERSION.SDK_INT >= API_21) {
             openDocumentTree(call, result)
@@ -251,6 +256,32 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   }
 
   @RequiresApi(API_21)
+  private fun openDocument(call: MethodCall, result: MethodChannel.Result) {
+    val initialUri = call.argument<String>("initialUri")
+
+    val intent =
+      Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        addCategory(Intent.CATEGORY_OPENABLE)
+
+        if (initialUri != null) {
+          val tree = DocumentFile.fromTreeUri(plugin.context, Uri.parse(initialUri))
+          if (Build.VERSION.SDK_INT >= API_26) {
+            putExtra(DocumentsContract.EXTRA_INITIAL_URI, tree?.uri)
+          }
+        }
+
+        type = call.argument<String>("mimeType") ?: "*/*"
+        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, call.argument<Boolean>("multiple") ?: false)
+      }
+
+    if (pendingResults[OPEN_DOCUMENT_CODE] != null) return
+
+    pendingResults[OPEN_DOCUMENT_CODE] = Pair(call, result)
+
+    plugin.binding?.activity?.startActivityForResult(intent, OPEN_DOCUMENT_CODE)
+  }
+
+  @RequiresApi(API_21)
   private fun openDocumentTree(call: MethodCall, result: MethodChannel.Result) {
     val grantWritePermission = call.argument<Boolean>("grantWritePermission")!!
 
@@ -349,7 +380,8 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
                   "isReadPermission" to it.isReadPermission,
                   "isWritePermission" to it.isWritePermission,
                   "persistedTime" to it.persistedTime,
-                  "uri" to "${it.uri}"
+                  "uri" to "${it.uri}",
+                  "isTreeDocumentFile" to it.uri.isTreeDocumentFile
               )
             }
             .toList()
@@ -373,16 +405,19 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         val pendingResult = pendingResults[OPEN_DOCUMENT_TREE_CODE] ?: return false
 
         val grantWritePermission = pendingResult.first.argument<Boolean>("grantWritePermission")!!
+        val persistablePermission = pendingResult.first.argument<Boolean>("persistablePermission")!!
 
         try {
           val uri = data?.data
 
           if (uri != null) {
-            plugin.context.contentResolver.takePersistableUriPermission(
+            if (persistablePermission) {
+              plugin.context.contentResolver.takePersistableUriPermission(
                 uri,
                 if (grantWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 else Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
+              )
+            }
 
             pendingResult.second.success("$uri")
 
@@ -392,6 +427,39 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           pendingResult.second.success(null)
         } finally {
           pendingResults.remove(OPEN_DOCUMENT_TREE_CODE)
+        }
+      }
+      OPEN_DOCUMENT_CODE -> {
+        val pendingResult = pendingResults[OPEN_DOCUMENT_CODE] ?: return false
+
+        val grantWritePermission = pendingResult.first.argument<Boolean>("grantWritePermission")!!
+        val persistablePermission = pendingResult.first.argument<Boolean>("persistablePermission")!!
+
+        try {
+          // if data.clipData not null, uriList from data.clipData, else uriList is data.data
+          val uriList = data?.clipData?.let {
+            (0 until it.itemCount).map { i -> it.getItemAt(i).uri }
+          } ?: data?.data?.let { listOf(it) }
+
+          if (uriList != null) {
+            if (persistablePermission) {
+              for (uri in uriList) {
+                plugin.context.contentResolver.takePersistableUriPermission(
+                  uri,
+                  if (grantWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                  else Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+              }
+            }
+
+            pendingResult.second.success(uriList.map { "$it" })
+
+            return true
+          }
+
+          pendingResult.second.success(null)
+        } finally {
+          pendingResults.remove(OPEN_DOCUMENT_CODE)
         }
       }
     }

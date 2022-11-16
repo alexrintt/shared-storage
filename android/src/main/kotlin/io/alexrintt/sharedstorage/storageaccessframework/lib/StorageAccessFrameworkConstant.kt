@@ -19,6 +19,7 @@ const val DOCUMENTS_CONTRACT_EXTRA_INITIAL_URI =
 /**
  * Available DocumentFile Method Channel APIs
  */
+const val OPEN_DOCUMENT = "openDocument"
 const val OPEN_DOCUMENT_TREE = "openDocumentTree"
 const val PERSISTED_URI_PERMISSIONS = "persistedUriPermissions"
 const val RELEASE_PERSISTABLE_URI_PERMISSION = "releasePersistableUriPermission"
@@ -54,3 +55,4 @@ const val GET_DOCUMENT_CONTENT = "getDocumentContent"
  * Intent Request Codes
  */
 const val OPEN_DOCUMENT_TREE_CODE = 10
+const val OPEN_DOCUMENT_CODE = 11

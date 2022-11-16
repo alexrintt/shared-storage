@@ -7,6 +7,9 @@ import 'environment_directory.dart';
 /// Equivalent to `Environment.getRootDirectory`
 ///
 /// [Refer to details](https://developer.android.com/reference/android/os/Environment#getRootDirectory%28%29)
+@Deprecated(
+  'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+)
 Future<Directory?> getRootDirectory() async {
   const kGetRootDirectory = 'getRootDirectory';
 
@@ -49,6 +52,9 @@ Future<Directory?> getExternalStoragePublicDirectory(
 /// Equivalent to `Environment.getExternalStorageDirectory`
 ///
 /// [Refer to details](https://developer.android.com/reference/android/os/Environment#getExternalStorageDirectory%28%29)
+@Deprecated(
+  'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+)
 Future<Directory?> getExternalStorageDirectory() async {
   const kGetExternalStorageDirectory = 'getExternalStorageDirectory';
 
@@ -58,6 +64,9 @@ Future<Directory?> getExternalStorageDirectory() async {
 /// Equivalent to `Environment.getDataDirectory`
 ///
 /// [Refer to details](https://developer.android.com/reference/android/os/Environment#getDataDirectory%28%29)
+@Deprecated(
+  'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+)
 Future<Directory?> getDataDirectory() async {
   const kGetDataDirectory = 'getDataDirectory';
 
@@ -67,6 +76,9 @@ Future<Directory?> getDataDirectory() async {
 /// Equivalent to `Environment.getDataDirectory`
 ///
 /// [Refer to details](https://developer.android.com/reference/android/os/Environment#getDownloadCacheDirectory%28%29)
+@Deprecated(
+  'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+)
 Future<Directory?> getDownloadCacheDirectory() async {
   const kGetDownloadCacheDirectory = 'getDownloadCacheDirectory';
 
@@ -76,6 +88,9 @@ Future<Directory?> getDownloadCacheDirectory() async {
 /// Equivalent to `Environment.getStorageDirectory`
 ///
 /// [Refer to details](https://developer.android.com/reference/android/os/Environment#getStorageDirectory%28%29)
+@Deprecated(
+  'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+)
 Future<Directory?> getStorageDirectory() {
   const kGetStorageDirectory = 'getStorageDirectory';
 

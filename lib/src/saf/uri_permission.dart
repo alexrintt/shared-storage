@@ -2,7 +2,7 @@
 /// This grants may have been created via `Intent#FLAG_GRANT_READ_URI_PERMISSION`,
 /// etc when sending an `Intent`, or explicitly through `Context#grantUriPermission(String, android.net.Uri, int)`.
 ///
-/// [Refer to details](https://developer.android.com/reference/android/content/UriPermission)
+/// [Refer to details](https://developer.android.com/reference/android/content/UriPermission).
 class UriPermission {
   /// Even we allow create instances of this class avoid it and use
   /// `persistedUriPermissions` API instead
@@ -11,6 +11,7 @@ class UriPermission {
     required this.isWritePermission,
     required this.persistedTime,
     required this.uri,
+    required this.isTreeDocumentFile,
   });
 
   factory UriPermission.fromMap(Map<String, dynamic> map) {
@@ -19,6 +20,7 @@ class UriPermission {
       isWritePermission: map['isWritePermission'] as bool,
       persistedTime: map['persistedTime'] as int,
       uri: Uri.parse(map['uri'] as String),
+      isTreeDocumentFile: map['isTreeDocumentFile'] as bool,
     );
   }
 
@@ -40,17 +42,33 @@ class UriPermission {
   /// [Refer to details](https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/content/UriPermission.java#56)
   final Uri uri;
 
+  /// Whether or not a tree document file.
+  ///
+  /// Tree document files are granted through [openDocumentTree] method, that is, when the user select a folder-like tree document file.
+  /// Document files are granted through [openDocument] method, that is, when the user select (a) specific(s) document files.
+  ///
+  /// Roughly you may consider it as a property to verify if [this] permission is over a folder or a single-file.
+  final bool isTreeDocumentFile;
+
   @override
   bool operator ==(Object other) =>
       other is UriPermission &&
       isReadPermission == other.isReadPermission &&
       isWritePermission == other.isWritePermission &&
       persistedTime == other.persistedTime &&
-      uri == other.uri;
+      uri == other.uri &&
+      isTreeDocumentFile == other.isTreeDocumentFile;
 
   @override
-  int get hashCode =>
-      Object.hash(isReadPermission, isWritePermission, persistedTime, uri);
+  int get hashCode => Object.hashAll(
+        [
+          isReadPermission,
+          isWritePermission,
+          persistedTime,
+          uri,
+          isTreeDocumentFile,
+        ],
+      );
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -58,6 +76,7 @@ class UriPermission {
       'isWritePermission': isWritePermission,
       'persistedTime': persistedTime,
       'uri': '$uri',
+      'isTreeDocumentFile': isTreeDocumentFile,
     };
   }
 
@@ -66,5 +85,6 @@ class UriPermission {
       'isReadPermission: $isReadPermission, '
       'isWritePermission: $isWritePermission, '
       'persistedTime: $persistedTime, '
-      'uri: $uri)';
+      'uri: $uri, '
+      'isTreeDocumentFile: $isTreeDocumentFile)';
 }

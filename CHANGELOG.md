@@ -1,10 +1,28 @@
+## 0.7.0
+
+- New APIs and options.
+- There's no major breaking changes when updating to `v0.7.0` but there are deprecation notices over Media Store and Environment API.
+
+### New
+
+- `openDocument` API with single and multiple files support @honjow.
+- `openDocumentTree` it now also supports `persistablePermission` option which flags an one-time operation to avoid unused permission issues.
+
+### Deprecation notices
+
+- All non SAF APIs are deprecated (Media Store and Environment APIs), if you are using them, let us know by [opening an issue](https://github.com/alexrintt/shared-storage/issues/new) with your use-case so we can implement a new compatible API using a cross-platform approach.
+
+### Example project
+
+- Added a new button that implements `openDocument` API.
+
 ## 0.6.0
 
 This release contains a severe API fixes and some minor doc changes:
 
 ### Breaking changes
 
-- Unused arguments in `DocumentFile.getContent` and `DocumentFile.getContentAsString`. [#107](https://github.com/alexrintt/shared-storage/issues/107).
+- Unused arguments in `DocumentFile.getContent` and `DocumentFile.getContentAsString`. [#107](https://github.com/alexrintt/shared-storage/issues/107) @clragon.
 - Package import it's now done through a single import.
 
 ## 0.5.0
@@ -170,7 +188,7 @@ See the label [reference here](/docs/Usage/API%20Labeling.md).
 
 - <samp>Mirror</samp> `getStorageDirectory` from [`Environment.getStorageDirectory`](https://developer.android.com/reference/android/os/Environment#getStorageDirectory%28%29).
 
-### Deprecation Notices
+### Deprecation notices
 
 - `getExternalStoragePublicDirectory` was marked as deprecated and should be replaced with an equivalent API depending on your use-case, see [how to migrate `getExternalStoragePublicDirectory`](https://stackoverflow.com/questions/56468539/getexternalstoragepublicdirectory-deprecated-in-android-q). This deprecation is originated from official Android documentation and not by the plugin itself.
 

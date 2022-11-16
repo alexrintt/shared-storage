@@ -12,24 +12,36 @@ class MediaStoreCollection {
   ///
   /// Equivalent to:
   /// - [MediaStore.Audio]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const audio = MediaStoreCollection._('$_kPrefix.Audio');
 
   /// Available for Android [10 to 12]
   ///
   /// Equivalent to:
   /// - [MediaStore.Downloads]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const downloads = MediaStoreCollection._('$_kPrefix.Downloads');
 
   /// Available for Android [10 to 12]
   ///
   /// Equivalent to:
   /// - [MediaStore.Images]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const images = MediaStoreCollection._('$_kPrefix.Images');
 
   /// Available for Android [10 to 12]
   ///
   /// Equivalent to:
   /// - [MediaStore.Video]
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   static const video = MediaStoreCollection._('$_kPrefix.Video');
 
   @override
@@ -41,5 +53,8 @@ class MediaStoreCollection {
   int get hashCode => id.hashCode;
 
   @override
+  @Deprecated(
+    'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
+  )
   String toString() => id;
 }

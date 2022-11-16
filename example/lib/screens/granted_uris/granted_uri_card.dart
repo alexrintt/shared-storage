@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_storage/shared_storage.dart';
 
 import '../../theme/spacing.dart';
+import '../../utils/disabled_text_style.dart';
+import '../../utils/document_file_utils.dart';
 import '../../widgets/buttons.dart';
 import '../../widgets/key_value_text.dart';
 import '../../widgets/simple_card.dart';
+import '../file_explorer/file_explorer_card.dart';
 import '../file_explorer/file_explorer_page.dart';
 
 class GrantedUriCard extends StatefulWidget {
@@ -55,19 +58,79 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
     );
   }
 
+  List<Widget> _getTreeAvailableOptions() {
+    return [
+      ActionButton(
+        'Create sample file',
+        onTap: () => _appendSampleFile(
+          widget.permissionUri.uri,
+        ),
+      ),
+      ActionButton(
+        'Open file picker here',
+        onTap: () => openDocumentTree(initialUri: widget.permissionUri.uri),
+      )
+    ];
+  }
+
+  @override
+  void didUpdateWidget(covariant GrantedUriCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    documentFile = null;
+    loading = false;
+    error = null;
+  }
+
+  DocumentFile? documentFile;
+  bool loading = false;
+  String? error;
+
+  Future<void> _loadDocumentFile() async {
+    loading = true;
+    setState(() {});
+
+    documentFile = await widget.permissionUri.uri.toDocumentFile();
+    loading = false;
+
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _showDocumentFileContents() async {
+    try {
+      final documentFile = await widget.permissionUri.uri.toDocumentFile();
+
+      if (mounted) documentFile?.showContents(context);
+    } catch (e) {
+      error = e.toString();
+    }
+  }
+
+  VoidCallback get _onTapHandler => widget.permissionUri.isTreeDocumentFile
+      ? _openListFilesPage
+      : _showDocumentFileContents;
+
+  List<Widget> _getDocumentAvailableOptions() {
+    return [
+      ActionButton(
+        widget.permissionUri.isTreeDocumentFile
+            ? 'Open folder'
+            : 'Open document',
+        onTap: _onTapHandler,
+      ),
+      ActionButton(
+        'Load extra document data linked to this permission',
+        onTap: _loadDocumentFile,
+      ),
+    ];
+  }
+
   Widget _buildAvailableActions() {
     return Wrap(
       children: [
-        ActionButton(
-          'Create Sample File',
-          onTap: () => _appendSampleFile(
-            widget.permissionUri.uri,
-          ),
-        ),
-        ActionButton(
-          'Open Tree Here',
-          onTap: () => openDocumentTree(initialUri: widget.permissionUri.uri),
-        ),
+        if (widget.permissionUri.isTreeDocumentFile)
+          ..._getTreeAvailableOptions(),
+        ..._getDocumentAvailableOptions(),
         Padding(padding: k2dp.all),
         DangerButton(
           'Revoke',
@@ -86,6 +149,7 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
         'isReadPermission': '${widget.permissionUri.isReadPermission}',
         'persistedTime': '${widget.permissionUri.persistedTime}',
         'uri': Uri.decodeFull('${widget.permissionUri.uri}'),
+        'isTreeDocumentFile': '${widget.permissionUri.isTreeDocumentFile}',
       },
     );
   }
@@ -93,10 +157,34 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
   @override
   Widget build(BuildContext context) {
     return SimpleCard(
-      onTap: _openListFilesPage,
+      onTap: _onTapHandler,
       children: [
+        Padding(
+          padding: k2dp.all.copyWith(top: k8dp, bottom: k8dp),
+          child: Icon(
+            widget.permissionUri.isTreeDocumentFile
+                ? Icons.folder
+                : Icons.file_copy_sharp,
+            color: disabledColor(),
+          ),
+        ),
         _buildGrantedUriMetadata(),
         _buildAvailableActions(),
+        if (loading)
+          const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(),
+          )
+        else if (error != null)
+          Text('Error was thrown: $error')
+        else if (documentFile != null)
+          FileExplorerCard(
+            documentFile: documentFile!,
+            didUpdateDocument: (updatedDocumentFile) {
+              documentFile = updatedDocumentFile;
+            },
+          )
       ],
     );
   }

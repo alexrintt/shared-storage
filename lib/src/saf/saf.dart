@@ -20,12 +20,14 @@ import 'common.dart';
 /// {@endtemplate}
 Future<Uri?> openDocumentTree({
   bool grantWritePermission = true,
+  bool persistablePermission = true,
   Uri? initialUri,
 }) async {
   const kOpenDocumentTree = 'openDocumentTree';
 
   final args = <String, dynamic>{
     'grantWritePermission': grantWritePermission,
+    'persistablePermission': persistablePermission,
     if (initialUri != null) 'initialUri': '$initialUri',
   };
 
@@ -33,6 +35,31 @@ Future<Uri?> openDocumentTree({
       await kDocumentFileChannel.invokeMethod<String?>(kOpenDocumentTree, args);
 
   return selectedDirectoryUri?.apply((e) => Uri.parse(e));
+}
+
+/// [Refer to details](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT).
+Future<List<Uri>?> openDocument({
+  Uri? initialUri,
+  bool grantWritePermission = true,
+  bool persistablePermission = true,
+  String mimeType = '*/*',
+  bool multiple = false,
+}) async {
+  const kOpenDocument = 'openDocument';
+
+  final args = <String, dynamic>{
+    if (initialUri != null) 'initialUri': '$initialUri',
+    'grantWritePermission': grantWritePermission,
+    'persistablePermission': persistablePermission,
+    'mimeType': mimeType,
+    'multiple': multiple,
+  };
+
+  final selectedUriList =
+      await kDocumentFileChannel.invokeListMethod(kOpenDocument, args);
+
+  return selectedUriList
+      ?.apply((e) => e.map((e) => Uri.parse(e as String)).toList());
 }
 
 /// {@template sharedstorage.saf.persistedUriPermissions}
