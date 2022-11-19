@@ -12,7 +12,6 @@ dependencies:
   fl_toast: ^3.1.0
   flutter:
     sdk: flutter
-  lint: ^1.8.2
   shared_storage:
     # When depending on this package from a real application you should use:
     #   shared_storage: ^x.y.z
@@ -24,6 +23,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  lint: ^1.8.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
