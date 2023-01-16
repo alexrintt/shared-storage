@@ -55,9 +55,9 @@ All these APIs are module based, which means they are implemented separadely and
 
 > To request support for some API that is not currently included open a issue explaining your usecase and the API you want to make available, the same applies for new methods or activities for the current APIs.
 
-## Support
+## Contribute
 
-If you have ideas to share, bugs to report or need support, you can either open an issue or join our [Discord server](https://discord.gg/86GDERXZNS).
+If you have ideas to share, bugs to report or need support, you can open an issue.
 
 ## Android APIs
 
@@ -65,26 +65,18 @@ Most Flutter plugins use Android API's under the hood. So this plugin does the s
 
 [`🔗android.os.Environment`](https://developer.android.com/reference/android/os/Environment#summary) [`🔗android.provider.MediaStore`](https://developer.android.com/reference/android/provider/MediaStore#summary) [`🔗android.provider.DocumentsProvider`](https://developer.android.com/guide/topics/providers/document-provider)
 
+## Supporters
+
+- [aplicatii-romanesti](https://www.bibliotecaortodoxa.ro/) who bought me a whole month of caffeine!
+
 ## Contributors
 
-These are the brilliant minds behind the development of this plugin!
+- [honjow](https://github.com/honjow) contributed by [implementing `openDocument` Android API #110](https://github.com/alexrintt/shared-storage/pull/110) to pick single or multiple file URIs. Really helpful, thanks!
+- [clragon](https://github.com/clragon) submitted a severe [bug report #107](https://github.com/alexrintt/shared-storage/issues/107) and opened [discussions around package architecture #108](https://github.com/alexrintt/shared-storage/discussions/108), thanks!
+- [jfaltis](https://github.com/jfaltis) fixed [a memory leak #86](https://github.com/alexrintt/shared-storage/pull/86) and implemented an API to [override existing files #85](https://github.com/alexrintt/shared-storage/pull/85), thanks for your contribution!
+- [EternityForest](https://github.com/EternityForest) did [report a severe crash #50](https://github.com/alexrintt/shared-storage/issues/50) when the column ID was not provided and [implemented a new feature to list all subfolders #59](https://github.com/alexrintt/shared-storage/pull/59), thanks man!
+- Thanks [dhaval-k-simformsolutions](https://github.com/dhaval-k-simformsolutions) for taking time to submit [bug reports](https://github.com/alexrintt/shared-storage/issues?q=is%3Aissue+author%3Adhaval-k-simformsolutions) related to duplicated file entries!
+- [dangilbert](https://github.com/dangilbert) pointed and [fixed a bug #14](https://github.com/alexrintt/shared-storage/pull/14) when the user doesn't select a folder, thanks man!
+- A huge thanks to [aplicatii-romanesti](https://www.bibliotecaortodoxa.ro/) for taking time to submit [device specific issues](https://github.com/alexrintt/shared-storage/issues?q=author%3Aaplicatii-romanesti)!
+- I would thanks [ankitparmar007](https://github.com/ankitparmar007) for [discussing and requesting create file related APIs #20](https://github.com/alexrintt/shared-storage/issues/10)!
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://alexrintt.github.io"><img src="https://avatars.githubusercontent.com/u/51419598?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Rintt</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=alexrintt" title="Code">💻</a> <a href="#maintenance-alexrintt" title="Maintenance">🚧</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=alexrintt" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/ankitparmar007"><img src="https://avatars.githubusercontent.com/u/73648141?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ankitparmar007</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Aankitparmar007" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://www.bibliotecaortodoxa.ro"><img src="https://avatars.githubusercontent.com/u/1148228?v=4?s=100" width="100px;" alt=""/><br /><sub><b>www.bibliotecaortodoxa.ro</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=aplicatii-romanesti" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Aaplicatii-romanesti" title="Bug reports">🐛</a> <a href="#ideas-aplicatii-romanesti" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/dangilbert"><img src="https://avatars.githubusercontent.com/u/6799566?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dangilbert</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=dangilbert" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Adangilbert" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/dhaval-k-simformsolutions"><img src="https://avatars.githubusercontent.com/u/90894202?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dhaval-k-simformsolutions</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Adhaval-k-simformsolutions" title="Bug reports">🐛</a> <a href="#ideas-dhaval-k-simformsolutions" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://eternityforest.com"><img src="https://avatars.githubusercontent.com/u/758047?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Dunn</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3AEternityForest" title="Bug reports">🐛</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=EternityForest" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=EternityForest" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://jfaltis.de"><img src="https://avatars.githubusercontent.com/u/45465572?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jfaltis</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Ajfaltis" title="Bug reports">🐛</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=jfaltis" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=jfaltis" title="Documentation">📖</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
