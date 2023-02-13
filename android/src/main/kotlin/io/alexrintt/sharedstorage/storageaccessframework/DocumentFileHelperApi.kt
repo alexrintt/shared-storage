@@ -2,6 +2,7 @@ package io.alexrintt.sharedstorage.storageaccessframework
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import io.flutter.plugin.common.*
@@ -49,13 +50,20 @@ internal class DocumentFileHelperApi(private val plugin: SharedStoragePlugin) :
     val uri = Uri.parse(call.argument<String>("uri")!!)
     val type = call.argument<String>("type") ?: plugin.context.contentResolver.getType(uri)
 
-    val intent =
+    try {
+      val isApk: Boolean = type =="application/vnd.android.package-archive"
+
+      val intent =
         Intent(Intent.ACTION_VIEW).apply {
-          flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-          data = uri
+          var flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+          if (isApk)
+            flags = flags or Intent.FLAG_ACTIVITY_NEW_TASK
+
+          setDataAndType(uri, type)
+          setFlags(flags)
         }
 
-    try {
       plugin.binding?.activity?.startActivity(intent, null)
 
       Log.d("sharedstorage", "Successfully launched uri $uri ")
