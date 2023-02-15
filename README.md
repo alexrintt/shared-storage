@@ -40,6 +40,7 @@ All other branches are derivated from issues, new features or bug fixes.
 
 ## Contributors
 
+- [limshengli](https://github.com/limshengli) updated Android Gradle build version and Kotlin version on pull https://github.com/alexrintt/shared-storage/pull/115, thanks!
 - [honjow](https://github.com/honjow) contributed by [implementing `openDocument` Android API #110](https://github.com/alexrintt/shared-storage/pull/110) to pick single or multiple file URIs. Really helpful, thanks!
 - [clragon](https://github.com/clragon) submitted a severe [bug report #107](https://github.com/alexrintt/shared-storage/issues/107) and opened [discussions around package architecture #108](https://github.com/alexrintt/shared-storage/discussions/108), thanks!
 - [jfaltis](https://github.com/jfaltis) fixed [a memory leak #86](https://github.com/alexrintt/shared-storage/pull/86) and implemented an API to [override existing files #85](https://github.com/alexrintt/shared-storage/pull/85), thanks for your contribution!
