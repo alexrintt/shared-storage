@@ -7,8 +7,8 @@ import 'package:shared_storage/shared_storage.dart' as saf;
 Usage sample:
 
 ```dart
-shared_storage.openDocumentTree(...);
-shared_storage.listFiles(...);
+saf.openDocumentTree(...);
+saf.listFiles(...);
 ```
 
 But if you import without alias `import '...';` (Not recommeded because can conflict with other method/package names) you should use directly as functions:
