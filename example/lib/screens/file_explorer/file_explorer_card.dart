@@ -177,7 +177,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     return random.nextInt(1000);
   }
 
-  Widget _buildThumbnail({double? size}) {
+  Widget _buildThumbnail({required double size}) {
     late Widget thumbnail;
 
     if (_thumbnailImageBytes == null) {
@@ -215,7 +215,10 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
         children: [
           Align(
             alignment: _expanded ? Alignment.centerLeft : Alignment.center,
-            child: thumbnail,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: size, maxWidth: size),
+              child: thumbnail,
+            ),
           ),
           if (_expanded) _buildExpandButton(),
         ],
