@@ -1,4 +1,4 @@
-package io.alexrintt.sharedstorage.storageaccessframework.lib
+package io.alexrintt.sharedstorage.deprecated.lib
 
 /**
  * Exceptions

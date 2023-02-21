@@ -1,4 +1,4 @@
-package io.alexrintt.sharedstorage.storageaccessframework
+package io.alexrintt.sharedstorage.deprecated
 
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -13,12 +13,12 @@ import android.provider.DocumentsContract
 import android.util.Log
 import io.alexrintt.sharedstorage.ROOT_CHANNEL
 import io.alexrintt.sharedstorage.SharedStoragePlugin
-import io.alexrintt.sharedstorage.plugin.API_21
-import io.alexrintt.sharedstorage.plugin.ActivityListener
-import io.alexrintt.sharedstorage.plugin.Listenable
-import io.alexrintt.sharedstorage.plugin.notSupported
-import io.alexrintt.sharedstorage.storageaccessframework.lib.GET_DOCUMENT_THUMBNAIL
-import io.alexrintt.sharedstorage.storageaccessframework.lib.bitmapToBase64
+import io.alexrintt.sharedstorage.utils.API_21
+import io.alexrintt.sharedstorage.utils.ActivityListener
+import io.alexrintt.sharedstorage.utils.Listenable
+import io.alexrintt.sharedstorage.utils.notSupported
+import io.alexrintt.sharedstorage.deprecated.lib.GET_DOCUMENT_THUMBNAIL
+import io.alexrintt.sharedstorage.deprecated.lib.bitmapToBase64
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel

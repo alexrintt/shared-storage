@@ -1,4 +1,4 @@
-package io.alexrintt.sharedstorage.plugin
+package io.alexrintt.sharedstorage.utils
 
 /**
  * Interface shared across API classes to make intuitive and clean [init] and [dispose] plugin

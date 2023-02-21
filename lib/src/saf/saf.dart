@@ -23,18 +23,18 @@ Future<Uri?> openDocumentTree({
   bool persistablePermission = true,
   Uri? initialUri,
 }) async {
-  const kOpenDocumentTree = 'openDocumentTree';
+  const String kOpenDocumentTree = 'openDocumentTree';
 
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'grantWritePermission': grantWritePermission,
     'persistablePermission': persistablePermission,
     if (initialUri != null) 'initialUri': '$initialUri',
   };
 
-  final selectedDirectoryUri =
+  final String? selectedDirectoryUri =
       await kDocumentFileChannel.invokeMethod<String?>(kOpenDocumentTree, args);
 
-  return selectedDirectoryUri?.apply((e) => Uri.parse(e));
+  return selectedDirectoryUri?.apply((String e) => Uri.parse(e));
 }
 
 /// [Refer to details](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT).
@@ -45,9 +45,9 @@ Future<List<Uri>?> openDocument({
   String mimeType = '*/*',
   bool multiple = false,
 }) async {
-  const kOpenDocument = 'openDocument';
+  const String kOpenDocument = 'openDocument';
 
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     if (initialUri != null) 'initialUri': '$initialUri',
     'grantWritePermission': grantWritePermission,
     'persistablePermission': persistablePermission,
@@ -55,11 +55,12 @@ Future<List<Uri>?> openDocument({
     'multiple': multiple,
   };
 
-  final selectedUriList =
+  final List<dynamic>? selectedUriList =
       await kDocumentFileChannel.invokeListMethod(kOpenDocument, args);
 
-  return selectedUriList
-      ?.apply((e) => e.map((e) => Uri.parse(e as String)).toList());
+  return selectedUriList?.apply(
+    (List<dynamic> e) => e.map((dynamic e) => Uri.parse(e as String)).toList(),
+  );
 }
 
 /// {@template sharedstorage.saf.persistedUriPermissions}
@@ -70,11 +71,17 @@ Future<List<Uri>?> openDocument({
 /// To remove an persisted [Uri] call `releasePersistableUriPermission`.
 /// {@endtemplate}
 Future<List<UriPermission>?> persistedUriPermissions() async {
-  final persistedUriPermissions =
+  final List<dynamic>? persistedUriPermissions =
       await kDocumentFileChannel.invokeListMethod('persistedUriPermissions');
 
   return persistedUriPermissions?.apply(
-    (p) => p.map((e) => UriPermission.fromMap(Map.from(e as Map))).toList(),
+    (List<dynamic> p) => p
+        .map(
+          (dynamic e) => UriPermission.fromMap(
+            Map<String, dynamic>.from(e as Map<dynamic, dynamic>),
+          ),
+        )
+        .toList(),
   );
 }
 
@@ -103,9 +110,11 @@ Future<void> releasePersistableUriPermission(Uri directory) async {
 /// of allowed [Uri]s then will verify if the [uri] is included in.
 /// {@endtemplate}
 Future<bool> isPersistedUri(Uri uri) async {
-  final persistedUris = await persistedUriPermissions();
+  final List<UriPermission>? persistedUris = await persistedUriPermissions();
 
-  return persistedUris?.any((persistedUri) => persistedUri.uri == uri) ?? false;
+  return persistedUris
+          ?.any((UriPermission persistedUri) => persistedUri.uri == uri) ??
+      false;
 }
 
 /// {@template sharedstorage.saf.canRead}
@@ -134,16 +143,16 @@ Future<DocumentBitmap?> getDocumentThumbnail({
   required double width,
   required double height,
 }) async {
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'width': width,
     'height': height,
   };
 
-  final bitmap = await kDocumentsContractChannel
+  final Map<String, dynamic>? bitmap = await kDocumentsContractChannel
       .invokeMapMethod<String, dynamic>('getDocumentThumbnail', args);
 
-  return bitmap?.apply((b) => DocumentBitmap.fromMap(b));
+  return bitmap?.apply((Map<String, dynamic> b) => DocumentBitmap.fromMap(b));
 }
 
 /// {@template sharedstorage.saf.listFiles}
@@ -175,16 +184,20 @@ Stream<DocumentFile> listFiles(
   Uri uri, {
   required List<DocumentFileColumn> columns,
 }) {
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'event': 'listFiles',
-    'columns': columns.map((e) => '$e').toList(),
+    'columns': columns.map((DocumentFileColumn e) => '$e').toList(),
   };
 
-  final onCursorRowResult =
+  final Stream<dynamic> onCursorRowResult =
       kDocumentFileEventChannel.receiveBroadcastStream(args);
 
-  return onCursorRowResult.map((e) => DocumentFile.fromMap(Map.from(e as Map)));
+  return onCursorRowResult.map(
+    (dynamic e) => DocumentFile.fromMap(
+      Map<String, dynamic>.from(e as Map<dynamic, dynamic>),
+    ),
+  );
 }
 
 /// {@template sharedstorage.saf.exists}
@@ -215,15 +228,16 @@ Future<bool?> delete(Uri uri) async => kDocumentFileChannel
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createDirectory%28java.lang.String%29).
 /// {@endtemplate}
 Future<DocumentFile?> createDirectory(Uri parentUri, String displayName) async {
-  final args = <String, String>{
+  final Map<String, String> args = <String, String>{
     'uri': '$parentUri',
     'displayName': displayName,
   };
 
-  final createdDocumentFile = await kDocumentFileChannel
+  final Map<String, dynamic>? createdDocumentFile = await kDocumentFileChannel
       .invokeMapMethod<String, dynamic>('createDirectory', args);
 
-  return createdDocumentFile?.apply((c) => DocumentFile.fromMap(c));
+  return createdDocumentFile
+      ?.apply((Map<String, dynamic> c) => DocumentFile.fromMap(c));
 }
 
 /// {@template sharedstorage.saf.createFile}
@@ -272,9 +286,9 @@ Future<DocumentFile?> createFileAsBytes(
   required String displayName,
   required Uint8List bytes,
 }) async {
-  final directoryUri = '$parentUri';
+  final String directoryUri = '$parentUri';
 
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'mimeType': mimeType,
     'content': bytes,
     'displayName': displayName,
@@ -347,10 +361,10 @@ Future<bool?> writeToFileAsBytes(
   required Uint8List bytes,
   FileMode? mode,
 }) async {
-  final writeMode =
+  final String writeMode =
       mode == FileMode.append || mode == FileMode.writeOnlyAppend ? 'wa' : 'wt';
 
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'content': bytes,
     'mode': writeMode,
@@ -391,14 +405,14 @@ Future<int?> documentLength(Uri uri) async => kDocumentFileChannel
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#lastModified%28%29).
 /// {@endtemplate}
 Future<DateTime?> lastModified(Uri uri) async {
-  const kLastModified = 'lastModified';
+  const String kLastModified = 'lastModified';
 
-  final inMillisecondsSinceEpoch = await kDocumentFileChannel
+  final int? inMillisecondsSinceEpoch = await kDocumentFileChannel
       .invokeMethod<int>(kLastModified, <String, String>{'uri': '$uri'});
 
   return inMillisecondsSinceEpoch
-      ?.takeIf((i) => i > 0)
-      ?.apply((i) => DateTime.fromMillisecondsSinceEpoch(i));
+      ?.takeIf((int i) => i > 0)
+      ?.apply((int i) => DateTime.fromMillisecondsSinceEpoch(i));
 }
 
 /// {@template sharedstorage.saf.findFile}
@@ -409,7 +423,7 @@ Future<DateTime?> lastModified(Uri uri) async {
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#findFile%28java.lang.String%29).
 /// {@endtemplate}
 Future<DocumentFile?> findFile(Uri directoryUri, String displayName) async {
-  final args = <String, String>{
+  final Map<String, String> args = <String, String>{
     'uri': '$directoryUri',
     'displayName': displayName,
   };
@@ -461,7 +475,7 @@ Future<DocumentFile?> child(
   String path, {
   bool requiresWriteAccess = false,
 }) async {
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'path': path,
     'requiresWriteAccess': requiresWriteAccess,
@@ -482,7 +496,7 @@ Future<DocumentFile?> child(
 /// Returns `true` if launched successfully otherwise `false`.
 /// {@endtemplate}
 Future<bool?> openDocumentFile(Uri uri) async {
-  final successfullyLaunched =
+  final bool? successfullyLaunched =
       await kDocumentFileHelperChannel.invokeMethod<bool>(
     'openDocumentFile',
     <String, String>{'uri': '$uri'},
@@ -507,7 +521,10 @@ Future<DocumentFile?> parentFile(Uri uri) async =>
 /// This API uses the `createFile` and `getDocumentContent` API's behind the scenes.
 /// {@endtemplate}
 Future<DocumentFile?> copy(Uri uri, Uri destination) async {
-  final args = <String, String>{'uri': '$uri', 'destination': '$destination'};
+  final Map<String, String> args = <String, String>{
+    'uri': '$uri',
+    'destination': '$destination'
+  };
 
   return invokeMapMethod('copy', args);
 }
@@ -533,9 +550,9 @@ Future<String?> getDocumentContentAsString(
   Uri uri, {
   bool throwIfError = false,
 }) async {
-  final bytes = await getDocumentContent(uri);
+  final Uint8List? bytes = await getDocumentContent(uri);
 
-  return bytes?.apply((a) => String.fromCharCodes(a));
+  return bytes?.apply((Uint8List a) => String.fromCharCodes(a));
 }
 
 /// {@template sharedstorage.saf.getDocumentContentAsString}

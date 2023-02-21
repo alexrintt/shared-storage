@@ -1,4 +1,4 @@
-package io.alexrintt.sharedstorage.storageaccessframework.lib
+package io.alexrintt.sharedstorage.deprecated.lib
 
 import android.content.ContentResolver
 import android.content.Context
@@ -9,9 +9,8 @@ import android.provider.DocumentsContract
 import android.util.Base64
 import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
-import io.alexrintt.sharedstorage.plugin.API_19
-import io.alexrintt.sharedstorage.plugin.API_21
-import io.alexrintt.sharedstorage.plugin.API_24
+import io.alexrintt.sharedstorage.utils.API_21
+import io.alexrintt.sharedstorage.utils.API_24
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 
@@ -168,13 +167,15 @@ fun traverseDirectoryEntries(
       }
 
       while (cursor.moveToNext()) {
-        val data = mutableMapOf<String, Any>()
+        val data = mutableMapOf<String, Any?>()
 
         for (column in projection) {
-          data[column] = cursorHandlerOf(typeOfColumn(column)!!)(
+          val columnValue: Any? = cursorHandlerOf(typeOfColumn(column)!!)(
             cursor,
             cursor.getColumnIndexOrThrow(column)
           )
+
+          data[column] = columnValue
         }
 
         val mimeType =
@@ -230,7 +231,6 @@ fun traverseDirectoryEntries(
   return true
 }
 
-@RequiresApi(API_19)
 private fun isDirectory(mimeType: String): Boolean {
   return DocumentsContract.Document.MIME_TYPE_DIR == mimeType
 }

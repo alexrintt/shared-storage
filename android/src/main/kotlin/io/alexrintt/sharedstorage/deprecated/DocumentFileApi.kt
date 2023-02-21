@@ -1,4 +1,4 @@
-package io.alexrintt.sharedstorage.storageaccessframework
+package io.alexrintt.sharedstorage.deprecated
 
 import android.content.Intent
 import android.net.Uri
@@ -13,8 +13,8 @@ import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.alexrintt.sharedstorage.ROOT_CHANNEL
 import io.alexrintt.sharedstorage.SharedStoragePlugin
-import io.alexrintt.sharedstorage.plugin.*
-import io.alexrintt.sharedstorage.storageaccessframework.lib.*
+import io.alexrintt.sharedstorage.utils.*
+import io.alexrintt.sharedstorage.deprecated.lib.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -369,7 +369,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     }
   }
 
-  @RequiresApi(API_19)
   private fun persistedUriPermissions(result: MethodChannel.Result) {
     val persistedUriPermissions = plugin.context.contentResolver.persistedUriPermissions
 
@@ -388,7 +387,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     )
   }
 
-  @RequiresApi(API_19)
   private fun releasePersistableUriPermission(result: MethodChannel.Result, directoryUri: String) {
     plugin.context.contentResolver.releasePersistableUriPermission(
         Uri.parse(directoryUri),
@@ -398,7 +396,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     result.success(null)
   }
 
-  @RequiresApi(API_19)
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
     when (requestCode) {
       OPEN_DOCUMENT_TREE_CODE -> {
@@ -478,8 +475,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   }
 
   override fun stopListening() {
-    if (channel == null) return
-
     channel?.setMethodCallHandler(null)
     channel = null
 
@@ -526,6 +521,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         "Android SDK must be greater or equal than [Build.VERSION_CODES.N]",
         "Got (Build.VERSION.SDK_INT): ${Build.VERSION.SDK_INT}"
       )
+      eventSink.endOfStream()
     } else {
       if (!document.canRead()) {
         val error = "You cannot read a URI that you don't have read permissions"
@@ -556,6 +552,8 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               launch(Dispatchers.Main) { eventSink.endOfStream() }
             }
           }
+        } else {
+          eventSink.endOfStream()
         }
       }
     }
@@ -590,6 +588,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   }
 
   override fun onCancel(arguments: Any?) {
+    eventSink?.endOfStream()
     eventSink = null
   }
 }

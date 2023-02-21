@@ -1,7 +1,8 @@
-package io.alexrintt.sharedstorage.storageaccessframework.lib
+package io.alexrintt.sharedstorage.deprecated.lib
 
 import android.database.Cursor
 import android.provider.DocumentsContract
+import java.lang.NullPointerException
 
 private const val PREFIX = "DocumentFileColumn"
 
@@ -74,10 +75,34 @@ fun typeOfColumn(column: String): DocumentFileColumnType? {
   return values[column]
 }
 
-fun cursorHandlerOf(type: DocumentFileColumnType): (Cursor, Int) -> Any {
-  when(type) {
-    DocumentFileColumnType.LONG -> { return { cursor, index -> cursor.getLong(index) } }
-    DocumentFileColumnType.STRING -> { return { cursor, index -> cursor.getString(index) } }
-    DocumentFileColumnType.INT -> { return { cursor, index -> cursor.getInt(index) } }
+fun cursorHandlerOf(type: DocumentFileColumnType): (Cursor, Int) -> Any? {
+  when (type) {
+    DocumentFileColumnType.LONG -> {
+      return { cursor, index ->
+        try {
+          cursor.getLong(index)
+        } catch (e: NullPointerException) {
+          null
+        }
+      }
+    }
+    DocumentFileColumnType.STRING -> {
+      return { cursor, index ->
+        try {
+          cursor.getString(index)
+        } catch (e: NullPointerException) {
+          null
+        }
+      }
+    }
+    DocumentFileColumnType.INT -> {
+      return { cursor, index ->
+        try {
+          cursor.getInt(index)
+        } catch (e: NullPointerException) {
+          null
+        }
+      }
+    }
   }
 }

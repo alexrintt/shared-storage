@@ -1,9 +1,9 @@
-package io.alexrintt.sharedstorage.storageaccessframework
+package io.alexrintt.sharedstorage.deprecated
 
 import io.flutter.plugin.common.*
 import io.alexrintt.sharedstorage.SharedStoragePlugin
-import io.alexrintt.sharedstorage.plugin.ActivityListener
-import io.alexrintt.sharedstorage.plugin.Listenable
+import io.alexrintt.sharedstorage.utils.ActivityListener
+import io.alexrintt.sharedstorage.utils.Listenable
 
 class StorageAccessFrameworkApi(plugin: SharedStoragePlugin) : Listenable, ActivityListener {
   private val documentFileApi = DocumentFileApi(plugin)

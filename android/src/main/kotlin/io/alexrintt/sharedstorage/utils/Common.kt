@@ -1,4 +1,4 @@
-package io.alexrintt.sharedstorage.plugin
+package io.alexrintt.sharedstorage.utils
 
 import android.os.Build
 import io.flutter.plugin.common.MethodChannel

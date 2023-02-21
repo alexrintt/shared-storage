@@ -61,7 +61,7 @@ class UriPermission {
 
   @override
   int get hashCode => Object.hashAll(
-        [
+        <Object?>[
           isReadPermission,
           isWritePermission,
           persistedTime,

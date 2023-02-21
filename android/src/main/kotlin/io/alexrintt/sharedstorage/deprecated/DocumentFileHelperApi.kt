@@ -1,17 +1,16 @@
-package io.alexrintt.sharedstorage.storageaccessframework
+package io.alexrintt.sharedstorage.deprecated
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.util.Log
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.alexrintt.sharedstorage.ROOT_CHANNEL
 import io.alexrintt.sharedstorage.SharedStoragePlugin
-import io.alexrintt.sharedstorage.plugin.ActivityListener
-import io.alexrintt.sharedstorage.plugin.Listenable
-import io.alexrintt.sharedstorage.storageaccessframework.lib.*
+import io.alexrintt.sharedstorage.utils.ActivityListener
+import io.alexrintt.sharedstorage.utils.Listenable
+import io.alexrintt.sharedstorage.deprecated.lib.*
 
 /**
  * Aimed to be a class which takes the `DocumentFile` API and implement some APIs not supported

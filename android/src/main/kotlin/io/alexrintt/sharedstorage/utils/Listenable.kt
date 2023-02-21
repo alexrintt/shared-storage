@@ -1,4 +1,4 @@
-package io.alexrintt.sharedstorage.plugin
+package io.alexrintt.sharedstorage.utils
 
 import io.flutter.plugin.common.BinaryMessenger
 

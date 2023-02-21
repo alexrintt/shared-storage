@@ -7,7 +7,7 @@ Future<DocumentFile?> invokeMapMethod(
   String method,
   Map<String, dynamic> args,
 ) async {
-  final documentMap =
+  final Map<String, dynamic>? documentMap =
       await kDocumentFileChannel.invokeMapMethod<String, dynamic>(method, args);
 
   if (documentMap == null) return null;

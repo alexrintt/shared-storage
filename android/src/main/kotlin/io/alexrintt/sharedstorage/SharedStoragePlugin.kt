@@ -2,24 +2,16 @@ package io.alexrintt.sharedstorage
 
 import android.content.Context
 import androidx.annotation.NonNull
+import io.alexrintt.sharedstorage.deprecated.StorageAccessFrameworkApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import io.alexrintt.sharedstorage.environment.EnvironmentApi
-import io.alexrintt.sharedstorage.mediastore.MediaStoreApi
-import io.alexrintt.sharedstorage.storageaccessframework.StorageAccessFrameworkApi
 
 const val ROOT_CHANNEL = "io.alexrintt.plugins/sharedstorage"
 
 /** Flutter plugin Kotlin implementation `SharedStoragePlugin` */
 class SharedStoragePlugin : FlutterPlugin, ActivityAware {
-  /** `Environment` API channel */
-  private val environmentApi = EnvironmentApi(this)
-
-  /** `MediaStore` API channel */
-  private val mediaStoreApi = MediaStoreApi(this)
-
   /** `DocumentFile` API channel */
   private val storageAccessFrameworkApi = StorageAccessFrameworkApi(this)
 
@@ -30,8 +22,6 @@ class SharedStoragePlugin : FlutterPlugin, ActivityAware {
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPluginBinding) {
     context = flutterPluginBinding.applicationContext
 
-    environmentApi.startListening(flutterPluginBinding.binaryMessenger)
-    mediaStoreApi.startListening(flutterPluginBinding.binaryMessenger)
     storageAccessFrameworkApi.startListening(flutterPluginBinding.binaryMessenger)
   }
 
@@ -42,8 +32,6 @@ class SharedStoragePlugin : FlutterPlugin, ActivityAware {
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPluginBinding) {
-    environmentApi.stopListening()
-    mediaStoreApi.stopListening()
     storageAccessFrameworkApi.stopListening()
   }
 
