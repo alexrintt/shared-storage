@@ -649,6 +649,8 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       null
     } catch (e: IOException) {
       null
+    } catch (e: IllegalArgumentException) {
+      null
     }
   }
 
