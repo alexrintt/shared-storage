@@ -136,12 +136,17 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         }
       DELETE ->
         if (Build.VERSION.SDK_INT >= API_21) {
-          result.success(
-            documentFromUri(
-              plugin.context,
-              call.argument<String?>("uri") as String
-            )?.delete()
-          )
+          try {
+            result.success(
+              documentFromUri(
+                plugin.context,
+                call.argument<String?>("uri") as String
+              )?.delete()
+            )
+          } catch (e: FileNotFoundException) {
+            // Since the file is already deleted, just return a success with a [null] reference.
+            result.success(null)
+          }
         }
       LAST_MODIFIED ->
         if (Build.VERSION.SDK_INT >= API_21) {
@@ -185,14 +190,9 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         val uri = Uri.parse(call.argument<String>("uri")!!)
         val destination = Uri.parse(call.argument<String>("destination")!!)
 
-//        if (uri.scheme == "file" && destination.scheme != "file") {
-//          uri.path?.let {
-//            val source: ByteArray = File(it).readBytes()
-//
-//          }
-//        }
         if (Build.VERSION.SDK_INT >= API_21) {
-          val isContentUri: Boolean = uri.scheme == "content" && destination.scheme == "content"
+          val isContentUri: Boolean =
+            uri.scheme == "content" && destination.scheme == "content"
 
           CoroutineScope(Dispatchers.IO).launch {
             if (Build.VERSION.SDK_INT >= API_24 && isContentUri) {
@@ -646,10 +646,16 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
       bytes
     } catch (e: FileNotFoundException) {
+      // Probably the file was already deleted and now you are trying to read.
       null
     } catch (e: IOException) {
+      // Unknown, can be anything.
       null
     } catch (e: IllegalArgumentException) {
+      // Probably the file was already deleted and now you are trying to read.
+      null
+    } catch (e: IllegalStateException) {
+      // Probably you ran [delete] and [readDocumentContent] at the same time.
       null
     }
   }
