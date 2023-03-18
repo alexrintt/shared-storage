@@ -484,6 +484,27 @@ Future<DocumentFile?> child(
   return invokeMapMethod('child', args);
 }
 
+/// {@template sharedstorage.saf.share}
+/// Start share intent for the given [uri].
+///
+/// To share a file, use [Uri.parse] passing the file absolute path as argument.
+///
+/// Note that this method can only share files that your app has permission over,
+/// either by being in your app domain (e.g file from your app cache) or that is granted by [openDocumentTree].
+/// {@endtemplate}
+@willbemovedsoon
+Future<void> shareUri(
+  Uri uri, {
+  String? type,
+}) {
+  final Map<String, dynamic> args = <String, dynamic>{
+    'uri': '$uri',
+    'type': type,
+  };
+
+  return kDocumentFileHelperChannel.invokeMethod<void>('shareUri', args);
+}
+
 /// {@template sharedstorage.saf.openDocumentFile}
 /// It's a convenience method to launch the default application associated
 /// with the given MIME type and can't be considered an official SAF API.

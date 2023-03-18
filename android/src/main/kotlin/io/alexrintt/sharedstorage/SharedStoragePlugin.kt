@@ -1,7 +1,6 @@
 package io.alexrintt.sharedstorage
 
 import android.content.Context
-import androidx.annotation.NonNull
 import io.alexrintt.sharedstorage.deprecated.StorageAccessFrameworkApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
@@ -19,7 +18,7 @@ class SharedStoragePlugin : FlutterPlugin, ActivityAware {
   var binding: ActivityPluginBinding? = null
 
   /** Setup all APIs */
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPluginBinding) {
+  override fun onAttachedToEngine(flutterPluginBinding: FlutterPluginBinding) {
     context = flutterPluginBinding.applicationContext
 
     storageAccessFrameworkApi.startListening(flutterPluginBinding.binaryMessenger)
@@ -31,7 +30,7 @@ class SharedStoragePlugin : FlutterPlugin, ActivityAware {
     storageAccessFrameworkApi.startListeningToActivity()
   }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPluginBinding) {
+  override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     storageAccessFrameworkApi.stopListening()
   }
 

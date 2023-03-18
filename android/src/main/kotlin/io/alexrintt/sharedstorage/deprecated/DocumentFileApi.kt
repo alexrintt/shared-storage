@@ -144,7 +144,16 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               )?.delete()
             )
           } catch (e: FileNotFoundException) {
-            // Since the file is already deleted, just return a success with a [null] reference.
+            // File is already deleted.
+            result.success(null)
+          } catch (e: IllegalStateException) {
+            // File is already deleted.
+            result.success(null)
+          } catch (e: IllegalArgumentException) {
+            // File is already deleted.
+            result.success(null)
+          } catch (e: IOException) {
+            // Unknown, can be anything.
             result.success(null)
           }
         }
