@@ -1,3 +1,7 @@
+## 0.7.1
+
+- No changes in the Dart API. It is just a hotfix in the Kotlin impl. See #118 for details.
+
 ## 0.7.0
 
 - New APIs and options.
