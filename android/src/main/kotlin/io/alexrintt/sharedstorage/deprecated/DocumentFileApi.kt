@@ -296,10 +296,22 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   @RequiresApi(API_21)
   private fun openDocument(call: MethodCall, result: MethodChannel.Result) {
     val initialUri = call.argument<String>("initialUri")
+    val grantWritePermission = call.argument<Boolean>("grantWritePermission")!!
+    val persistablePermission =
+      call.argument<Boolean>("persistablePermission")!!
 
     val intent =
       Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
+        if (persistablePermission) {
+          addFlags(
+            Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+          )
+        }
+        addFlags(
+          if (grantWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+          else Intent.FLAG_GRANT_READ_URI_PERMISSION
+        )
 
         if (initialUri != null) {
           val tree =
@@ -325,12 +337,18 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
   @RequiresApi(API_21)
   private fun openDocumentTree(call: MethodCall, result: MethodChannel.Result) {
-    val grantWritePermission = call.argument<Boolean>("grantWritePermission")!!
-
     val initialUri = call.argument<String>("initialUri")
+    val grantWritePermission = call.argument<Boolean>("grantWritePermission")!!
+    val persistablePermission =
+      call.argument<Boolean>("persistablePermission")!!
 
     val intent =
       Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+        if (persistablePermission) {
+          addFlags(
+            Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+          )
+        }
         addFlags(
           if (grantWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION
           else Intent.FLAG_GRANT_READ_URI_PERMISSION
