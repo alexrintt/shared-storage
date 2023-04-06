@@ -155,6 +155,13 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           } catch (e: IOException) {
             // Unknown, can be anything.
             result.success(null)
+          } catch (e: Throwable) {
+            Log.d(
+              "sharedstorage",
+              "Unknown error when calling [delete] method with [uri]."
+            )
+            // Unknown, can be anything.
+            result.success(null)
           }
         }
       LAST_MODIFIED ->
