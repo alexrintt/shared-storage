@@ -13,6 +13,7 @@
 pubspec.lock
 venv/
 site/
+.vscode/
 
 # IntelliJ related
 *.iml

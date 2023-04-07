@@ -26,11 +26,11 @@ See the website for [documentation](https://alexrintt.github.io/shared-storage).
 
 All documentation is also available under `/docs` to each released version which is the data source of the website.
 
-You can contribute to the documentation by just editing these files through the GitHub web editor!
+You can contribute to the documentation by just editing these files.
 
 To check all ways you can contribute to this package see [Contributing/Ways to contribute](https://alexrintt.github.io/shared-storage/Contributing/Ways%20to%20contribute/).
 
-Latest changes are available on `master` branch and the actual latest published package version lives under `release` branch.
+**To start developing, use `release` branch as base**, `master` is used for experimentation only and is likely to be not working.
 
 All other branches are derivated from issues, new features or bug fixes.
 
@@ -40,6 +40,7 @@ All other branches are derivated from issues, new features or bug fixes.
 
 ## Contributors
 
+- [Tamerlanchiques](https://github.com/Tamerlanchiques) thanks a lot for the thoughtful bug reports.
 - [limshengli](https://github.com/limshengli) updated Android Gradle build version and Kotlin version on pull https://github.com/alexrintt/shared-storage/pull/115, thanks!
 - [honjow](https://github.com/honjow) contributed by [implementing `openDocument` Android API #110](https://github.com/alexrintt/shared-storage/pull/110) to pick single or multiple file URIs. Really helpful, thanks!
 - [clragon](https://github.com/clragon) submitted a severe [bug report #107](https://github.com/alexrintt/shared-storage/issues/107) and opened [discussions around package architecture #108](https://github.com/alexrintt/shared-storage/discussions/108), thanks!
@@ -49,20 +50,3 @@ All other branches are derivated from issues, new features or bug fixes.
 - [dangilbert](https://github.com/dangilbert) pointed and [fixed a bug #14](https://github.com/alexrintt/shared-storage/pull/14) when the user doesn't select a folder, thanks man!
 - A huge thanks to [aplicatii-romanesti](https://www.bibliotecaortodoxa.ro/) for taking time to submit [device specific issues](https://github.com/alexrintt/shared-storage/issues?q=author%3Aaplicatii-romanesti)!
 - I would thanks [ankitparmar007](https://github.com/ankitparmar007) for [discussing and requesting create file related APIs #20](https://github.com/alexrintt/shared-storage/issues/10)!
-
-<br>
-
-<samp>
-
-<h2 align="center">
-  Open Source
-</h2>
-<p align="center">
-  <sub>Copyright © 2021-present, Alex Rintt.</sub>
-</p>
-<p align="center">Shared Storage <a href="https://github.com/alexrintt/shared-storage/blob/master/LICENSE.md">is MIT licensed 💖</a></p>
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/51419598/161439601-fc228a0d-d09d-4dbb-b5a3-ebc5dbcf9f46.png" width="35" />
-</p>
-  
-</samp>
