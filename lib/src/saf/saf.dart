@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+
 import '../../saf.dart';
 import '../channels.dart';
 import '../common/functional_extender.dart';
@@ -172,6 +174,51 @@ Future<DocumentBitmap?> getDocumentThumbnail({
 /// [Refer to details](https://stackoverflow.com/questions/41096332/issues-traversing-through-directory-hierarchy-with-android-storage-access-framew).
 /// {@endtemplate}
 Stream<DocumentFile> listFiles(
+  Uri uri, {
+  required List<DocumentFileColumn> columns,
+}) {
+  final args = <String, dynamic>{
+    'uri': '$uri',
+    'event': 'listFiles',
+    'columns': columns.map((e) => '$e').toList(),
+  };
+
+  final onCursorRowResult =
+      kDocumentFileEventChannel.receiveBroadcastStream(args);
+
+  return onCursorRowResult.map((e) => DocumentFile.fromMap(Map.from(e as Map)));
+}
+
+/// If we are going to implement using [ChangeNotifier] otherwise just use [Stream].
+///
+/// See https://github.com/sebastianhaberey/nsd/blob/main/nsd_platform_interface/lib/src/nsd_platform_interface.dart#L143
+/// as support material.
+class DocumentFileListener extends ChangeNotifier {
+  @override
+  Future<void> dispose() async {
+    // cancel listener
+    super.dispose();
+  }
+}
+
+/// {@template sharedstorage.saf.startListingFiles}
+/// Possible signatures:
+/// Future<Stream<DocumentFile>>
+/// Future<DocumentFileListener<DocumentFile>>
+///
+/// See https://github.com/sebastianhaberey/nsd/blob/main/nsd_platform_interface/lib/src/method_channel_nsd_platform.dart#L35-L78
+/// as base material.
+/// {@endtemplate}
+Future<?> startListingFiles(
+  Uri uri, {
+  required List<DocumentFileColumn> columns,
+}) {}
+
+/// {@template sharedstorage.saf.stopListingFiles}
+/// See https://github.com/sebastianhaberey/nsd/blob/main/nsd_platform_interface/lib/src/method_channel_nsd_platform.dart#L81-L98
+/// as base material.
+/// {@endtemplate}
+Future<void> stopListingFiles(
   Uri uri, {
   required List<DocumentFileColumn> columns,
 }) {
