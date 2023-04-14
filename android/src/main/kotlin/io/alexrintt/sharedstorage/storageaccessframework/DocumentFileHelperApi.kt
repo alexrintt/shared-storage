@@ -60,7 +60,7 @@ internal class DocumentFileHelperApi(private val plugin: SharedStoragePlugin) :
 
       Log.d("sharedstorage", "Successfully launched uri $uri ")
 
-      result.success(null)
+      result.success(true)
     } catch (e: ActivityNotFoundException) {
       result.error(
           EXCEPTION_ACTIVITY_NOT_FOUND,

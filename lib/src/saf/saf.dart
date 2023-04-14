@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
+
+import 'package:flutter/services.dart';
 
 import '../../saf.dart';
 import '../channels.dart';
@@ -482,13 +483,24 @@ Future<DocumentFile?> child(
 /// Returns `true` if launched successfully otherwise `false`.
 /// {@endtemplate}
 Future<bool?> openDocumentFile(Uri uri) async {
-  final successfullyLaunched =
-      await kDocumentFileHelperChannel.invokeMethod<bool>(
-    'openDocumentFile',
-    <String, String>{'uri': '$uri'},
-  );
-
-  return successfullyLaunched;
+  try {
+    final successfullyLaunched =
+        await kDocumentFileHelperChannel.invokeMethod<bool>(
+      'openDocumentFile',
+      <String, String>{'uri': '$uri'},
+    );
+    return successfullyLaunched;
+  } on PlatformException catch (e) {
+    // TODO: Throw friendly exceptions or return a class that provides info about the failure.
+    switch (e.code) {
+      case 'EXCEPTION_ACTIVITY_NOT_FOUND':
+      case 'EXCEPTION_CANT_OPEN_FILE_DUE_SECURITY_POLICY':
+      case 'EXCEPTION_CANT_OPEN_DOCUMENT_FILE':
+        return false;
+      default:
+        rethrow;
+    }
+  }
 }
 
 /// {@template sharedstorage.saf.parentFile}
