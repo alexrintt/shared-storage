@@ -207,7 +207,7 @@ Basically this allow get the **granted** `Uri`s permissions after the app restar
 ```dart
 final List<UriPermission>? grantedUris = await persistedUriPermissions();
 
-if (grantedUris != null) {
+if (grantedUris == null) {
   print('There is no granted Uris');
 } else {
   print('My granted Uris: $grantedUris');
