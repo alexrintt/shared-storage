@@ -299,6 +299,10 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
           ),
         _buildOpenWithButton(),
         DangerButton(
+          'Rename',
+          onTap: _renameDocFile,
+        ),
+        DangerButton(
           'Delete ${_isDirectory ? 'Directory' : 'File'}',
           onTap: _isDirectory
               ? _directoryConfirmation('Delete', _deleteDocument)
@@ -357,6 +361,27 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
           "${prependWithNewLine ? '\n' : ''}You file got bigger! Here's your luck number: ${_generateLuckNumber()}",
       mode: FileMode.append,
     );
+  }
+
+  Future<void> _renameDocFile() async {
+    final newDisplayName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return TextFieldDialog(
+          labelText:
+              'New ${widget.documentFile.isDirectory ?? false ? 'directory' : 'file'} name:',
+          hintText: widget.documentFile.name ?? '',
+          actionText: 'Edit',
+        );
+      },
+    );
+
+    if (newDisplayName == null) return;
+
+    final updatedDocumentFile =
+        await widget.documentFile.renameTo(newDisplayName);
+
+    widget.didUpdateDocument(updatedDocumentFile);
   }
 
   Future<void> _eraseFileContents() async {
