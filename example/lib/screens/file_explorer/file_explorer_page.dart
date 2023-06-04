@@ -116,11 +116,16 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
     DocumentFile before,
     DocumentFile? after,
   ) {
-    if (after == null) {
-      _files?.removeWhere((doc) => doc.id == before.id);
+    if (_files == null) return;
 
-      if (mounted) setState(() {});
+    if (after == null) {
+      _files!.removeWhere((doc) => doc.id == before.id);
+    } else {
+      final indexToUpdate = _files!.indexWhere((doc) => doc.id == before.id);
+      _files![indexToUpdate] = after;
     }
+
+    if (mounted) setState(() {});
   }
 
   Widget _buildDocumentList() {

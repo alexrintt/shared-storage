@@ -1,5 +1,5 @@
-import '../channels.dart';
-import 'document_file.dart';
+import '../../channels.dart';
+import '../models/barrel.dart';
 
 /// Helper method to invoke a native SAF method and return a document file
 /// if not null, shouldn't be called directly from non-package code

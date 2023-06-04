@@ -207,18 +207,27 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
       }
     }
 
+    List<Widget> children;
+
+    if (_expanded) {
+      children = [
+        Flexible(
+          child: Align(
+            child: thumbnail,
+          ),
+        ),
+        Flexible(child: _buildExpandButton()),
+      ];
+    } else {
+      children = [thumbnail];
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: _expanded ? MainAxisSize.max : MainAxisSize.min,
-        children: [
-          Align(
-            alignment: _expanded ? Alignment.centerLeft : Alignment.center,
-            child: thumbnail,
-          ),
-          if (_expanded) _buildExpandButton(),
-        ],
+        children: children,
       ),
     );
   }
@@ -254,6 +263,14 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     );
   }
 
+  String? get _lastModified {
+    if (_file.lastModified == null) {
+      return null;
+    }
+
+    return _file.lastModified!.toIso8601String();
+  }
+
   Widget _buildDocumentMetadata() {
     return KeyValueText(
       entries: {
@@ -263,13 +280,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
         'isDirectory': '${_file.isDirectory}',
         'isFile': '${_file.isFile}',
         'size': '${formatBytes(_sizeInBytes, 2)} ($_sizeInBytes bytes)',
-        'lastModified': '${(() {
-          if (_file.lastModified == null) {
-            return null;
-          }
-
-          return _file.lastModified!.toIso8601String();
-        })()}',
+        'lastModified': _lastModified.toString(),
         'id': '${_file.id}',
         'parentUri': _file.parentUri?.apply((u) => Uri.decodeFull('$u')) ??
             _buildNotAvailableText(),
@@ -287,6 +298,10 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
             onTap: _openDirectory,
           ),
         _buildOpenWithButton(),
+        DangerButton(
+          'Rename',
+          onTap: _renameDocFile,
+        ),
         DangerButton(
           'Delete ${_isDirectory ? 'Directory' : 'File'}',
           onTap: _isDirectory
@@ -346,6 +361,27 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
           "${prependWithNewLine ? '\n' : ''}You file got bigger! Here's your luck number: ${_generateLuckNumber()}",
       mode: FileMode.append,
     );
+  }
+
+  Future<void> _renameDocFile() async {
+    final newDisplayName = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return TextFieldDialog(
+          labelText:
+              'New ${widget.documentFile.isDirectory ?? false ? 'directory' : 'file'} name:',
+          hintText: widget.documentFile.name ?? '',
+          actionText: 'Edit',
+        );
+      },
+    );
+
+    if (newDisplayName == null) return;
+
+    final updatedDocumentFile =
+        await widget.documentFile.renameTo(newDisplayName);
+
+    widget.didUpdateDocument(updatedDocumentFile);
   }
 
   Future<void> _eraseFileContents() async {

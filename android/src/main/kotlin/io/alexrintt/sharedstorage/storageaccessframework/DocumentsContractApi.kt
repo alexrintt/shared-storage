@@ -31,34 +31,39 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
     when (call.method) {
       GET_DOCUMENT_THUMBNAIL -> {
         if (Build.VERSION.SDK_INT >= API_21) {
-          val uri = Uri.parse(call.argument("uri"))
-          val width = call.argument<Int>("width")!!
-          val height = call.argument<Int>("height")!!
+          try {
+            val uri = Uri.parse(call.argument("uri"))
+            val width = call.argument<Int>("width")!!
+            val height = call.argument<Int>("height")!!
 
-          val bitmap = DocumentsContract.getDocumentThumbnail(
-            plugin.context.contentResolver,
-            uri,
-            Point(width, height),
-            null
-          )
+            val bitmap = DocumentsContract.getDocumentThumbnail(
+              plugin.context.contentResolver,
+              uri,
+              Point(width, height),
+              null
+            )
 
-          if (bitmap != null) {
-            CoroutineScope(Dispatchers.Default).launch {
-              val base64 = bitmapToBase64(bitmap)
+            if (bitmap != null) {
+              CoroutineScope(Dispatchers.Default).launch {
+                val base64 = bitmapToBase64(bitmap)
 
-              val data =
-                mapOf(
-                  "base64" to base64,
-                  "uri" to "$uri",
-                  "width" to bitmap.width,
-                  "height" to bitmap.height,
-                  "byteCount" to bitmap.byteCount,
-                  "density" to bitmap.density
-                )
+                val data =
+                  mapOf(
+                    "base64" to base64,
+                    "uri" to "$uri",
+                    "width" to bitmap.width,
+                    "height" to bitmap.height,
+                    "byteCount" to bitmap.byteCount,
+                    "density" to bitmap.density
+                  )
 
-              launch(Dispatchers.Main) { result.success(data) }
+                launch(Dispatchers.Main) { result.success(data) }
+              }
+            } else {
+              result.success(null)
             }
-          } else {
+          } catch(e: IllegalArgumentException) {
+            // Tried to load thumbnail of a folder.
             result.success(null)
           }
         } else {

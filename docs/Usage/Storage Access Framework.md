@@ -140,12 +140,38 @@ onNewFileLoaded.listen((file) => files.add(file), onDone: () => print('All files
 
 Open a file uri in a external app, by starting a new activity with `ACTION_VIEW` Intent.
 
+Same as [openDocumentFileWithResult] but returns a boolean value, true if success false otherwise.
+
 ```dart
 final Uri fileUri = ...
 
 /// This call will prompt the user: "Open with" dialog
 /// Or will open directly in the app if this there's only a single app that can handle this file type.
 await openDocumentFile(fileUri);
+```
+
+### <samp>openDocumentFileWithResult</samp>
+
+This method open the current uri in a third-part application through `ACTION_VIEW` intent.
+
+This method returns a result enum that you can use to implement custom handles to all possible results, e.g:
+
+```dart
+final Uri uri = ...
+
+final OpenDocumentFileResult result = await uri.openDocumentFileWithResult(); // or openDocumentFileWithResult(documentFile)
+
+switch (result) {
+  case OpenDocumentFileResult.launched:
+    // The file was opened successfully
+    break;
+  case OpenDocumentFileResult.failedDueActivityNotFound:
+    // Error: Device has no configured application for [documentFile.type]
+    break;
+  default:
+    // Unknown error
+    break;
+}
 ```
 
 ### <samp>getDocumentContent</samp>
@@ -162,20 +188,6 @@ final Uint8List? fileContent = await getDocumentContent(uri);
 
 /// If the file is intended to be human readable, you can convert the output to [String]:
 print(String.fromCharCodes(fileContent));
-```
-
-### <samp>getRealPathFromUri</samp>
-
-Helper method to generate the file path of the given `uri`. This returns the real path to work with native old `File` API instead Uris, be aware this approach is no longer supported on Android 10+ (API 29+) and though new, this API is **marked as deprecated** and should be migrated to a _scoped-storage_ approach.
-
-See [Get real path from URI, Android KitKat new storage access framework](https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175#20559175) for details.
-
-```dart
-final Uri uri = ...;
-
-final String? filePath = await getRealPathFromUri(myUri);
-
-final File file = File(filePath);
 ```
 
 ## Mirror methods
@@ -715,18 +727,6 @@ This method convert `this` uri to the respective `DocumentFile` (if exists, othe
 final Uri uri = ...
 
 final DocumentFile? documentFile = uri.toDocumentFile();
-```
-
-### <samp>Uri.openDocumentFile on [`Uri`](https://api.dart.dev/stable/2.17.1/dart-core/Uri-class.html)</samp>
-
-<samp>Alias for `openDocumentFile(this)`</samp>
-
-This method open the current uri in a third-part application through `ACTION_VIEW` intent.
-
-```dart
-final Uri uri = ...
-
-await uri.openDocumentFile();
 ```
 
 ## Android Official Documentation

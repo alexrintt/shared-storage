@@ -1,3 +1,31 @@
+## 0.8.0
+
+New SAF API and Gradle version upgrade.
+
+### New
+
+- Introduced `openDocumentFileWithResult` to allow implementation of success and error handling #121 (@mx1up).
+
+### Breaking changes
+
+- Shared storage no longer supports imports other than `import 'package:shared_storage/shared_storage.dart';`, all APIs were merged into a single import #126.
+- Behavior of `openDocumentFile` no longer throws exception, to handle it's result use `openDocumentFileWithResult` instead #126.
+- Removed `getRealPathFromUri` since it tries to go against the SAF API architecture (thus bring a lot of issues and is not safe across devices).
+
+### Bug fixes
+
+- Gradle, Android Gradle Plugin and Kotlin version upgraded #124 (@iamcosmin).
+- Plugin now requires Dart v2.17+ #124.
+- Code and workflow was migrated to Flutter v3.7.7 #124.
+- Minor code improvements and error handling on native side #121.
+- Minor layout fixes on example project.
+
+### Code improvements
+
+- SAF source code was refactored into multiple modules #126.
+- Added `renameTo` sample usage in the example project #133.
+- `DocumentFileColumn` it's now using the Dart enhanced enum syntax.
+
 ## 0.7.1
 
 - No changes in the Dart API. It is just a hotfix in the Kotlin impl. See #118 for details.
