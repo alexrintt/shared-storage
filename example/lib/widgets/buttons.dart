@@ -15,7 +15,7 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      style: TextButton.styleFrom(primary: color),
+      style: TextButton.styleFrom(foregroundColor: color),
       onPressed: onTap,
       child: Text(text),
     );

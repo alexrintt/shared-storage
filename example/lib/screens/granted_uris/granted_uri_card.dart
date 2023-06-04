@@ -118,10 +118,11 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
             : 'Open document',
         onTap: _onTapHandler,
       ),
-      ActionButton(
-        'Load extra document data linked to this permission',
-        onTap: _loadDocumentFile,
-      ),
+      if (!widget.permissionUri.isTreeDocumentFile)
+        ActionButton(
+          'Load extra document file data linked to this permission',
+          onTap: _loadDocumentFile,
+        ),
     ];
   }
 
@@ -161,11 +162,19 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
       children: [
         Padding(
           padding: k2dp.all.copyWith(top: k8dp, bottom: k8dp),
-          child: Icon(
-            widget.permissionUri.isTreeDocumentFile
-                ? Icons.folder
-                : Icons.file_copy_sharp,
-            color: disabledColor(),
+          child: Row(
+            children: [
+              Icon(
+                Icons.security,
+                color: disabledColor(),
+              ),
+              Text(
+                widget.permissionUri.isTreeDocumentFile
+                    ? ' Permission over a folder'
+                    : ' Permission over a file',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
         ),
         _buildGrantedUriMetadata(),

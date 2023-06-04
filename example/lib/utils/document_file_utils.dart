@@ -1,7 +1,7 @@
 import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_storage/saf.dart';
+import 'package:shared_storage/shared_storage.dart';
 
 import '../theme/spacing.dart';
 import 'disabled_text_style.dart';
@@ -24,7 +24,7 @@ extension OpenUriWithExternalApp on Uri {
     try {
       final launched = await openDocumentFile(uri);
 
-      if (launched ?? false) {
+      if (launched) {
         print('Successfully opened $uri');
       } else {
         print('Failed to launch $uri');
@@ -65,26 +65,28 @@ extension ShowDocumentFileContents on DocumentFile {
     if (content != null) {
       final isImage = mimeTypeOrEmpty.startsWith(kImageMime);
 
-      await showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          if (isImage) {
-            return Image.memory(content);
-          }
+      if (context.mounted) {
+        await showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            if (isImage) {
+              return Image.memory(content);
+            }
 
-          final contentAsString = String.fromCharCodes(content);
+            final contentAsString = String.fromCharCodes(content);
 
-          final fileIsEmpty = contentAsString.isEmpty;
+            final fileIsEmpty = contentAsString.isEmpty;
 
-          return Container(
-            padding: k8dp.all,
-            child: Text(
-              fileIsEmpty ? 'This file is empty' : contentAsString,
-              style: fileIsEmpty ? disabledTextStyle() : null,
-            ),
-          );
-        },
-      );
+            return Container(
+              padding: k8dp.all,
+              child: Text(
+                fileIsEmpty ? 'This file is empty' : contentAsString,
+                style: fileIsEmpty ? disabledTextStyle() : null,
+              ),
+            );
+          },
+        );
+      }
     }
   }
 }

@@ -19,7 +19,7 @@ To ensure everything is working, type `flutter doctor` in your shell, you should
 
 ```md
 Doctor summary (to see all details, run flutter doctor -v):
-[√] Flutter (Channel stable, 2.10.0, on Microsoft Windows [Version 10.0.19043.1645], locale en-US)
+[√] Flutter (Channel stable, 3.7.7, on Microsoft Windows [Version 10.0.19043.1645], locale en-US)
 [√] Android toolchain - develop for Android devices (Android SDK version 31.0.0)
 [√] Chrome - develop for the web
 [√] Visual Studio - develop for Windows (Visual Studio Build Tools 2019 16.11.13)

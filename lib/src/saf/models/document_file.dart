@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import '../common/functional_extender.dart';
-import 'saf.dart' as saf;
+import '../../common/functional_extender.dart';
+import '../api/barrel.dart' as saf;
 
 extension UriDocumentFileUtils on Uri {
   /// {@macro sharedstorage.saf.fromTreeUri}
