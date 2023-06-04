@@ -29,7 +29,6 @@ Future<OpenDocumentFileResult> openDocumentFileWithResult(Uri uri) async {
     );
     return OpenDocumentFileResult.launched;
   } on PlatformException catch (e) {
-    // TODO: Throw friendly exceptions or return a class that provides info about the failure.
     switch (e.code) {
       case 'EXCEPTION_ACTIVITY_NOT_FOUND':
         return OpenDocumentFileResult.failedDueActivityNotFound;

@@ -10,6 +10,7 @@ New SAF API and Gradle version upgrade.
 
 - Shared storage no longer supports imports other than `import 'package:shared_storage/shared_storage.dart';`, all APIs were merged into a single import #126.
 - Behavior of `openDocumentFile` no longer throws exception, to handle it's result use `openDocumentFileWithResult` instead #126.
+- Removed `getRealPathFromUri` since it tries to go against the SAF API architecture (thus bring a lot of issues and is not safe across devices).
 
 ### Bug fixes
 

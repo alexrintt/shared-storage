@@ -7,7 +7,7 @@
 /// ```dart
 /// final result = documentFile.openDocumentFileWithResult(); // or openDocumentFileWithResult(documentFile)
 /// switch (result) {
-///   case OpenDocumentFileResult.success:
+///   case OpenDocumentFileResult.launched:
 ///     // ....
 ///     break;
 ///   case OpenDocumentFileResult.failedDueActivityNotFound:
