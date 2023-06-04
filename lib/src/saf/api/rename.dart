@@ -1,5 +1,5 @@
 import '../barrel.dart';
-import '../common.dart';
+import '../common/barrel.dart';
 
 /// {@template sharedstorage.saf.renameTo}
 /// Rename the current document `uri` to a new `displayName`.

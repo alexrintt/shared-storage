@@ -1,6 +1,6 @@
 import '../../channels.dart';
 import '../../common/functional_extender.dart';
-import '../common.dart';
+import '../common/barrel.dart';
 import '../models/barrel.dart';
 
 /// {@template sharedstorage.saf.listFiles}

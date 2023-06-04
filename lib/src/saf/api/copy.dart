@@ -1,4 +1,4 @@
-import '../common.dart';
+import '../common/barrel.dart';
 import '../models/barrel.dart';
 
 /// {@template sharedstorage.saf.copy}

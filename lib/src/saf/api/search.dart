@@ -1,5 +1,5 @@
 import '../barrel.dart';
-import '../common.dart';
+import '../common/barrel.dart';
 
 /// {@template sharedstorage.saf.findFile}
 /// Equivalent to `DocumentFile.findFile`.
