@@ -23,6 +23,13 @@ dependencies:
   shared_storage: ^latest # Pickup the latest version either from the pub.dev page or doc badge
 ```
 
+Import:
+
+
+```dart
+import 'package:shared_storage/shared_storage.dart' as shared_storage;
+```
+
 ## Plugin
 
 This plugin include **partial** support for the following APIs:
@@ -31,25 +38,15 @@ This plugin include **partial** support for the following APIs:
 
 Mirror API from [Environment](https://developer.android.com/reference/android/os/Environment)
 
-```dart
-import 'package:shared_storage/environment.dart' as environment;
-```
 
 ### Partial Support for [Media Store](./Usage/Media%20Store.md)
 
 Mirror API from [MediaStore provider](https://developer.android.com/reference/android/provider/MediaStore)
 
-```dart
-import 'package:shared_storage/media_store.dart' as mediastore;
-```
-
 ### Partial Support for [Storage Access Framework](./Usage/Storage%20Access%20Framework.md)
 
 Mirror API from [Storage Access Framework](https://developer.android.com/guide/topics/providers/document-provider)
 
-```dart
-import 'package:shared_storage/saf.dart' as saf;
-```
 
 All these APIs are module based, which means they are implemented separadely and so you need to import those you want use.
 
@@ -65,26 +62,6 @@ Most Flutter plugins use Android API's under the hood. So this plugin does the s
 
 [`🔗android.os.Environment`](https://developer.android.com/reference/android/os/Environment#summary) [`🔗android.provider.MediaStore`](https://developer.android.com/reference/android/provider/MediaStore#summary) [`🔗android.provider.DocumentsProvider`](https://developer.android.com/guide/topics/providers/document-provider)
 
-## Contributors
+---
 
-These are the brilliant minds behind the development of this plugin!
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://alexrintt.github.io"><img src="https://avatars.githubusercontent.com/u/51419598?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Rintt</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=alexrintt" title="Code">💻</a> <a href="#maintenance-alexrintt" title="Maintenance">🚧</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=alexrintt" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/ankitparmar007"><img src="https://avatars.githubusercontent.com/u/73648141?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ankitparmar007</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Aankitparmar007" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://www.bibliotecaortodoxa.ro"><img src="https://avatars.githubusercontent.com/u/1148228?v=4?s=100" width="100px;" alt=""/><br /><sub><b>www.bibliotecaortodoxa.ro</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=aplicatii-romanesti" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Aaplicatii-romanesti" title="Bug reports">🐛</a> <a href="#ideas-aplicatii-romanesti" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://github.com/dangilbert"><img src="https://avatars.githubusercontent.com/u/6799566?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dangilbert</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/commits?author=dangilbert" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Adangilbert" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/dhaval-k-simformsolutions"><img src="https://avatars.githubusercontent.com/u/90894202?v=4?s=100" width="100px;" alt=""/><br /><sub><b>dhaval-k-simformsolutions</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Adhaval-k-simformsolutions" title="Bug reports">🐛</a> <a href="#ideas-dhaval-k-simformsolutions" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://eternityforest.com"><img src="https://avatars.githubusercontent.com/u/758047?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Dunn</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3AEternityForest" title="Bug reports">🐛</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=EternityForest" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=EternityForest" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://jfaltis.de"><img src="https://avatars.githubusercontent.com/u/45465572?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jfaltis</b></sub></a><br /><a href="https://github.com/alexrintt/shared-storage/issues?q=author%3Ajfaltis" title="Bug reports">🐛</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=jfaltis" title="Code">💻</a> <a href="https://github.com/alexrintt/shared-storage/commits?author=jfaltis" title="Documentation">📖</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+Thanks to all [contributors](https://github.com/alexrintt/shared-storage/tree/release#contributors).

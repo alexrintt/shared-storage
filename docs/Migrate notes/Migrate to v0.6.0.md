@@ -13,8 +13,8 @@ Instead of:
 
 ```dart
 import 'package:shared_storage/environment.dart' as environment;
-import 'package:shared_storage/media_store.dart' as environment;
-import 'package:shared_storage/saf.dart' as environment;
+import 'package:shared_storage/media_store.dart' as media_store;
+import 'package:shared_storage/saf.dart' as saf;
 ```
 
 Import as:
