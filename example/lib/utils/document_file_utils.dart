@@ -46,12 +46,6 @@ extension ShowDocumentFileContents on DocumentFile {
 
     if (!mimeTypeOrEmpty.startsWith(kTextMime) &&
         !mimeTypeOrEmpty.startsWith(kImageMime)) {
-      if (mimeTypeOrEmpty == kApkMime) {
-        return context.showToast(
-          'Requesting to install a package (.apk) is not currently supported, to request this feature open an issue at github.com/alexrintt/shared-storage/issues',
-        );
-      }
-
       return uri.openWithExternalApp();
     }
 
