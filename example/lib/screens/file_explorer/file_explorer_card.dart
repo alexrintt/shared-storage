@@ -36,7 +36,7 @@ class FileExplorerCard extends StatefulWidget {
 class _FileExplorerCardState extends State<FileExplorerCard> {
   DocumentFile get _file => widget.documentFile;
 
-  static const _expandedThumbnailSize = Size.square(150);
+  static const _kExpandedThumbnailSize = Size.square(150);
 
   Uint8List? _thumbnailImageBytes;
   Size? _thumbnailSize;
@@ -51,8 +51,8 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
 
     final bitmap = await getDocumentThumbnail(
       uri: uri,
-      width: _expandedThumbnailSize.width,
-      height: _expandedThumbnailSize.height,
+      width: _kExpandedThumbnailSize.width,
+      height: _kExpandedThumbnailSize.height,
     );
 
     if (bitmap == null) {
@@ -177,7 +177,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     return random.nextInt(1000);
   }
 
-  Widget _buildThumbnail({double? size}) {
+  Widget _buildThumbnailImage({double? size}) {
     late Widget thumbnail;
 
     if (_thumbnailImageBytes == null) {
@@ -206,6 +206,12 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
         );
       }
     }
+
+    return thumbnail;
+  }
+
+  Widget _buildThumbnail({double? size}) {
+    final Widget thumbnail = _buildThumbnailImage(size: size);
 
     List<Widget> children;
 

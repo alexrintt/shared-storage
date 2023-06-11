@@ -22,11 +22,14 @@ import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.nio.ByteBuffer
+import java.io.Serializable
 import java.util.*
+
 
 const val APK_MIME_TYPE = "application/vnd.android.package-archive"
 
@@ -38,17 +41,20 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
     private const val CHANNEL = "documentscontract"
   }
 
-  private fun createTempUriFile(sourceUri: Uri, callback: (File) -> Unit) {
-    val destinationFilename: String = UUID.randomUUID().toString()
+  private fun createTempUriFile(sourceUri: Uri, callback: (File?) -> Unit) {
+    try {
+      val destinationFilename: String = UUID.randomUUID().toString()
 
-    val tempDestinationFile =
-      File(plugin.context.cacheDir.path, destinationFilename)
+      val tempDestinationFile =
+        File(plugin.context.cacheDir.path, destinationFilename)
 
-    plugin.context.contentResolver.openInputStream(sourceUri)?.use {
-      createFileFromStream(it, tempDestinationFile)
+      plugin.context.contentResolver.openInputStream(sourceUri)?.use {
+        createFileFromStream(it, tempDestinationFile)
+      }
+      callback(tempDestinationFile)
+    } catch (_: FileNotFoundException) {
+      callback(null)
     }
-
-    callback(tempDestinationFile)
   }
 
   private fun createFileFromStream(ins: InputStream, destination: File?) {
@@ -69,60 +75,72 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
         val mimeType: String? = plugin.context.contentResolver.getType(uri)
 
         if (mimeType == APK_MIME_TYPE) {
-          CoroutineScope(Dispatchers.IO).launch {
-            createTempUriFile(uri) {
-              val packageManager: PackageManager = plugin.context.packageManager
-              val packageInfo: PackageInfo? =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                  packageManager.getPackageArchiveInfo(
-                    it.path,
-                    PackageManager.PackageInfoFlags.of(0)
-                  )
-                } else {
-                  @Suppress("DEPRECATION")
-                  packageManager.getPackageArchiveInfo(
-                    it.path,
-                    0
-                  )
-                }
-
-              if (packageInfo == null) {
-                if (it.exists()) it.delete()
-                return@createTempUriFile result.success(null)
-              }
-
-              // the secret is these two lines....
-              packageInfo.applicationInfo.sourceDir = it.path
-              packageInfo.applicationInfo.publicSourceDir = it.path
-
-              val apkIcon: Drawable =
-                packageInfo.applicationInfo.loadIcon(packageManager)
-
-              val bitmap: Bitmap = drawableToBitmap(apkIcon)
-
-              val bytes: ByteArray = bitmap.convertToByteArray()
-
-              val data =
-                mapOf(
-                  "bytes" to bytes,
-                  "uri" to "$uri",
-                  "width" to bitmap.width,
-                  "height" to bitmap.height,
-                  "byteCount" to bitmap.byteCount,
-                  "density" to bitmap.density
-                )
-
-              if (it.exists()) it.delete()
-
-              launch(Dispatchers.Main) { result.success(data) }
-            }
-          }
+          getThumbnailForApkFile(call, result, uri)
         } else {
           if (Build.VERSION.SDK_INT >= API_21) {
             getThumbnailForApi24(call, result)
           } else {
             result.notSupported(call.method, API_21)
           }
+        }
+      }
+    }
+  }
+
+  private fun getThumbnailForApkFile(
+    call: MethodCall,
+    result: MethodChannel.Result,
+    uri: Uri
+  ) {
+    CoroutineScope(Dispatchers.IO).launch {
+      createTempUriFile(uri) {
+        if (it == null) {
+          launch(Dispatchers.Main) { result.success(null) }
+          return@createTempUriFile
+        }
+
+        kotlin.runCatching {
+          val packageManager: PackageManager =
+            plugin.context.packageManager
+          val packageInfo: PackageInfo? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+              packageManager.getPackageArchiveInfo(
+                it.path,
+                PackageManager.PackageInfoFlags.of(0)
+              )
+            } else {
+              @Suppress("DEPRECATION")
+              packageManager.getPackageArchiveInfo(
+                it.path,
+                0
+              )
+            }
+
+          if (packageInfo == null) {
+            if (it.exists()) it.delete()
+            return@createTempUriFile result.success(null)
+          }
+
+          // Parse the apk and to get the icon later on
+          packageInfo.applicationInfo.sourceDir = it.path
+          packageInfo.applicationInfo.publicSourceDir = it.path
+
+          val apkIcon: Drawable =
+            packageInfo.applicationInfo.loadIcon(packageManager)
+
+          val bitmap: Bitmap = drawableToBitmap(apkIcon)
+
+          val data = bitmap.generateSerializableBitmapData(uri)
+
+          if (it.exists()) it.delete()
+
+          launch(Dispatchers.Main) { result.success(data) }
+        }
+
+        try {
+        } catch (e: FileNotFoundException) {
+          // The target file apk is invalid
+          launch(Dispatchers.Main) { result.success(null) }
         }
       }
     }
@@ -148,17 +166,7 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
         )
 
         if (bitmap != null) {
-          val byteArray: ByteArray = bitmap.convertToByteArray()
-
-          val data =
-            mapOf(
-              "bytes" to byteArray,
-              "uri" to "$uri",
-              "width" to bitmap.width,
-              "height" to bitmap.height,
-              "byteCount" to bitmap.byteCount,
-              "density" to bitmap.density
-            )
+          val data = bitmap.generateSerializableBitmapData(uri)
 
           launch(Dispatchers.Main) { result.success(data) }
         } else {
@@ -221,24 +229,38 @@ fun drawableToBitmap(drawable: Drawable): Bitmap {
 
 /**
  * Convert bitmap to byte array using ByteBuffer.
+ *
+ * This method calls [Bitmap.recycle] so this function will make the bitmap unusable after that.
  */
 fun Bitmap.convertToByteArray(): ByteArray {
-  //minimum number of bytes that can be used to store this bitmap's pixels
-  val size: Int = this.byteCount
+  val stream = ByteArrayOutputStream()
 
-  //allocate new instances which will hold bitmap
-  val buffer = ByteBuffer.allocate(size)
-  val bytes = ByteArray(size)
+  // Very important, see https://stackoverflow.com/questions/51516310/sending-bitmap-to-flutter-from-android-platform
+  // Without compressing the raw bitmap, Flutter Image widget cannot decode it correctly and will throw a error.
+  this.compress(Bitmap.CompressFormat.PNG, 100, stream)
 
-  // copy the bitmap's pixels into the specified buffer
-  this.copyPixelsToBuffer(buffer)
+  val byteArray = stream.toByteArray()
 
-  // rewinds buffer (buffer position is set to zero and the mark is discarded)
-  buffer.rewind()
+  this.recycle()
 
-  // transfer bytes from buffer into the given destination array
-  buffer.get(bytes)
+  return byteArray
+}
 
-  // return bitmap's pixels
-  return bytes
+fun Bitmap.generateSerializableBitmapData(
+  uri: Uri,
+  additional: Map<String, Serializable> = mapOf()
+): Map<String, Serializable> {
+  val metadata = mapOf(
+    "uri" to "$uri",
+    "width" to this.width,
+    "height" to this.height,
+    "byteCount" to this.byteCount,
+    "density" to this.density
+  )
+
+  val bytes: ByteArray = this.convertToByteArray()
+
+  return metadata + additional + mapOf<String, Serializable>(
+    "bytes" to bytes
+  )
 }
