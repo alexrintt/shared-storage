@@ -23,7 +23,7 @@ class DocumentBitmap {
   factory DocumentBitmap.fromMap(Map<String, dynamic> map) {
     return DocumentBitmap(
       uri: (() {
-        final uri = map['uri'] as String?;
+        final String? uri = map['uri'] as String?;
 
         if (uri == null) return null;
 
@@ -58,7 +58,7 @@ class DocumentBitmap {
   Uint8List? get bytes {
     if (base64 == null) return null;
 
-    const codec = Base64Codec();
+    const Base64Codec codec = Base64Codec();
 
     return codec.decode(base64!);
   }

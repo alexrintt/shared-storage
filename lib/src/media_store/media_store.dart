@@ -12,12 +12,14 @@ import 'media_store_collection.dart';
 Future<Uri?> getMediaStoreContentDirectory(
   MediaStoreCollection collection,
 ) async {
-  const kGetMediaStoreContentDirectory = 'getMediaStoreContentDirectory';
-  const kCollectionArg = 'collection';
+  const String kGetMediaStoreContentDirectory = 'getMediaStoreContentDirectory';
+  const String kCollectionArg = 'collection';
 
-  final args = <String, String>{kCollectionArg: '$collection'};
+  final Map<String, String> args = <String, String>{
+    kCollectionArg: '$collection'
+  };
 
-  final publicDir = await kMediaStoreChannel.invokeMethod<String?>(
+  final String? publicDir = await kMediaStoreChannel.invokeMethod<String?>(
     kGetMediaStoreContentDirectory,
     args,
   );

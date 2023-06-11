@@ -1,23 +1,20 @@
 package io.alexrintt.sharedstorage.storageaccessframework
 
-import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import com.anggrayudi.storage.file.isTreeDocumentFile
 import io.alexrintt.sharedstorage.ROOT_CHANNEL
 import io.alexrintt.sharedstorage.SharedStoragePlugin
+import io.alexrintt.sharedstorage.deprecated.lib.documentFromUri
 import io.alexrintt.sharedstorage.plugin.ActivityListener
 import io.alexrintt.sharedstorage.plugin.Listenable
 import io.alexrintt.sharedstorage.storageaccessframework.lib.*
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
-import java.security.AccessController.getContext
 
 
 /**

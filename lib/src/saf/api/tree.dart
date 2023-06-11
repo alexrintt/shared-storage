@@ -32,16 +32,22 @@ Stream<DocumentFile> listFiles(
   Uri uri, {
   required List<DocumentFileColumn> columns,
 }) {
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'event': 'listFiles',
-    'columns': columns.map((e) => '$e').toList(),
+    'columns': columns.map((DocumentFileColumn e) => '$e').toList(),
   };
 
-  final onCursorRowResult =
+  final Stream<dynamic> onCursorRowResult =
       kDocumentFileEventChannel.receiveBroadcastStream(args);
 
-  return onCursorRowResult.map((e) => DocumentFile.fromMap(Map.from(e as Map)));
+  return onCursorRowResult.map(
+    (dynamic e) => DocumentFile.fromMap(
+      Map<String, dynamic>.from(
+        e as Map<String, dynamic>,
+      ),
+    ),
+  );
 }
 
 /// {@template sharedstorage.saf.child}
@@ -60,7 +66,7 @@ Future<DocumentFile?> child(
   String path, {
   bool requiresWriteAccess = false,
 }) async {
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'path': path,
     'requiresWriteAccess': requiresWriteAccess,

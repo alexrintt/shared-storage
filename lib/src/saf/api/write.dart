@@ -16,10 +16,10 @@ Future<bool?> writeToFileAsBytes(
   required Uint8List bytes,
   FileMode? mode,
 }) async {
-  final writeMode =
+  final String writeMode =
       mode == FileMode.append || mode == FileMode.writeOnlyAppend ? 'wa' : 'wt';
 
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'content': bytes,
     'mode': writeMode,

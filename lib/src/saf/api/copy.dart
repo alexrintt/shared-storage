@@ -7,7 +7,10 @@ import '../models/barrel.dart';
 /// This API uses the `createFile` and `getDocumentContent` API's behind the scenes.
 /// {@endtemplate}
 Future<DocumentFile?> copy(Uri uri, Uri destination) async {
-  final args = <String, String>{'uri': '$uri', 'destination': '$destination'};
+  final Map<String, String> args = <String, String>{
+    'uri': '$uri',
+    'destination': '$destination'
+  };
 
   return invokeMapMethod('copy', args);
 }

@@ -19,3 +19,5 @@ linter:
     always_use_package_imports: false
     avoid_relative_lib_imports: false
     avoid_print: false
+    always_specify_types: true
+    avoid_classes_with_only_static_members: false

@@ -17,14 +17,14 @@ Future<int?> documentLength(Uri uri) async => kDocumentFileChannel
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#lastModified%28%29).
 /// {@endtemplate}
 Future<DateTime?> lastModified(Uri uri) async {
-  const kLastModified = 'lastModified';
+  const String kLastModified = 'lastModified';
 
-  final inMillisecondsSinceEpoch = await kDocumentFileChannel
+  final int? inMillisecondsSinceEpoch = await kDocumentFileChannel
       .invokeMethod<int>(kLastModified, <String, String>{'uri': '$uri'});
 
   return inMillisecondsSinceEpoch
-      ?.takeIf((i) => i > 0)
-      ?.apply((i) => DateTime.fromMillisecondsSinceEpoch(i));
+      ?.takeIf((int i) => i > 0)
+      ?.apply((int i) => DateTime.fromMillisecondsSinceEpoch(i));
 }
 
 /// {@template sharedstorage.saf.canRead}

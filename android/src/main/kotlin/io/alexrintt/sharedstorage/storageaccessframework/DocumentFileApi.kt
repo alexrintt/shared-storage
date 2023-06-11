@@ -13,15 +13,16 @@ import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.alexrintt.sharedstorage.ROOT_CHANNEL
 import io.alexrintt.sharedstorage.SharedStoragePlugin
+import io.alexrintt.sharedstorage.deprecated.lib.*
 import io.alexrintt.sharedstorage.plugin.*
+import io.alexrintt.sharedstorage.storageaccessframework.*
 import io.alexrintt.sharedstorage.storageaccessframework.lib.*
+import io.alexrintt.sharedstorage.plugin.ActivityListener
+import io.alexrintt.sharedstorage.plugin.Listenable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
 
 /**
  * Aimed to implement strictly only the APIs already available from the native and original
@@ -58,12 +59,15 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           result.notSupported(call.method, API_21)
         }
       }
+
       OPEN_DOCUMENT -> if (Build.VERSION.SDK_INT >= API_21) {
         openDocument(call, result)
       }
+
       OPEN_DOCUMENT_TREE -> if (Build.VERSION.SDK_INT >= API_21) {
         openDocumentTree(call, result)
       }
+
       CREATE_FILE -> if (Build.VERSION.SDK_INT >= API_21) {
         createFile(
           result,
@@ -73,16 +77,20 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           call.argument<ByteArray>("content")!!
         )
       }
+
       WRITE_TO_FILE -> writeToFile(
         result,
         call.argument<String>("uri")!!,
         call.argument<ByteArray>("content")!!,
         call.argument<String>("mode")!!
       )
+
       PERSISTED_URI_PERMISSIONS -> persistedUriPermissions(result)
+
       RELEASE_PERSISTABLE_URI_PERMISSION -> releasePersistableUriPermission(
         result, call.argument<String?>("uri") as String
       )
+
       FROM_TREE_URI -> if (Build.VERSION.SDK_INT >= API_21) {
         result.success(
           createDocumentFileMap(
@@ -92,6 +100,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         )
       }
+
       CAN_WRITE -> if (Build.VERSION.SDK_INT >= API_21) {
         result.success(
           documentFromUri(
@@ -99,11 +108,13 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )?.canWrite()
         )
       }
+
       CAN_READ -> if (Build.VERSION.SDK_INT >= API_21) {
         val uri = call.argument<String?>("uri") as String
 
         result.success(documentFromUri(plugin.context, uri)?.canRead())
       }
+
       LENGTH -> if (Build.VERSION.SDK_INT >= API_21) {
         result.success(
           documentFromUri(
@@ -111,6 +122,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )?.length()
         )
       }
+
       EXISTS -> if (Build.VERSION.SDK_INT >= API_21) {
         result.success(
           documentFromUri(
@@ -118,13 +130,36 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )?.exists()
         )
       }
+
       DELETE -> if (Build.VERSION.SDK_INT >= API_21) {
-        result.success(
-          documentFromUri(
-            plugin.context, call.argument<String?>("uri") as String
-          )?.delete()
-        )
+        try {
+          result.success(
+            documentFromUri(
+              plugin.context, call.argument<String?>("uri") as String
+            )?.delete()
+          )
+        } catch (e: FileNotFoundException) {
+          // File is already deleted.
+          result.success(null)
+        } catch (e: IllegalStateException) {
+          // File is already deleted.
+          result.success(null)
+        } catch (e: IllegalArgumentException) {
+          // File is already deleted.
+          result.success(null)
+        } catch (e: IOException) {
+          // Unknown, can be anything.
+          result.success(null)
+        } catch (e: Throwable) {
+          Log.d(
+            "sharedstorage",
+            "Unknown error when calling [delete] method with [uri]."
+          )
+          // Unknown, can be anything.
+          result.success(null)
+        }
       }
+
       LAST_MODIFIED -> if (Build.VERSION.SDK_INT >= API_21) {
         val document = documentFromUri(
           plugin.context, call.argument<String?>("uri") as String
@@ -132,6 +167,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
         result.success(document?.lastModified())
       }
+
       CREATE_DIRECTORY -> {
         if (Build.VERSION.SDK_INT >= API_21) {
           val uri = call.argument<String?>("uri") as String
@@ -146,6 +182,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           result.notSupported(call.method, API_21)
         }
       }
+
       FIND_FILE -> {
         if (Build.VERSION.SDK_INT >= API_21) {
           val uri = call.argument<String?>("uri") as String
@@ -160,20 +197,30 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       }
+
       COPY -> {
         val uri = Uri.parse(call.argument<String>("uri")!!)
         val destination = Uri.parse(call.argument<String>("destination")!!)
 
         if (Build.VERSION.SDK_INT >= API_21) {
-          if (Build.VERSION.SDK_INT >= API_24) {
-            DocumentsContract.copyDocument(
-              plugin.context.contentResolver, uri, destination
-            )
-          } else {
-            val inputStream = openInputStream(uri)
-            val outputStream = openOutputStream(destination)
+          val isContentUri: Boolean =
+            uri.scheme == "content" && destination.scheme == "content"
 
-            outputStream?.let { inputStream?.copyTo(it) }
+          CoroutineScope(Dispatchers.IO).launch {
+            if (Build.VERSION.SDK_INT >= API_24 && isContentUri) {
+              DocumentsContract.copyDocument(
+                plugin.context.contentResolver, uri, destination
+              )
+            } else {
+              val inputStream = openInputStream(uri)
+              val outputStream = openOutputStream(destination)
+
+              outputStream?.let { inputStream?.copyTo(it) }
+            }
+
+            launch(Dispatchers.Main) {
+              result.success(null)
+            }
           }
         } else {
           result.notSupported(
@@ -183,6 +230,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       }
+
       RENAME_TO -> {
         val uri = call.argument<String?>("uri") as String
         val displayName = call.argument<String?>("displayName") as String
@@ -206,6 +254,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           )
         }
       }
+
       PARENT_FILE -> {
         val uri = call.argument<String>("uri")!!
 
@@ -217,6 +266,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           result.notSupported(PARENT_FILE, API_21, mapOf("uri" to uri))
         }
       }
+
       CHILD -> {
         val uri = call.argument<String>("uri")!!
         val path = call.argument<String>("path")!!
@@ -233,6 +283,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           result.notSupported(CHILD, API_21, mapOf("uri" to uri))
         }
       }
+
       else -> result.notImplemented()
     }
   }
@@ -344,20 +395,25 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     content: ByteArray,
     block: DocumentFile?.() -> Unit
   ) {
-    val createdFile = documentFromUri(plugin.context, treeUri)!!.createFile(
-      mimeType, displayName
-    )
+    CoroutineScope(Dispatchers.IO).launch {
+      val createdFile = documentFromUri(plugin.context, treeUri)!!.createFile(
+        mimeType, displayName
+      )
 
-    createdFile?.uri?.apply {
-      plugin.context.contentResolver.openOutputStream(this)?.apply {
-        write(content)
-        flush()
-        close()
+      createdFile?.uri?.apply {
+        kotlin.runCatching {
+          plugin.context.contentResolver.openOutputStream(this)?.use {
+            it.write(content)
+            it.flush()
 
-        val createdFileDocument =
-          documentFromUri(plugin.context, createdFile.uri)
+            val createdFileDocument =
+              documentFromUri(plugin.context, createdFile.uri)
 
-        block(createdFileDocument)
+            launch(Dispatchers.Main) {
+              block(createdFileDocument)
+            }
+          }
+        }
       }
     }
   }
@@ -379,23 +435,21 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     }
   }
 
-  @RequiresApi(API_19)
   private fun persistedUriPermissions(result: MethodChannel.Result) {
     val persistedUriPermissions =
       plugin.context.contentResolver.persistedUriPermissions
 
     result.success(persistedUriPermissions.map {
-      mapOf(
-        "isReadPermission" to it.isReadPermission,
-        "isWritePermission" to it.isWritePermission,
-        "persistedTime" to it.persistedTime,
-        "uri" to "${it.uri}",
-        "isTreeDocumentFile" to it.uri.isTreeDocumentFile
-      )
-    }.toList())
+        mapOf(
+          "isReadPermission" to it.isReadPermission,
+          "isWritePermission" to it.isWritePermission,
+          "persistedTime" to it.persistedTime,
+          "uri" to "${it.uri}",
+          "isTreeDocumentFile" to it.uri.isTreeDocumentFile
+        )
+      }.toList())
   }
 
-  @RequiresApi(API_19)
   private fun releasePersistableUriPermission(
     result: MethodChannel.Result, directoryUri: String
   ) {
@@ -417,8 +471,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         }
 
         plugin.context.contentResolver.releasePersistableUriPermission(
-          targetUri,
-          flags
+          targetUri, flags
         )
       }
     }
@@ -426,7 +479,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     result.success(null)
   }
 
-  @RequiresApi(API_19)
   override fun onActivityResult(
     requestCode: Int, resultCode: Int, resultIntent: Intent?
   ): Boolean {
@@ -467,6 +519,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           pendingResults.remove(OPEN_DOCUMENT_TREE_CODE)
         }
       }
+
       OPEN_DOCUMENT_CODE -> {
         val pendingResult = pendingResults[OPEN_DOCUMENT_CODE] ?: return false
 
@@ -579,7 +632,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   ) {
     if (eventSink == null) return
 
-    val columns = args["columns"] as List<*>
+    val userProvidedColumns = args["columns"] as List<*>
     val uri = Uri.parse(args["uri"] as String)
     val document = DocumentFile.fromTreeUri(plugin.context, uri)
 
@@ -589,6 +642,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         "Android SDK must be greater or equal than [Build.VERSION_CODES.N]",
         "Got (Build.VERSION.SDK_INT): ${Build.VERSION.SDK_INT}"
       )
+      eventSink.endOfStream()
     } else {
       if (!document.canRead()) {
         val error = "You cannot read a URI that you don't have read permissions"
@@ -604,14 +658,15 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
           CoroutineScope(Dispatchers.IO).launch {
             try {
-              traverseDirectoryEntries(
-                plugin.context.contentResolver,
+              traverseDirectoryEntries(plugin.context.contentResolver,
                 rootOnly = true,
                 targetUri = document.uri,
-                columns = columns.map {
-                  parseDocumentFileColumn(parseDocumentFileColumn(it as String)!!)
-                }.toTypedArray()
-              ) { data, _ ->
+                columns = userProvidedColumns.map {
+                    // Convert the user provided column string to documentscontract column ID.
+                    documentFileColumnToActualDocumentsContractEnumString(
+                      deserializeDocumentFileColumn(it as String)!!
+                    )
+                  }.toTypedArray()) { data, _ ->
                 launch(Dispatchers.Main) {
                   eventSink.success(
                     data
@@ -622,6 +677,8 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
               launch(Dispatchers.Main) { eventSink.endOfStream() }
             }
           }
+        } else {
+          eventSink.endOfStream()
         }
       }
     }
@@ -649,13 +706,22 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
       bytes
     } catch (e: FileNotFoundException) {
+      // Probably the file was already deleted and now you are trying to read.
       null
     } catch (e: IOException) {
+      // Unknown, can be anything.
+      null
+    } catch (e: IllegalArgumentException) {
+      // Probably the file was already deleted and now you are trying to read.
+      null
+    } catch (e: IllegalStateException) {
+      // Probably you ran [delete] and [readDocumentContent] at the same time.
       null
     }
   }
 
   override fun onCancel(arguments: Any?) {
+    eventSink?.endOfStream()
     eventSink = null
   }
 }
