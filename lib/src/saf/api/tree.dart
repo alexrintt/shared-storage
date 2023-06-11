@@ -44,7 +44,7 @@ Stream<DocumentFile> listFiles(
   return onCursorRowResult.map(
     (dynamic e) => DocumentFile.fromMap(
       Map<String, dynamic>.from(
-        e as Map<String, dynamic>,
+        e as Map<dynamic, dynamic>,
       ),
     ),
   );

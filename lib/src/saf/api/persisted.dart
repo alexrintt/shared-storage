@@ -10,16 +10,14 @@ import '../models/barrel.dart';
 /// To remove an persisted [Uri] call `releasePersistableUriPermission`.
 /// {@endtemplate}
 Future<List<UriPermission>?> persistedUriPermissions() async {
-  final List<dynamic>? persistedUriPermissions =
-      await kDocumentFileChannel.invokeListMethod('persistedUriPermissions');
+  final List<dynamic>? persistedUriPermissions = await kDocumentFileChannel
+      .invokeListMethod<dynamic>('persistedUriPermissions');
 
   return persistedUriPermissions?.apply(
     (List<dynamic> p) => p
         .map(
           (dynamic e) => UriPermission.fromMap(
-            Map<String, dynamic>.from(
-              e as Map<String, dynamic>,
-            ),
+            Map<String, dynamic>.from(e as Map<dynamic, dynamic>),
           ),
         )
         .toList(),
