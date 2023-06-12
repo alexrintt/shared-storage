@@ -22,6 +22,7 @@ import io.alexrintt.sharedstorage.plugin.Listenable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.*
 
 /**
@@ -212,10 +213,15 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
                 plugin.context.contentResolver, uri, destination
               )
             } else {
-              val inputStream = openInputStream(uri)
-              val outputStream = openOutputStream(destination)
+              withContext(Dispatchers.IO) {
+                val inputStream = openInputStream(uri)
+                val outputStream = openOutputStream(destination)
 
-              outputStream?.let { inputStream?.copyTo(it) }
+                outputStream?.let { inputStream?.copyTo(it) }
+
+                inputStream?.close()
+                outputStream?.close()
+              }
             }
 
             launch(Dispatchers.Main) {
