@@ -299,6 +299,26 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     await widget.documentFile.share();
   }
 
+  Future<void> _copyTo() async {
+    final Uri? parentUri = await openDocumentTree(persistablePermission: false);
+
+    if (parentUri != null) {
+      final DocumentFile? parentDocumentFile = await parentUri.toDocumentFile();
+
+      if (widget.documentFile.type != null &&
+          widget.documentFile.name != null) {
+        final DocumentFile? recipient = await parentDocumentFile?.createFile(
+          mimeType: widget.documentFile.type!,
+          displayName: widget.documentFile.name!,
+        );
+
+        if (recipient != null) {
+          widget.documentFile.copy(recipient.uri);
+        }
+      }
+    }
+  }
+
   Widget _buildAvailableActions() {
     return Wrap(
       children: [
@@ -319,6 +339,10 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
               : _fileConfirmation('Delete', _deleteDocument),
         ),
         if (!_isDirectory) ...[
+          ActionButton(
+            'Copy to',
+            onTap: _copyTo,
+          ),
           ActionButton(
             'Share Document',
             onTap: _shareDocument,

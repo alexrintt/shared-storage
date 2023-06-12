@@ -204,24 +204,16 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         val destination = Uri.parse(call.argument<String>("destination")!!)
 
         if (Build.VERSION.SDK_INT >= API_21) {
-          val isContentUri: Boolean =
-            uri.scheme == "content" && destination.scheme == "content"
-
           CoroutineScope(Dispatchers.IO).launch {
-            if (Build.VERSION.SDK_INT >= API_24 && isContentUri) {
-              DocumentsContract.copyDocument(
-                plugin.context.contentResolver, uri, destination
-              )
-            } else {
-              withContext(Dispatchers.IO) {
-                val inputStream = openInputStream(uri)
-                val outputStream = openOutputStream(destination)
+            withContext(Dispatchers.IO) {
+              val inputStream = openInputStream(uri)
+              val outputStream = openOutputStream(destination)
 
-                outputStream?.let { inputStream?.copyTo(it) }
+              // TODO: Implement progress indicator by re-writing the [copyTo] impl with an optional callback fn.
+              outputStream?.let { inputStream?.copyTo(it) }
 
-                inputStream?.close()
-                outputStream?.close()
-              }
+              inputStream?.close()
+              outputStream?.close()
             }
 
             launch(Dispatchers.Main) {
