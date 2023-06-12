@@ -13,15 +13,16 @@ import '../models/barrel.dart';
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createDirectory%28java.lang.String%29).
 /// {@endtemplate}
 Future<DocumentFile?> createDirectory(Uri parentUri, String displayName) async {
-  final args = <String, String>{
+  final Map<String, String> args = <String, String>{
     'uri': '$parentUri',
     'displayName': displayName,
   };
 
-  final createdDocumentFile = await kDocumentFileChannel
+  final Map<String, dynamic>? createdDocumentFile = await kDocumentFileChannel
       .invokeMapMethod<String, dynamic>('createDirectory', args);
 
-  return createdDocumentFile?.apply((c) => DocumentFile.fromMap(c));
+  return createdDocumentFile
+      ?.apply((Map<String, dynamic> c) => DocumentFile.fromMap(c));
 }
 
 /// {@template sharedstorage.saf.createFile}
@@ -70,9 +71,9 @@ Future<DocumentFile?> createFileAsBytes(
   required String displayName,
   required Uint8List bytes,
 }) async {
-  final directoryUri = '$parentUri';
+  final String directoryUri = '$parentUri';
 
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'mimeType': mimeType,
     'content': bytes,
     'displayName': displayName,

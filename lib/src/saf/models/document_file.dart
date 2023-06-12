@@ -31,7 +31,8 @@ class DocumentFile {
 
   factory DocumentFile.fromMap(Map<String, dynamic> map) {
     return DocumentFile(
-      parentUri: (map['parentUri'] as String?)?.apply((p) => Uri.parse(p)),
+      parentUri:
+          (map['parentUri'] as String?)?.apply((String p) => Uri.parse(p)),
       id: map['id'] as String?,
       isDirectory: map['isDirectory'] as bool?,
       isFile: map['isFile'] as bool?,
@@ -41,7 +42,7 @@ class DocumentFile {
       uri: Uri.parse(map['uri'] as String),
       size: map['size'] as int?,
       lastModified: (map['lastModified'] as int?)
-          ?.apply((l) => DateTime.fromMillisecondsSinceEpoch(l)),
+          ?.apply((int l) => DateTime.fromMillisecondsSinceEpoch(l)),
     );
   }
 
@@ -95,7 +96,6 @@ class DocumentFile {
   static Future<DocumentFile?> fromTreeUri(Uri uri) => saf.fromTreeUri(uri);
 
   /// {@macro sharedstorage.saf.child}
-  @willbemovedsoon
   Future<DocumentFile?> child(
     String path, {
     bool requiresWriteAccess = false,
@@ -112,6 +112,9 @@ class DocumentFile {
 
   /// {@macro sharedstorage.saf.canRead}
   Future<bool?> canRead() async => saf.canRead(uri);
+
+  /// {@macro sharedstorage.saf.share}
+  Future<void> share() async => saf.shareUri(uri);
 
   /// {@macro sharedstorage.saf.canWrite}
   Future<bool?> canWrite() async => saf.canWrite(uri);
@@ -226,7 +229,7 @@ class DocumentFile {
   Future<DocumentFile?> parentFile() => saf.parentFile(uri);
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       'id': id,
       'uri': '$uri',
       'parentUri': '$parentUri',

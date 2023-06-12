@@ -22,7 +22,7 @@ enum DocumentFileColumn {
 
   const DocumentFileColumn(this.androidEnumItemName);
 
-  static const _kAndroidEnumTypeName = 'DocumentFileColumn';
+  static const String _kAndroidEnumTypeName = 'DocumentFileColumn';
 
   final String androidEnumItemName;
 

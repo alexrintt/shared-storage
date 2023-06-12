@@ -36,7 +36,7 @@ class FileExplorerCard extends StatefulWidget {
 class _FileExplorerCardState extends State<FileExplorerCard> {
   DocumentFile get _file => widget.documentFile;
 
-  static const _expandedThumbnailSize = Size.square(150);
+  static const _kExpandedThumbnailSize = Size.square(150);
 
   Uint8List? _thumbnailImageBytes;
   Size? _thumbnailSize;
@@ -51,8 +51,8 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
 
     final bitmap = await getDocumentThumbnail(
       uri: uri,
-      width: _expandedThumbnailSize.width,
-      height: _expandedThumbnailSize.height,
+      width: _kExpandedThumbnailSize.width,
+      height: _kExpandedThumbnailSize.height,
     );
 
     if (bitmap == null) {
@@ -177,7 +177,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     return random.nextInt(1000);
   }
 
-  Widget _buildThumbnail({double? size}) {
+  Widget _buildThumbnailImage({double? size}) {
     late Widget thumbnail;
 
     if (_thumbnailImageBytes == null) {
@@ -206,6 +206,12 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
         );
       }
     }
+
+    return thumbnail;
+  }
+
+  Widget _buildThumbnail({double? size}) {
+    final Widget thumbnail = _buildThumbnailImage(size: size);
 
     List<Widget> children;
 
@@ -289,6 +295,30 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     );
   }
 
+  Future<void> _shareDocument() async {
+    await widget.documentFile.share();
+  }
+
+  Future<void> _copyTo() async {
+    final Uri? parentUri = await openDocumentTree(persistablePermission: false);
+
+    if (parentUri != null) {
+      final DocumentFile? parentDocumentFile = await parentUri.toDocumentFile();
+
+      if (widget.documentFile.type != null &&
+          widget.documentFile.name != null) {
+        final DocumentFile? recipient = await parentDocumentFile?.createFile(
+          mimeType: widget.documentFile.type!,
+          displayName: widget.documentFile.name!,
+        );
+
+        if (recipient != null) {
+          widget.documentFile.copy(recipient.uri);
+        }
+      }
+    }
+  }
+
   Widget _buildAvailableActions() {
     return Wrap(
       children: [
@@ -309,6 +339,14 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
               : _fileConfirmation('Delete', _deleteDocument),
         ),
         if (!_isDirectory) ...[
+          ActionButton(
+            'Copy to',
+            onTap: _copyTo,
+          ),
+          ActionButton(
+            'Share Document',
+            onTap: _shareDocument,
+          ),
           DangerButton(
             'Write to File',
             onTap: _fileConfirmation('Overwite', _overwriteFileContents),

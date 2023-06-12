@@ -17,18 +17,18 @@ Future<Uri?> openDocumentTree({
   bool persistablePermission = true,
   Uri? initialUri,
 }) async {
-  const kOpenDocumentTree = 'openDocumentTree';
+  const String kOpenDocumentTree = 'openDocumentTree';
 
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'grantWritePermission': grantWritePermission,
     'persistablePermission': persistablePermission,
     if (initialUri != null) 'initialUri': '$initialUri',
   };
 
-  final selectedDirectoryUri =
+  final String? selectedDirectoryUri =
       await kDocumentFileChannel.invokeMethod<String?>(kOpenDocumentTree, args);
 
-  return selectedDirectoryUri?.apply((e) => Uri.parse(e));
+  return selectedDirectoryUri?.apply((String e) => Uri.parse(e));
 }
 
 /// [Refer to details](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT).
@@ -39,9 +39,9 @@ Future<List<Uri>?> openDocument({
   String mimeType = '*/*',
   bool multiple = false,
 }) async {
-  const kOpenDocument = 'openDocument';
+  const String kOpenDocument = 'openDocument';
 
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     if (initialUri != null) 'initialUri': '$initialUri',
     'grantWritePermission': grantWritePermission,
     'persistablePermission': persistablePermission,
@@ -49,9 +49,11 @@ Future<List<Uri>?> openDocument({
     'multiple': multiple,
   };
 
-  final selectedUriList =
+  final List<dynamic>? selectedUriList =
       await kDocumentFileChannel.invokeListMethod(kOpenDocument, args);
 
-  return selectedUriList
-      ?.apply((e) => e.map((e) => Uri.parse(e as String)).toList());
+  return selectedUriList?.apply(
+    (List<dynamic> list) =>
+        list.map((dynamic e) => Uri.parse(e as String)).toList(),
+  );
 }

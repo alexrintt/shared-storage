@@ -12,7 +12,7 @@ Future<String?> getDocumentContentAsString(
   Uri uri, {
   bool throwIfError = false,
 }) async {
-  final bytes = await getDocumentContent(uri);
+  final Uint8List? bytes = await getDocumentContent(uri);
 
   if (bytes == null) return null;
 
@@ -42,14 +42,14 @@ Future<DocumentBitmap?> getDocumentThumbnail({
   required double width,
   required double height,
 }) async {
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'width': width,
     'height': height,
   };
 
-  final bitmap = await kDocumentsContractChannel
+  final Map<String, dynamic>? bitmap = await kDocumentsContractChannel
       .invokeMapMethod<String, dynamic>('getDocumentThumbnail', args);
 
-  return bitmap?.apply((b) => DocumentBitmap.fromMap(b));
+  return bitmap?.apply((Map<String, dynamic> b) => DocumentBitmap.fromMap(b));
 }
