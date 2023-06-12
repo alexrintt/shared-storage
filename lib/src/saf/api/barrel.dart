@@ -8,6 +8,7 @@ export './open.dart';
 export './persisted.dart';
 export './rename.dart';
 export './search.dart';
+export './share.dart';
 export './tree.dart';
 export './utility.dart';
 export './write.dart';

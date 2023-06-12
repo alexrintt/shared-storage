@@ -60,7 +60,6 @@ Stream<DocumentFile> listFiles(
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29)
 /// {@endtemplate}
-@willbemovedsoon
 Future<DocumentFile?> child(
   Uri uri,
   String path, {

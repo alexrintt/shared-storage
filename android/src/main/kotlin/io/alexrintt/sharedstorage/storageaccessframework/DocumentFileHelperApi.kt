@@ -6,7 +6,9 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.ShareCompat
 import com.anggrayudi.storage.file.isTreeDocumentFile
+import com.anggrayudi.storage.file.mimeType
 import io.alexrintt.sharedstorage.ROOT_CHANNEL
 import io.alexrintt.sharedstorage.SharedStoragePlugin
 import io.alexrintt.sharedstorage.deprecated.lib.documentFromUri
@@ -15,6 +17,7 @@ import io.alexrintt.sharedstorage.plugin.Listenable
 import io.alexrintt.sharedstorage.storageaccessframework.lib.*
 import io.flutter.plugin.common.*
 import io.flutter.plugin.common.EventChannel.StreamHandler
+import java.net.URLConnection
 
 
 /**
@@ -46,13 +49,63 @@ internal class DocumentFileHelperApi(private val plugin: SharedStoragePlugin) :
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     when (call.method) {
       OPEN_DOCUMENT_FILE -> openDocumentFile(call, result)
+      SHARE_URI  -> shareUri(call, result)
       else -> result.notImplemented()
     }
   }
 
-  private fun openDocumentAsSimpleFile(uri: Uri, type: String?) {
-    val isApk: Boolean = type == "application/vnd.android.package-archive"
+  private fun shareUri(call: MethodCall, result: MethodChannel.Result) {
+    val uri = Uri.parse(call.argument<String>("uri")!!)
+    val type =
+      call.argument<String>("type")
+        ?: try {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            documentFromUri(plugin.context, uri)?.mimeType
+          } else {
+            null
+          }
+        } catch (e: Throwable) {
+          null
+        }
+        ?: plugin.binding!!.activity.contentResolver.getType(uri)
+        ?: URLConnection.guessContentTypeFromName(uri.lastPathSegment)
+        ?: "application/octet-stream"
 
+    try {
+      Log.d("sharedstorage", "Trying to share uri $uri with type $type")
+
+      ShareCompat
+        .IntentBuilder(plugin.binding!!.activity)
+        .setChooserTitle("Share")
+        .setType(type)
+        .setStream(uri)
+        .startChooser()
+
+      Log.d("sharedstorage", "Successfully shared uri $uri of type $type.")
+
+      result.success(null)
+    } catch (e: ActivityNotFoundException) {
+      result.error(
+        EXCEPTION_ACTIVITY_NOT_FOUND,
+        "There's no activity handler that can process the uri $uri of type $type, error: $e.",
+        mapOf("uri" to "$uri", "type" to type)
+      )
+    } catch (e: SecurityException) {
+      result.error(
+        EXCEPTION_CANT_OPEN_FILE_DUE_SECURITY_POLICY,
+        "Missing read and write permissions for uri $uri of type $type to launch ACTION_VIEW activity, error: $e.",
+        mapOf("uri" to "$uri", "type" to type)
+      )
+    } catch (e: Throwable) {
+      result.error(
+        EXCEPTION_CANT_OPEN_DOCUMENT_FILE,
+        "Couldn't start activity to open document file for uri: $uri, error: $e.",
+        mapOf("uri" to "$uri")
+      )
+    }
+  }
+
+  private fun openDocumentAsSimpleFile(uri: Uri, type: String?) {
     Log.d("sharedstorage", "Trying to open uri $uri with type $type")
 
     val intent =

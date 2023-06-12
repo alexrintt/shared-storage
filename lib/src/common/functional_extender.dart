@@ -28,7 +28,3 @@ extension FunctionalExtender<T> on T? {
     return self != null && f(self) ? self : null;
   }
 }
-
-const Deprecated willbemovedsoon = Deprecated(
-  'This method will be moved to another package in a next release.\nBe aware this method will not be removed but moved to another module outside of [saf].',
-);

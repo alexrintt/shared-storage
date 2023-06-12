@@ -1,3 +1,11 @@
+## 0.9.0
+
+### New
+
+- Calling [openDocumentFile] on apk files triggers the installation.
+- [getDocumentThumbnail] it's now supports decoding apk file icons.
+- [shareUri] is a new API to trigger share intent using Uris from SAF (files through File class are also supported).
+
 ## 0.8.0
 
 New SAF API and Gradle version upgrade.

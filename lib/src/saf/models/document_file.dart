@@ -96,7 +96,6 @@ class DocumentFile {
   static Future<DocumentFile?> fromTreeUri(Uri uri) => saf.fromTreeUri(uri);
 
   /// {@macro sharedstorage.saf.child}
-  @willbemovedsoon
   Future<DocumentFile?> child(
     String path, {
     bool requiresWriteAccess = false,
@@ -113,6 +112,9 @@ class DocumentFile {
 
   /// {@macro sharedstorage.saf.canRead}
   Future<bool?> canRead() async => saf.canRead(uri);
+
+  /// {@macro sharedstorage.saf.share}
+  Future<void> share() async => saf.shareUri(uri);
 
   /// {@macro sharedstorage.saf.canWrite}
   Future<bool?> canWrite() async => saf.canWrite(uri);

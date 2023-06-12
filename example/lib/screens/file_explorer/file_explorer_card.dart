@@ -295,6 +295,10 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     );
   }
 
+  Future<void> _shareDocument() async {
+    await widget.documentFile.share();
+  }
+
   Widget _buildAvailableActions() {
     return Wrap(
       children: [
@@ -315,6 +319,10 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
               : _fileConfirmation('Delete', _deleteDocument),
         ),
         if (!_isDirectory) ...[
+          ActionButton(
+            'Share Document',
+            onTap: _shareDocument,
+          ),
           DangerButton(
             'Write to File',
             onTap: _fileConfirmation('Overwite', _overwriteFileContents),
