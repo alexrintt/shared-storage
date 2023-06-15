@@ -6,6 +6,43 @@ The latest version is a Beta release, which means all these APIs can change over
 
 So, please be aware that this is plugin is not intended for production usage yet, since the API is currently in development.
 
+## Features
+
+Current supported features are detailed below.
+
+### Summary
+
+- [x] Read and write to files.
+- [x] Pick files using a filter (e.g image/png).
+- [x] Single or multiple file picks.
+- [x] Picking directories.
+- [x] Load file data immediately into memory (Uint8List) if needed.
+- [x] Delete files/directories.
+- [x] Getting file thumbnails as `Image.memory` bytes (Uint8List).
+- [x] Launch file with third apps.
+- [x] Request install APKs.
+- [x] List directory contents recursively (aka file-explorer like experience).
+
+### Detailed
+
+- [x] **No runtime permissions are required**, this package doesn't rely on `MANAGE_EXTERNAL_STORAGE` or any other runtime permission, only normal permissions (`READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`) are implicitly used and added to your Android project.
+- [x] Read file content as Future.
+- [ ] Read file content as Stream (planned).
+- [x] Get file's thumbnail (APK file icons are also supported but not recommended due it's poor performance limited by SAF and PackageManager API).
+- [x] Request install apk (requires `REQUEST_INSTALL_PACKAGE` permission and it's entirely optional).
+- [x] Open and persist folders granted by the user ("Select folder" use-case).
+- [x] Open and persist files granted by the user ("Select file" use-case).
+- [x] Different default type filtering (media, image, video, audio or any).
+- [x] List files inside a folder with Streams.
+- [x] Copy file.
+- [x] Open file with third-party apps (aka "Open with" use-case).
+- [x] Folders and files granted can be persisted across device reboots (optional).
+- [x] Delete file.
+- [x] Delete folder.
+- [x] Edit file contents.
+- [ ] Edit file contents through lazy streams (planned).
+- [x] Move file (it's a copy + delete).
+
 ## Installation
 
 ![Package version badge](https://img.shields.io/pub/v/shared_storage.svg?style=for-the-badge&color=22272E&showLabel=false&labelColor=15191f&logo=dart&logoColor=blue)
