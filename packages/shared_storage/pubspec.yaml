@@ -1,0 +1,48 @@
+name: shared_storage
+description: A Flutter plugin for network service discovery and registration (aka NSD / DNS-SD / Bonjour / mDNS).
+version: 2.3.1
+repository: https://github.com/sebastianhaberey/shared_storage/tree/main/shared_storage
+issue_tracker: https://github.com/sebastianhaberey/shared_storage/issues
+#publish_to: none
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.20.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # production
+  shared_storage_android: ^1.2.2
+  shared_storage_ios: ^1.0.3
+  shared_storage_macos: ^1.0.3
+  shared_storage_platform_interface: ^1.6.0
+  shared_storage_windows: ^2.0.1
+
+#  # development
+#  shared_storage_android:
+#    path: ../shared_storage_android
+#  shared_storage_ios:
+#    path: ../shared_storage_ios
+#  shared_storage_macos:
+#    path: ../shared_storage_macos
+#  shared_storage_windows:
+#    path: ../shared_storage_windows
+#  shared_storage_platform_interface:
+#    path: ../shared_storage_platform_interface
+
+dev_dependencies:
+  flutter_lints: ^2.0.1
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: shared_storage_android
+      ios:
+        default_package: shared_storage_ios
+      macos:
+        default_package: shared_storage_macos
+      windows:
+        default_package: shared_storage_windows

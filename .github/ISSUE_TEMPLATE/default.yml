@@ -1,0 +1,37 @@
+name: Issue
+description: File a bug report, feature request, or other issue
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this issue!
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      placeholder: Please describe the issue
+    validations:
+      required: true
+  - type: dropdown
+    id: scenario
+    attributes:
+      label: Scenario
+      description: What were you trying to do?
+      options:
+        - Use the plugin in my own application via Flutter dependency
+        - Run the example application
+        - Other (please describe above)
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platform does this issue concern?
+      options:
+        - Android
+        - iOS
+        - macOS
+        - Windows
+        - All of them
+        - Don't know

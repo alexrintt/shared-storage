@@ -1,0 +1,21 @@
+name: shared_storage
+
+packages:
+  - packages/*
+
+command:
+  bootstrap:
+    runPubGetInParallel: false
+    usePubspecOverrides: true
+    hooks:
+      post: dart run melos run gen:dart
+
+scripts:
+  gen:dart:
+    concurrency: 1
+    run: dart run melos exec --depends-on="build_runner" --no-flutter -- "dart run build_runner build --delete-conflicting-outputs"
+    description: Build all generated files for Dart packages in this project.
+  gen:dart:watch:
+    concurrency: 100
+    run: dart run melos exec --depends-on="build_runner" --no-flutter -- "dart run build_runner watch --delete-conflicting-outputs"
+    description: Build all generated files for Dart packages in this project and watch for changes.

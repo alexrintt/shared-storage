@@ -1,0 +1,20 @@
+name: shared_storage_android
+description: Flutter network service discovery plugin (Android submodule - will be installed with the parent plugin).
+version: 1.2.2
+repository: https://github.com/sebastianhaberey/shared_storage/tree/main/shared_storage_android
+issue_tracker: https://github.com/sebastianhaberey/shared_storage/issues
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.20.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: io.alexrintt.flutter.shared_storage_android
+        pluginClass: NsdAndroidPlugin

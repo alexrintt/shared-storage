@@ -1,0 +1,60 @@
+# see https://www.linkedin.com/pulse/github-actions-flutter-app-moataz-nabil
+# see https://github.com/felangel/bloc/blob/master/.github/workflows/flutter_bloc.yaml
+
+name: Platform Tests
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "shared_storage_platform_interface/**"
+
+env:
+  flutter_version: "3.7.8"
+
+jobs:
+  test:
+    name: Run tests & coverage (platform)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: shared_storage_platform_interface
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: /opt/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache-${{ env.flutter_version }}
+
+      - name: Set up Flutter environment
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable" # 'dev', 'alpha', 'stable'
+          flutter-version: ${{ env.flutter_version }}
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Verify code format
+        run: flutter format --set-exit-if-changed .
+
+      - name: Analyze code
+        run: flutter analyze .
+
+      - name: Run tests with code coverage
+        run: flutter test --no-pub --coverage --reporter expanded
+
+      - name: Check Code Coverage
+        uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
+        with:
+          path: shared_storage_platform_interface/coverage/lcov.info
+          min_coverage: 80
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
