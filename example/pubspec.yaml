@@ -6,7 +6,7 @@ description: Demonstrates how to use the shared_storage plugin.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   fl_toast: ^3.1.0

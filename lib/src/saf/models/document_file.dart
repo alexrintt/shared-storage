@@ -134,6 +134,9 @@ class DocumentFile {
   /// {@macro sharedstorage.saf.getContentAsString}
   Future<String?> getContentAsString() => saf.getDocumentContentAsString(uri);
 
+  /// {@macro sharedstorage.getDocumentContentAsStream}
+  Stream<Uint8List> getContentAsStream() => saf.getDocumentContentAsStream(uri);
+
   /// {@macro sharedstorage.saf.createDirectory}
   Future<DocumentFile?> createDirectory(String displayName) =>
       saf.createDirectory(uri, displayName);

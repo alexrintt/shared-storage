@@ -9,21 +9,20 @@ import androidx.annotation.RequiresApi
 import androidx.documentfile.provider.DocumentFile
 import com.anggrayudi.storage.extension.isTreeDocumentFile
 import com.anggrayudi.storage.file.child
-import io.flutter.plugin.common.*
-import io.flutter.plugin.common.EventChannel.StreamHandler
 import io.alexrintt.sharedstorage.ROOT_CHANNEL
 import io.alexrintt.sharedstorage.SharedStoragePlugin
 import io.alexrintt.sharedstorage.deprecated.lib.*
 import io.alexrintt.sharedstorage.plugin.*
 import io.alexrintt.sharedstorage.storageaccessframework.*
 import io.alexrintt.sharedstorage.storageaccessframework.lib.*
-import io.alexrintt.sharedstorage.plugin.ActivityListener
-import io.alexrintt.sharedstorage.plugin.Listenable
+import io.flutter.plugin.common.*
+import io.flutter.plugin.common.EventChannel.StreamHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.*
+
 
 /**
  * Aimed to implement strictly only the APIs already available from the native and original
@@ -41,23 +40,84 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   private var eventChannel: EventChannel? = null
   private var eventSink: EventChannel.EventSink? = null
 
+  private val openInputStreams = mutableMapOf<String, InputStream>()
+
   companion object {
     private const val CHANNEL = "documentfile"
   }
 
+  private fun readBytes(
+    inputStream: InputStream,
+    offset: Int,
+    bufferSize: Int = 1024,
+  ): Pair<ByteArray, Int> {
+    val buffer = ByteArray(bufferSize)
+    val readBufferSize = inputStream.read(buffer, offset, bufferSize)
+    return Pair(buffer, readBufferSize)
+  }
+
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     when (call.method) {
-      GET_DOCUMENT_CONTENT -> {
+      OPEN_INPUT_STREAM -> {
         val uri = Uri.parse(call.argument<String>("uri")!!)
+        val callId = call.argument<String>("callId")!!
 
-        if (Build.VERSION.SDK_INT >= API_21) {
-          CoroutineScope(Dispatchers.IO).launch {
-            val content = readDocumentContent(uri)
-
-            launch(Dispatchers.Main) { result.success(content) }
-          }
+        if (openInputStreams[callId] != null) {
+          // There is already a open input stream for this URI
+          result.success(null)
         } else {
-          result.notSupported(call.method, API_21)
+          val (inputStream, exception) = openInputStream(uri)
+          if (exception != null) {
+            result.error(
+              exception.code, exception.details, mapOf("uri" to uri.toString())
+            )
+          } else if (inputStream != null) {
+            openInputStreams[callId] = inputStream
+            result.success(null)
+          } else {
+            result.error(
+              "INTERNAL_ERROR",
+              "[openInputStream] doesn't returned errors neither success",
+              mapOf("uri" to uri.toString(), "callId" to callId)
+            )
+          }
+        }
+      }
+
+      CLOSE_INPUT_STREAM -> {
+        val callId = call.argument<String>("callId")!!
+        openInputStreams[callId]?.close()
+        openInputStreams.remove(callId)
+        result.success(null)
+      }
+
+      READ_INPUT_STREAM -> {
+        val callId = call.argument<String>("callId")!!
+        val offset = call.argument<Int>("offset")!!
+        val bufferSize = call.argument<Int>("bufferSize")!!
+        val inputStream = openInputStreams[callId]
+
+        if (inputStream == null) {
+          result.error(
+            "NOT_FOUND",
+            "Input stream was not found opened, please, call [openInputStream] method before",
+            mapOf("callId" to callId)
+          )
+        } else {
+          CoroutineScope(Dispatchers.IO).launch {
+            try {
+              val (bytes, readBufferSize) = readBytes(
+                inputStream, offset, bufferSize
+              )
+              launch(Dispatchers.Main) {
+                result.success(
+                  mapOf("bytes" to bytes, "readBufferSize" to readBufferSize)
+                )
+              }
+            } catch (e: IOException) {
+              // Concurrent reads or too fast reads (opening, closing, opening, closing, opening, ...)
+            }
+          }
         }
       }
 
@@ -206,7 +266,7 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         if (Build.VERSION.SDK_INT >= API_21) {
           CoroutineScope(Dispatchers.IO).launch {
             withContext(Dispatchers.IO) {
-              val inputStream = openInputStream(uri)
+              val (inputStream) = openInputStream(uri)
               val outputStream = openOutputStream(destination)
 
               // TODO: Implement progress indicator by re-writing the [copyTo] impl with an optional callback fn.
@@ -438,14 +498,14 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
       plugin.context.contentResolver.persistedUriPermissions
 
     result.success(persistedUriPermissions.map {
-        mapOf(
-          "isReadPermission" to it.isReadPermission,
-          "isWritePermission" to it.isWritePermission,
-          "persistedTime" to it.persistedTime,
-          "uri" to "${it.uri}",
-          "isTreeDocumentFile" to it.uri.isTreeDocumentFile
-        )
-      }.toList())
+      mapOf(
+        "isReadPermission" to it.isReadPermission,
+        "isWritePermission" to it.isWritePermission,
+        "persistedTime" to it.persistedTime,
+        "uri" to "${it.uri}",
+        "isTreeDocumentFile" to it.uri.isTreeDocumentFile
+      )
+    }.toList())
   }
 
   private fun releasePersistableUriPermission(
@@ -656,15 +716,17 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
           CoroutineScope(Dispatchers.IO).launch {
             try {
-              traverseDirectoryEntries(plugin.context.contentResolver,
+              traverseDirectoryEntries(
+                plugin.context.contentResolver,
                 rootOnly = true,
                 targetUri = document.uri,
                 columns = userProvidedColumns.map {
-                    // Convert the user provided column string to documentscontract column ID.
-                    documentFileColumnToActualDocumentsContractEnumString(
-                      deserializeDocumentFileColumn(it as String)!!
-                    )
-                  }.toTypedArray()) { data, _ ->
+                  // Convert the user provided column string to documentscontract column ID.
+                  documentFileColumnToActualDocumentsContractEnumString(
+                    deserializeDocumentFileColumn(it as String)!!
+                  )
+                }.toTypedArray()
+              ) { data, _ ->
                 launch(Dispatchers.Main) {
                   eventSink.success(
                     data
@@ -682,39 +744,28 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     }
   }
 
+
   /** Alias for `plugin.context.contentResolver.openOutputStream(uri)` */
   private fun openOutputStream(uri: Uri): OutputStream? {
     return plugin.context.contentResolver.openOutputStream(uri)
   }
 
   /** Alias for `plugin.context.contentResolver.openInputStream(uri)` */
-  private fun openInputStream(uri: Uri): InputStream? {
-    return plugin.context.contentResolver.openInputStream(uri)
-  }
-
-  /** Get a document content as `ByteArray` equivalent to `Uint8List` in Dart */
-  @RequiresApi(API_21)
-  private fun readDocumentContent(uri: Uri): ByteArray? {
+  private fun openInputStream(uri: Uri): Pair<InputStream?, PlatformException?> {
     return try {
-      val inputStream = openInputStream(uri)
-
-      val bytes = inputStream?.readBytes()
-
-      inputStream?.close()
-
-      bytes
+      Pair(plugin.context.contentResolver.openInputStream(uri), null)
     } catch (e: FileNotFoundException) {
       // Probably the file was already deleted and now you are trying to read.
-      null
+      Pair(null, PlatformException("FILE_NOT_FOUND_EXCEPTION", e.toString()))
     } catch (e: IOException) {
       // Unknown, can be anything.
-      null
+      Pair(null, PlatformException("INTERNAL_ERROR", e.toString()))
     } catch (e: IllegalArgumentException) {
       // Probably the file was already deleted and now you are trying to read.
-      null
+      Pair(null, PlatformException("FILE_NOT_FOUND_EXCEPTION", e.toString()))
     } catch (e: IllegalStateException) {
       // Probably you ran [delete] and [readDocumentContent] at the same time.
-      null
+      Pair(null, PlatformException("FILE_NOT_FOUND_EXCEPTION", e.toString()))
     }
   }
 
@@ -723,3 +774,5 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     eventSink = null
   }
 }
+
+data class PlatformException(val code: String, val details: String)

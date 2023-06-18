@@ -13,9 +13,9 @@ import 'file_explorer_card.dart';
 
 class FileExplorerPage extends StatefulWidget {
   const FileExplorerPage({
-    Key? key,
+    super.key,
     required this.uri,
-  }) : super(key: key);
+  });
 
   final Uri uri;
 

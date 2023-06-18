@@ -17,14 +17,15 @@ import '../../widgets/buttons.dart';
 import '../../widgets/key_value_text.dart';
 import '../../widgets/simple_card.dart';
 import '../../widgets/text_field_dialog.dart';
+import '../large_file/large_file_screen.dart';
 import 'file_explorer_page.dart';
 
 class FileExplorerCard extends StatefulWidget {
   const FileExplorerCard({
-    Key? key,
+    super.key,
     required this.documentFile,
     required this.didUpdateDocument,
-  }) : super(key: key);
+  });
 
   final DocumentFile documentFile;
   final void Function(DocumentFile?) didUpdateDocument;
@@ -319,6 +320,17 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     }
   }
 
+  void _openLargeFileScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return LargeFileScreen(uri: widget.documentFile.uri);
+        },
+      ),
+    );
+  }
+
   Widget _buildAvailableActions() {
     return Wrap(
       children: [
@@ -339,6 +351,10 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
               : _fileConfirmation('Delete', _deleteDocument),
         ),
         if (!_isDirectory) ...[
+          ActionButton(
+            'Lazy load its content',
+            onTap: _openLargeFileScreen,
+          ),
           ActionButton(
             'Copy to',
             onTap: _copyTo,
