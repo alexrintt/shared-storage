@@ -67,10 +67,17 @@ Stream<Uint8List> getDocumentContentAsStream(
 
   bool paused = false;
 
+  FutureOr<void> onCancel() async {
+    await kDocumentFileChannel.invokeMethod<void>(
+      'closeInputStream',
+      <String, String>{'callId': callId},
+    );
+  }
+
   Stream<Uint8List> readFileInputStream() async* {
     int readBufferSize = 0;
 
-    while (readBufferSize != -1 && !paused) {
+    while (true && !paused) {
       final Map<String, dynamic>? result =
           await kDocumentFileChannel.invokeMapMethod<String, dynamic>(
         'readInputStream',
@@ -83,28 +90,25 @@ Stream<Uint8List> getDocumentContentAsStream(
 
       if (result != null) {
         readBufferSize = result['readBufferSize'] as int;
-        yield result['bytes'] as Uint8List;
+        if (readBufferSize == -1) {
+          controller.close();
+          break;
+        } else {
+          yield result['bytes'] as Uint8List;
+        }
       }
     }
   }
 
-  void onListen() {
+  Future<void> onListen() async {
     // Platform code is optimized to not create a new input stream if
     // a same [callId] is provided, so there are no problems in calling this several times.
-    kDocumentFileChannel.invokeMethod<void>(
+    await kDocumentFileChannel.invokeMethod<void>(
       'openInputStream',
       <String, String>{'uri': uri.toString(), 'callId': callId},
     );
 
-    controller.addStream(readFileInputStream());
-  }
-
-  FutureOr<void> onCancel() {
-    kDocumentFileChannel.invokeMethod<void>(
-      'closeInputStream',
-      <String, String>{'callId': callId},
-    );
-    controller.close();
+    await controller.addStream(readFileInputStream());
   }
 
   void onPause() {
@@ -113,7 +117,6 @@ Stream<Uint8List> getDocumentContentAsStream(
 
   void onResume() {
     paused = false;
-    readFileInputStream();
   }
 
   controller = StreamController<Uint8List>(

@@ -112,7 +112,11 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
         setState(() {});
       },
       cancelOnError: true,
-      onError: (_) => _unsubscribe(),
+      onError: (_) {
+        _loaded = true;
+        _unsubscribe();
+        setState(() {});
+      },
       onDone: () {
         _loaded = true;
         _unsubscribe();
@@ -128,7 +132,7 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
 
   @override
   Widget build(BuildContext context) {
-    if (_bytesLoaded >= k1MB * 10) {
+    if (!_loaded || _bytesLoaded >= k1MB * 10) {
       // The ideal approach is to implement a backpressure using:
       // - Pause: _subscription!.pause();
       // - Resume: _subscription!.resume();
@@ -138,7 +142,9 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('File too long to show: ${widget.documentFile.name}'),
+            Text('Is done: $_loaded'),
+            if (_bytesLoaded >= k1MB * 10)
+              Text('File too long to show: ${widget.documentFile.name}'),
             ContentSizeCard(bytes: _bytesLoaded),
             Wrap(
               children: [
@@ -163,10 +169,6 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
           ],
         ),
       );
-    }
-
-    if (!_loaded) {
-      return const Center(child: CircularProgressIndicator());
     }
 
     final type = widget.documentFile.type;
