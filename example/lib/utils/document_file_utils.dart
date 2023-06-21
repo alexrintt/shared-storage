@@ -70,14 +70,17 @@ class DocumentContentViewer extends StatefulWidget {
 }
 
 class _DocumentContentViewerState extends State<DocumentContentViewer> {
-  Uint8List _bytes = Uint8List.fromList([]);
+  late Uint8List _bytes;
   StreamSubscription<Uint8List>? _subscription;
-  int _bytesLoaded = 0;
-  bool _loaded = false;
+  late int _bytesLoaded;
+  late bool _loaded = false;
 
   @override
   void initState() {
     super.initState();
+    _bytes = Uint8List.fromList([]);
+    _bytesLoaded = 0;
+    _loaded = false;
     _startLoadingFile();
   }
 
@@ -91,6 +94,8 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
     _subscription?.cancel();
   }
 
+  static const double _kLargerFileSupported = k1MB * 10;
+
   Future<void> _startLoadingFile() async {
     // The implementation of [getDocumentContent] is no longer blocking!
     // It now just merges all events of [getDocumentContentAsStream].
@@ -101,23 +106,24 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
     _subscription = byteStream.listen(
       (Uint8List chunk) {
         _bytesLoaded += chunk.length;
-        if (_bytesLoaded <= k1KB * 10) {
+        if (_bytesLoaded < _kLargerFileSupported) {
           // Load file
           _bytes = Uint8List.fromList(_bytes + chunk);
         } else {
           // otherwise just bump we are not going to display a large file
           _bytes = Uint8List.fromList([]);
         }
-
         setState(() {});
       },
-      cancelOnError: true,
-      onError: (_) {
+      cancelOnError: false,
+      onError: (e, stackTrace) {
+        print('Error: $e, st: $stackTrace');
         _loaded = true;
         _unsubscribe();
         setState(() {});
       },
       onDone: () {
+        print('Done');
         _loaded = true;
         _unsubscribe();
         setState(() {});
@@ -132,7 +138,7 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_loaded || _bytesLoaded >= k1MB * 10) {
+    if (!_loaded || _bytesLoaded >= _kLargerFileSupported) {
       // The ideal approach is to implement a backpressure using:
       // - Pause: _subscription!.pause();
       // - Resume: _subscription!.resume();

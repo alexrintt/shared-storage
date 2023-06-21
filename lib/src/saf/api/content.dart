@@ -61,72 +61,48 @@ const int k1PB = k1TB * 1024;
 Stream<Uint8List> getDocumentContentAsStream(
   Uri uri, {
   int bufferSize = k1MB,
-}) {
+  int offset = 0,
+}) async* {
   final String callId = generateTimeBasedId();
-  late final StreamController<Uint8List> controller;
 
-  bool paused = false;
+  await kDocumentFileChannel.invokeMethod<void>(
+    'openInputStream',
+    <String, String>{'uri': uri.toString(), 'callId': callId},
+  );
 
-  FutureOr<void> onCancel() async {
-    await kDocumentFileChannel.invokeMethod<void>(
-      'closeInputStream',
-      <String, String>{'callId': callId},
+  int readBufferSize = 0;
+
+  while (true) {
+    final Map<String, dynamic>? result =
+        await kDocumentFileChannel.invokeMapMethod<String, dynamic>(
+      'readInputStream',
+      <String, dynamic>{
+        'callId': callId,
+        'offset': offset,
+        'bufferSize': bufferSize,
+      },
     );
-  }
 
-  Stream<Uint8List> readFileInputStream() async* {
-    int readBufferSize = 0;
-
-    while (true && !paused) {
-      final Map<String, dynamic>? result =
-          await kDocumentFileChannel.invokeMapMethod<String, dynamic>(
-        'readInputStream',
-        <String, dynamic>{
-          'callId': callId,
-          'offset': 0,
-          'bufferSize': bufferSize,
-        },
-      );
-
-      if (result != null) {
-        readBufferSize = result['readBufferSize'] as int;
-        if (readBufferSize == -1) {
-          controller.close();
-          break;
+    if (result != null) {
+      readBufferSize = result['readBufferSize'] as int;
+      if (readBufferSize < 0) {
+        break;
+      } else {
+        if (readBufferSize != bufferSize) {
+          // Slice the buffer to the actual read size.
+          yield (result['bytes'] as Uint8List).sublist(0, readBufferSize);
         } else {
+          // No need to slice the buffer, just yield it.
           yield result['bytes'] as Uint8List;
         }
       }
     }
   }
 
-  Future<void> onListen() async {
-    // Platform code is optimized to not create a new input stream if
-    // a same [callId] is provided, so there are no problems in calling this several times.
-    await kDocumentFileChannel.invokeMethod<void>(
-      'openInputStream',
-      <String, String>{'uri': uri.toString(), 'callId': callId},
-    );
-
-    await controller.addStream(readFileInputStream());
-  }
-
-  void onPause() {
-    paused = true;
-  }
-
-  void onResume() {
-    paused = false;
-  }
-
-  controller = StreamController<Uint8List>(
-    onCancel: onCancel,
-    onListen: onListen,
-    onPause: onPause,
-    onResume: onResume,
+  await kDocumentFileChannel.invokeMethod<void>(
+    'closeInputStream',
+    <String, String>{'callId': callId},
   );
-
-  return controller.stream;
 }
 
 /// {@template sharedstorage.saf.getDocumentThumbnail}
