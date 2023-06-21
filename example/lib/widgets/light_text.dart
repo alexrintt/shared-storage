@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class LightText extends StatelessWidget {
-  const LightText(this.text, {Key? key}) : super(key: key);
+  const LightText(this.text, {super.key});
 
   final String text;
 

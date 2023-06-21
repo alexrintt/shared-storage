@@ -6,7 +6,7 @@ class MediaStoreCollection {
 
   final String id;
 
-  static const _kPrefix = 'MediaStoreCollection';
+  static const String _kPrefix = 'MediaStoreCollection';
 
   /// Available for Android [10 to 12]
   ///
@@ -15,7 +15,8 @@ class MediaStoreCollection {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const audio = MediaStoreCollection._('$_kPrefix.Audio');
+  static const MediaStoreCollection audio =
+      MediaStoreCollection._('$_kPrefix.Audio');
 
   /// Available for Android [10 to 12]
   ///
@@ -24,7 +25,8 @@ class MediaStoreCollection {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const downloads = MediaStoreCollection._('$_kPrefix.Downloads');
+  static const MediaStoreCollection downloads =
+      MediaStoreCollection._('$_kPrefix.Downloads');
 
   /// Available for Android [10 to 12]
   ///
@@ -33,7 +35,8 @@ class MediaStoreCollection {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const images = MediaStoreCollection._('$_kPrefix.Images');
+  static const MediaStoreCollection images =
+      MediaStoreCollection._('$_kPrefix.Images');
 
   /// Available for Android [10 to 12]
   ///
@@ -42,7 +45,8 @@ class MediaStoreCollection {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const video = MediaStoreCollection._('$_kPrefix.Video');
+  static const MediaStoreCollection video =
+      MediaStoreCollection._('$_kPrefix.Video');
 
   @override
   bool operator ==(Object other) {

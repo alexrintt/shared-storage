@@ -12,10 +12,10 @@ import '../file_explorer/file_explorer_page.dart';
 
 class GrantedUriCard extends StatefulWidget {
   const GrantedUriCard({
-    Key? key,
+    super.key,
     required this.permissionUri,
     required this.onChange,
-  }) : super(key: key);
+  });
 
   final UriPermission permissionUri;
   final VoidCallback onChange;

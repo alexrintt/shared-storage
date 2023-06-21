@@ -5,12 +5,12 @@ import 'buttons.dart';
 
 class TextFieldDialog extends StatefulWidget {
   const TextFieldDialog({
-    Key? key,
+    super.key,
     required this.labelText,
     required this.hintText,
     this.suffixText,
     required this.actionText,
-  }) : super(key: key);
+  });
 
   final String labelText;
   final String hintText;

@@ -11,7 +11,7 @@ import 'environment_directory.dart';
   'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
 )
 Future<Directory?> getRootDirectory() async {
-  const kGetRootDirectory = 'getRootDirectory';
+  const String kGetRootDirectory = 'getRootDirectory';
 
   return invokeVoidEnvironmentMethod(kGetRootDirectory);
 }
@@ -33,13 +33,15 @@ Future<Directory?> getRootDirectory() async {
 Future<Directory?> getExternalStoragePublicDirectory(
   EnvironmentDirectory directory,
 ) async {
-  const kGetExternalStoragePublicDirectory =
+  const String kGetExternalStoragePublicDirectory =
       'getExternalStoragePublicDirectory';
-  const kDirectoryArg = 'directory';
+  const String kDirectoryArg = 'directory';
 
-  final args = <String, String>{kDirectoryArg: '$directory'};
+  final Map<String, String> args = <String, String>{
+    kDirectoryArg: '$directory'
+  };
 
-  final publicDir = await kEnvironmentChannel.invokeMethod<String?>(
+  final String? publicDir = await kEnvironmentChannel.invokeMethod<String?>(
     kGetExternalStoragePublicDirectory,
     args,
   );
@@ -56,7 +58,7 @@ Future<Directory?> getExternalStoragePublicDirectory(
   'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
 )
 Future<Directory?> getExternalStorageDirectory() async {
-  const kGetExternalStorageDirectory = 'getExternalStorageDirectory';
+  const String kGetExternalStorageDirectory = 'getExternalStorageDirectory';
 
   return invokeVoidEnvironmentMethod(kGetExternalStorageDirectory);
 }
@@ -68,7 +70,7 @@ Future<Directory?> getExternalStorageDirectory() async {
   'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
 )
 Future<Directory?> getDataDirectory() async {
-  const kGetDataDirectory = 'getDataDirectory';
+  const String kGetDataDirectory = 'getDataDirectory';
 
   return invokeVoidEnvironmentMethod(kGetDataDirectory);
 }
@@ -80,7 +82,7 @@ Future<Directory?> getDataDirectory() async {
   'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
 )
 Future<Directory?> getDownloadCacheDirectory() async {
-  const kGetDownloadCacheDirectory = 'getDownloadCacheDirectory';
+  const String kGetDownloadCacheDirectory = 'getDownloadCacheDirectory';
 
   return invokeVoidEnvironmentMethod(kGetDownloadCacheDirectory);
 }
@@ -92,7 +94,7 @@ Future<Directory?> getDownloadCacheDirectory() async {
   'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
 )
 Future<Directory?> getStorageDirectory() {
-  const kGetStorageDirectory = 'getStorageDirectory';
+  const String kGetStorageDirectory = 'getStorageDirectory';
 
   return invokeVoidEnvironmentMethod(kGetStorageDirectory);
 }

@@ -7,7 +7,7 @@ import '../../widgets/light_text.dart';
 import 'granted_uri_card.dart';
 
 class GrantedUrisPage extends StatefulWidget {
-  const GrantedUrisPage({Key? key}) : super(key: key);
+  const GrantedUrisPage({super.key});
 
   @override
   _GrantedUrisPageState createState() => _GrantedUrisPageState();

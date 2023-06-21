@@ -5,7 +5,7 @@ import 'screens/granted_uris/granted_uris_page.dart';
 void main() => runApp(const Root());
 
 class Root extends StatefulWidget {
-  const Root({Key? key}) : super(key: key);
+  const Root({super.key});
 
   @override
   _RootState createState() => _RootState();

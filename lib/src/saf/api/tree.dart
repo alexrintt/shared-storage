@@ -1,5 +1,4 @@
 import '../../channels.dart';
-import '../../common/functional_extender.dart';
 import '../common/barrel.dart';
 import '../models/barrel.dart';
 
@@ -32,16 +31,22 @@ Stream<DocumentFile> listFiles(
   Uri uri, {
   required List<DocumentFileColumn> columns,
 }) {
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'event': 'listFiles',
-    'columns': columns.map((e) => '$e').toList(),
+    'columns': columns.map((DocumentFileColumn e) => '$e').toList(),
   };
 
-  final onCursorRowResult =
+  final Stream<dynamic> onCursorRowResult =
       kDocumentFileEventChannel.receiveBroadcastStream(args);
 
-  return onCursorRowResult.map((e) => DocumentFile.fromMap(Map.from(e as Map)));
+  return onCursorRowResult.map(
+    (dynamic e) => DocumentFile.fromMap(
+      Map<String, dynamic>.from(
+        e as Map<dynamic, dynamic>,
+      ),
+    ),
+  );
 }
 
 /// {@template sharedstorage.saf.child}
@@ -54,13 +59,12 @@ Stream<DocumentFile> listFiles(
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29)
 /// {@endtemplate}
-@willbemovedsoon
 Future<DocumentFile?> child(
   Uri uri,
   String path, {
   bool requiresWriteAccess = false,
 }) async {
-  final args = <String, dynamic>{
+  final Map<String, dynamic> args = <String, dynamic>{
     'uri': '$uri',
     'path': path,
     'requiresWriteAccess': requiresWriteAccess,

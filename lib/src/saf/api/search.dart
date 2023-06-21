@@ -9,7 +9,7 @@ import '../common/barrel.dart';
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#findFile%28java.lang.String%29).
 /// {@endtemplate}
 Future<DocumentFile?> findFile(Uri directoryUri, String displayName) async {
-  final args = <String, String>{
+  final Map<String, String> args = <String, String>{
     'uri': '$directoryUri',
     'displayName': displayName,
   };

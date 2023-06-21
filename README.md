@@ -42,6 +42,7 @@ All other branches are derivated from issues, new features or bug fixes.
 
 ## Contributors
 
+- [kent](https://github.com/ken-tn) fixed documentation typo.
 - [iamcosmin](https://github.com/iamcosmin), [limshengli](https://github.com/limshengli) reported a issue with Gradle and Kotlin version [#124](https://github.com/alexrintt/shared-storage/issues/124).
 - [mx1up](https://github.com/mx1up) reported a issue with `openDocumentFile` API [#121](https://github.com/alexrintt/shared-storage/issues/121).
 - [Tamerlanchiques](https://github.com/Tamerlanchiques) reported a bug which the persisted URI wasn't being properly persisted across device reboots [#118](https://github.com/alexrintt/shared-storage/issues/118).
