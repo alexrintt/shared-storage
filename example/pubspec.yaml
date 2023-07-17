@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
   lint: ^1.8.2
+  receive_intent: ^0.2.4
   shared_storage:
     # When depending on this package from a real application you should use:
     #   shared_storage: ^x.y.z

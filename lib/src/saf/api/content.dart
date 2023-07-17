@@ -1,21 +1,17 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
 
+import '../../../shared_storage.dart';
 import '../../channels.dart';
 import '../../common/functional_extender.dart';
-import '../common/generate_id.dart';
-import '../models/barrel.dart';
 
 /// {@template sharedstorage.saf.getDocumentContentAsString}
 /// Helper method to read document using
 /// `getDocumentContent` and get the content as String instead as `Uint8List`.
 /// {@endtemplate}
-Future<String?> getDocumentContentAsString(
-  Uri uri, {
-  bool throwIfError = false,
-}) async {
-  return utf8.decode(await getDocumentContent(uri));
+Future<String?> getDocumentContentAsString(Uri uri) async {
+  final ScopedFile scopedFile = await ScopedFile.fromUri(uri);
+  return scopedFile.readAsString();
 }
 
 /// {@template sharedstorage.saf.getDocumentContent}
@@ -60,49 +56,51 @@ const int k1PB = k1TB * 1024;
 /// {@endtemplate}
 Stream<Uint8List> getDocumentContentAsStream(
   Uri uri, {
-  int bufferSize = k1MB,
-  int offset = 0,
+  int start = 0,
+  int? end,
 }) async* {
-  final String callId = generateTimeBasedId();
+  final ScopedFile scopedFile = await ScopedFile.fromUri(uri);
+  yield* scopedFile.openRead(start, end);
 
-  await kDocumentFileChannel.invokeMethod<void>(
-    'openInputStream',
-    <String, String>{'uri': uri.toString(), 'callId': callId},
-  );
+  // final String callId = generateTimeBasedId();
 
-  int readBufferSize = 0;
+  // await kDocumentFileChannel.invokeMethod<void>(
+  //   'openInputStream',
+  //   <String, String>{'uri': uri.toString(), 'callId': callId},
+  // );
 
-  while (true) {
-    final Map<String, dynamic>? result =
-        await kDocumentFileChannel.invokeMapMethod<String, dynamic>(
-      'readInputStream',
-      <String, dynamic>{
-        'callId': callId,
-        'offset': offset,
-        'bufferSize': bufferSize,
-      },
-    );
+  // while (true) {
+  //   final Map<String, dynamic>? result =
+  //       await kDocumentFileChannel.invokeMapMethod<String, dynamic>(
+  //     'readInputStream',
+  //     <String, dynamic>{
+  //       'callId': callId,
+  //       'offset': offset,
+  //       'bufferSize': bufferSize,
+  //     },
+  //   );
 
-    if (result != null) {
-      readBufferSize = result['readBufferSize'] as int;
-      if (readBufferSize < 0) {
-        break;
-      } else {
-        if (readBufferSize != bufferSize) {
-          // Slice the buffer to the actual read size.
-          yield (result['bytes'] as Uint8List).sublist(0, readBufferSize);
-        } else {
-          // No need to slice the buffer, just yield it.
-          yield result['bytes'] as Uint8List;
-        }
-      }
-    }
-  }
+  //   if (result != null) {
+  //     final int readBufferSize = result['readBufferSize'] as int;
 
-  await kDocumentFileChannel.invokeMethod<void>(
-    'closeInputStream',
-    <String, String>{'callId': callId},
-  );
+  //     if (readBufferSize < 0) {
+  //       break;
+  //     } else {
+  //       if (readBufferSize != bufferSize) {
+  //         // Slice the buffer to the actual read size.
+  //         yield (result['bytes'] as Uint8List).sublist(0, readBufferSize);
+  //       } else {
+  //         // No need to slice the buffer, just yield it.
+  //         yield result['bytes'] as Uint8List;
+  //       }
+  //     }
+  //   }
+  // }
+
+  // await kDocumentFileChannel.invokeMethod<void>(
+  //   'closeInputStream',
+  //   <String, String>{'callId': callId},
+  // );
 }
 
 /// {@template sharedstorage.saf.getDocumentThumbnail}

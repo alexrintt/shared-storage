@@ -27,25 +27,18 @@ extension OpenUriWithExternalApp on Uri {
     final uri = this;
 
     try {
-      final launched = await openDocumentFile(uri);
-
-      if (launched) {
-        print('Successfully opened $uri');
-      } else {
-        print('Failed to launch $uri');
-      }
-    } on PlatformException {
-      print(
-        "There's no activity associated with the file type of this Uri: $uri",
-      );
+      await SharedStorage.launchUriWithExternalApp(uri);
+      print('Successfully opened $uri');
+    } on SharedStorageException catch (e) {
+      print('Failed to launch $uri. Cause: ${e.message}.');
     }
   }
 }
 
-extension ShowDocumentFileContents on DocumentFile {
+extension ShowDocumentFileContents on ScopedFile {
   Future<void> showContents(BuildContext context) async {
     if (context.mounted) {
-      final mimeTypeOrEmpty = type ?? '';
+      final mimeTypeOrEmpty = mimeType;
 
       if (!mimeTypeOrEmpty.startsWith(kTextMime) &&
           !mimeTypeOrEmpty.startsWith(kImageMime)) {
@@ -54,16 +47,16 @@ extension ShowDocumentFileContents on DocumentFile {
 
       await showModalBottomSheet(
         context: context,
-        builder: (context) => DocumentContentViewer(documentFile: this),
+        builder: (context) => DocumentContentViewer(file: this),
       );
     }
   }
 }
 
 class DocumentContentViewer extends StatefulWidget {
-  const DocumentContentViewer({super.key, required this.documentFile});
+  const DocumentContentViewer({super.key, required this.file});
 
-  final DocumentFile documentFile;
+  final ScopedFile file;
 
   @override
   State<DocumentContentViewer> createState() => _DocumentContentViewerState();
@@ -100,8 +93,9 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
     // The implementation of [getDocumentContent] is no longer blocking!
     // It now just merges all events of [getDocumentContentAsStream].
     // Basically: lazy loaded -> No performance issues.
-    final Stream<Uint8List> byteStream =
-        getDocumentContentAsStream(widget.documentFile.uri);
+    final ScopedFile scopedFile = await ScopedFile.fromUri(widget.file.uri);
+
+    final byteStream = scopedFile.openRead().map(Uint8List.fromList);
 
     _subscription = byteStream.listen(
       (Uint8List chunk) {
@@ -150,7 +144,7 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
           children: [
             Text('Is done: $_loaded'),
             if (_bytesLoaded >= k1MB * 10)
-              Text('File too long to show: ${widget.documentFile.name}'),
+              Text('File too long to show: ${widget.file.displayName}'),
             ContentSizeCard(bytes: _bytesLoaded),
             Wrap(
               children: [
@@ -177,8 +171,8 @@ class _DocumentContentViewerState extends State<DocumentContentViewer> {
       );
     }
 
-    final type = widget.documentFile.type;
-    final mimeTypeOrEmpty = type ?? '';
+    final type = widget.file.mimeType;
+    final mimeTypeOrEmpty = type;
 
     final isImage = mimeTypeOrEmpty.startsWith(kImageMime);
 

@@ -6,58 +6,22 @@ import java.lang.NullPointerException
 
 private const val PREFIX = "DocumentFileColumn"
 
-enum class DocumentFileColumn {
-  ID,
-  DISPLAY_NAME,
-  MIME_TYPE,
-  SUMMARY,
-  LAST_MODIFIED,
-  SIZE
-}
-
 enum class DocumentFileColumnType {
   LONG,
   STRING,
   INT
 }
 
-fun deserializeDocumentFileColumn(column: String): DocumentFileColumn? {
-  val values = mapOf(
-    "$PREFIX.COLUMN_DOCUMENT_ID" to DocumentFileColumn.ID,
-    "$PREFIX.COLUMN_DISPLAY_NAME" to DocumentFileColumn.DISPLAY_NAME,
-    "$PREFIX.COLUMN_MIME_TYPE" to DocumentFileColumn.MIME_TYPE,
-    "$PREFIX.COLUMN_SIZE" to DocumentFileColumn.SIZE,
-    "$PREFIX.COLUMN_SUMMARY" to DocumentFileColumn.SUMMARY,
-    "$PREFIX.COLUMN_LAST_MODIFIED" to DocumentFileColumn.LAST_MODIFIED
+
+fun getDocumentsContractColumns(): List<String> {
+  return listOf(
+    DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+    DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+    DocumentsContract.Document.COLUMN_MIME_TYPE,
+    DocumentsContract.Document.COLUMN_SIZE,
+    DocumentsContract.Document.COLUMN_SUMMARY,
+    DocumentsContract.Document.COLUMN_LAST_MODIFIED,
   )
-
-  return values[column]
-}
-
-fun serializeDocumentFileColumn(column: DocumentFileColumn): String? {
-  val values = mapOf(
-    DocumentFileColumn.ID to "$PREFIX.COLUMN_DOCUMENT_ID",
-    DocumentFileColumn.DISPLAY_NAME to "$PREFIX.COLUMN_DISPLAY_NAME",
-    DocumentFileColumn.MIME_TYPE to "$PREFIX.COLUMN_MIME_TYPE",
-    DocumentFileColumn.SIZE to "$PREFIX.COLUMN_SIZE",
-    DocumentFileColumn.SUMMARY to "$PREFIX.COLUMN_SUMMARY",
-    DocumentFileColumn.LAST_MODIFIED to "$PREFIX.COLUMN_LAST_MODIFIED"
-  )
-
-  return values[column]
-}
-
-fun documentFileColumnToActualDocumentsContractEnumString(column: DocumentFileColumn): String {
-  val values = mapOf(
-    DocumentFileColumn.ID to DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-    DocumentFileColumn.DISPLAY_NAME to DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-    DocumentFileColumn.MIME_TYPE to DocumentsContract.Document.COLUMN_MIME_TYPE,
-    DocumentFileColumn.SIZE to DocumentsContract.Document.COLUMN_SIZE,
-    DocumentFileColumn.SUMMARY to DocumentsContract.Document.COLUMN_SUMMARY,
-    DocumentFileColumn.LAST_MODIFIED to DocumentsContract.Document.COLUMN_LAST_MODIFIED
-  )
-
-  return values[column]!!
 }
 
 /// `column` must be a constant String from `DocumentsContract.Document.COLUMN*`
@@ -86,6 +50,7 @@ fun cursorHandlerOf(type: DocumentFileColumnType): (Cursor, Int) -> Any? {
         }
       }
     }
+
     DocumentFileColumnType.STRING -> {
       return { cursor, index ->
         try {
@@ -95,6 +60,7 @@ fun cursorHandlerOf(type: DocumentFileColumnType): (Cursor, Int) -> Any? {
         }
       }
     }
+
     DocumentFileColumnType.INT -> {
       return { cursor, index ->
         try {

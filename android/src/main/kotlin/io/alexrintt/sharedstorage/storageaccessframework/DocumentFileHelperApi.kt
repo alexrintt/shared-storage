@@ -11,7 +11,7 @@ import com.anggrayudi.storage.file.isTreeDocumentFile
 import com.anggrayudi.storage.file.mimeType
 import io.alexrintt.sharedstorage.ROOT_CHANNEL
 import io.alexrintt.sharedstorage.SharedStoragePlugin
-import io.alexrintt.sharedstorage.deprecated.lib.documentFromUri
+import io.alexrintt.sharedstorage.storageaccessframework.lib.documentFromUri
 import io.alexrintt.sharedstorage.plugin.ActivityListener
 import io.alexrintt.sharedstorage.plugin.Listenable
 import io.alexrintt.sharedstorage.storageaccessframework.lib.*
@@ -58,15 +58,6 @@ internal class DocumentFileHelperApi(private val plugin: SharedStoragePlugin) :
     val uri = Uri.parse(call.argument<String>("uri")!!)
     val type =
       call.argument<String>("type")
-        ?: try {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            documentFromUri(plugin.context, uri)?.mimeType
-          } else {
-            null
-          }
-        } catch (e: Throwable) {
-          null
-        }
         ?: plugin.binding!!.activity.contentResolver.getType(uri)
         ?: URLConnection.guessContentTypeFromName(uri.lastPathSegment)
         ?: "application/octet-stream"

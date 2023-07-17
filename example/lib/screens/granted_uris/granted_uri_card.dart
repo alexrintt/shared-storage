@@ -27,18 +27,19 @@ class GrantedUriCard extends StatefulWidget {
 class _GrantedUriCardState extends State<GrantedUriCard> {
   Future<void> _appendSampleFile(Uri parentUri) async {
     /// Create a new file inside the `parentUri`
-    final documentFile = await parentUri.toDocumentFile();
+    final directory = await SharedStorage.buildDirectoryFromUri(parentUri);
 
     const kFilename = 'Sample File';
 
-    final child = await documentFile?.child(kFilename);
+    final child = await directory.child(kFilename);
 
     if (child == null) {
-      documentFile?.createFileAsString(
+      final recipient = await directory.createChildFile(
         mimeType: 'text/plain',
-        content: 'Sample File Content',
         displayName: kFilename,
       );
+
+      await recipient.writeAsString('Sample File Content');
     } else {
       print('This File Already Exists');
     }
@@ -68,7 +69,8 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
       ),
       ActionButton(
         'Open file picker here',
-        onTap: () => openDocumentTree(initialUri: widget.permissionUri.uri),
+        onTap: () =>
+            SharedStorage.pickDirectory(initialUri: widget.permissionUri.uri),
       )
     ];
   }
@@ -77,20 +79,22 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
   void didUpdateWidget(covariant GrantedUriCard oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    documentFile = null;
+    fileSystemEntity = null;
     loading = false;
     error = null;
   }
 
-  DocumentFile? documentFile;
+  ScopedFileSystemEntity? fileSystemEntity;
   bool loading = false;
   String? error;
 
   Future<void> _loadDocumentFile() async {
     loading = true;
+
     setState(() {});
 
-    documentFile = await widget.permissionUri.uri.toDocumentFile();
+    fileSystemEntity =
+        await SharedStorage.buildScopedFileFromUri(widget.permissionUri.uri);
     loading = false;
 
     if (mounted) setState(() {});
@@ -98,9 +102,10 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
 
   Future<void> _showDocumentFileContents() async {
     try {
-      final documentFile = await widget.permissionUri.uri.toDocumentFile();
+      final file =
+          await SharedStorage.buildScopedFileFromUri(widget.permissionUri.uri);
 
-      if (mounted) documentFile?.showContents(context);
+      if (mounted) file.showContents(context);
     } catch (e) {
       error = e.toString();
     }
@@ -187,11 +192,11 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
           )
         else if (error != null)
           Text('Error was thrown: $error')
-        else if (documentFile != null)
+        else if (fileSystemEntity != null)
           FileExplorerCard(
-            documentFile: documentFile!,
+            scopedFileSystemEntity: fileSystemEntity!,
             didUpdateDocument: (updatedDocumentFile) {
-              documentFile = updatedDocumentFile;
+              fileSystemEntity = updatedDocumentFile;
             },
           )
       ],

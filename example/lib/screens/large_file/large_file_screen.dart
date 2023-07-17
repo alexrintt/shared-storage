@@ -17,14 +17,14 @@ class LargeFileScreen extends StatefulWidget {
 }
 
 class _LargeFileScreenState extends State<LargeFileScreen> {
-  DocumentFile? _documentFile;
+  ScopedFile? _file;
   StreamSubscription<Uint8List>? _subscription;
   int _bytesLoaded = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadDocFile();
+    _loadFile();
   }
 
   @override
@@ -33,8 +33,8 @@ class _LargeFileScreenState extends State<LargeFileScreen> {
     super.dispose();
   }
 
-  Future<void> _loadDocFile() async {
-    _documentFile = await widget.uri.toDocumentFile();
+  Future<void> _loadFile() async {
+    _file = await ScopedFile.fromUri(widget.uri);
 
     setState(() {});
 
@@ -42,7 +42,7 @@ class _LargeFileScreenState extends State<LargeFileScreen> {
   }
 
   Future<void> _startLoadingFile() async {
-    final Stream<Uint8List> byteStream = getDocumentContentAsStream(widget.uri);
+    final Stream<Uint8List> byteStream = _file!.openRead();
 
     _subscription = byteStream.listen(
       (bytes) {
@@ -70,7 +70,7 @@ class _LargeFileScreenState extends State<LargeFileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _documentFile?.name ?? 'Loading...',
+          _file?.displayName ?? 'Loading...',
         ),
       ),
       body: Center(

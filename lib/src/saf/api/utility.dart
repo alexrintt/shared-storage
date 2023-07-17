@@ -8,5 +8,5 @@ import '../models/barrel.dart';
 ///
 /// [Refer to details](https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri%28android.content.Context,%20android.net.Uri%29).
 /// {@endtemplate}
-Future<DocumentFile?> fromTreeUri(Uri uri) async =>
-    invokeMapMethod('fromTreeUri', <String, String>{'uri': '$uri'});
+// Future<DocumentFile?> fromTreeUri(Uri uri) async =>
+//     invokeMapMethod('fromTreeUri', <String, String>{'uri': '$uri'});

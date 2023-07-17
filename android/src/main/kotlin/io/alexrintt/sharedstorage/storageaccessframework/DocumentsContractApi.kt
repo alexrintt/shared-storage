@@ -75,7 +75,8 @@ internal class DocumentsContractApi(private val plugin: SharedStoragePlugin) :
         val mimeType: String? = plugin.context.contentResolver.getType(uri)
 
         if (mimeType == APK_MIME_TYPE) {
-          getThumbnailForApkFile(call, result, uri)
+          return result.success(null)
+//          getThumbnailForApkFile(call, result, uri)
         } else {
           if (Build.VERSION.SDK_INT >= API_21) {
             getThumbnailForApi24(call, result)

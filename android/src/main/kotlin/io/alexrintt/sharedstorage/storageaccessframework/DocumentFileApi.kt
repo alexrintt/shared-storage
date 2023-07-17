@@ -51,8 +51,15 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
     offset: Int,
     bufferSize: Int = 1024,
   ): Pair<ByteArray, Int> {
-    val buffer = ByteArray(bufferSize)
+    var buffer = ByteArray(bufferSize)
     val readBufferSize = inputStream.read(buffer, offset, bufferSize)
+
+    if (readBufferSize == -1) {
+      buffer = ByteArray(0)
+    } else if (readBufferSize < bufferSize) {
+      buffer = buffer.copyOfRange(0, readBufferSize)
+    }
+
     return Pair(buffer, readBufferSize)
   }
 
@@ -690,7 +697,6 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
   ) {
     if (eventSink == null) return
 
-    val userProvidedColumns = args["columns"] as List<*>
     val uri = Uri.parse(args["uri"] as String)
     val document = DocumentFile.fromTreeUri(plugin.context, uri)
 
@@ -717,15 +723,10 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
           CoroutineScope(Dispatchers.IO).launch {
             try {
               traverseDirectoryEntries(
-                plugin.context.contentResolver,
+                plugin.context,
                 rootOnly = true,
                 targetUri = document.uri,
-                columns = userProvidedColumns.map {
-                  // Convert the user provided column string to documentscontract column ID.
-                  documentFileColumnToActualDocumentsContractEnumString(
-                    deserializeDocumentFileColumn(it as String)!!
-                  )
-                }.toTypedArray()
+                columns = getDocumentsContractColumns().toTypedArray()
               ) { data, _ ->
                 launch(Dispatchers.Main) {
                   eventSink.success(
