@@ -44,6 +44,7 @@ const val CHILD = "child"
  * Available DocumentFileHelper Method Channel APIs
  */
 const val OPEN_DOCUMENT_FILE = "openDocumentFile"
+const val SHARE_URI = "shareUri"
 
 /**
  * Available Event Channels APIs
@@ -56,3 +57,7 @@ const val GET_DOCUMENT_CONTENT = "getDocumentContent"
  */
 const val OPEN_DOCUMENT_TREE_CODE = 10
 const val OPEN_DOCUMENT_CODE = 11
+
+const val OPEN_INPUT_STREAM = "openInputStream"
+const val CLOSE_INPUT_STREAM = "closeInputStream"
+const val READ_INPUT_STREAM = "readInputStream"

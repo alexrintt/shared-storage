@@ -4,16 +4,15 @@ import 'buttons.dart';
 
 class ConfirmationDialog extends StatefulWidget {
   const ConfirmationDialog({
-    Key? key,
+    super.key,
     required this.color,
     this.message,
     this.body,
     required this.actionName,
-  })  : assert(
+  }) : assert(
           message != null || body != null,
           '''You should at least provde [message] or body to explain to the user the context of this confirmation''',
-        ),
-        super(key: key);
+        );
 
   final Color color;
   final String? message;

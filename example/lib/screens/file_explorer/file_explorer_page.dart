@@ -13,9 +13,9 @@ import 'file_explorer_card.dart';
 
 class FileExplorerPage extends StatefulWidget {
   const FileExplorerPage({
-    Key? key,
+    super.key,
     required this.uri,
-  }) : super(key: key);
+  });
 
   final Uri uri;
 
@@ -24,16 +24,16 @@ class FileExplorerPage extends StatefulWidget {
 }
 
 class _FileExplorerPageState extends State<FileExplorerPage> {
-  List<DocumentFile>? _files;
+  List<ScopedFileSystemEntity>? _files;
 
   late bool _hasPermission;
 
-  StreamSubscription<DocumentFile>? _listener;
+  ScopedDirectory? _directory;
+
+  StreamSubscription<ScopedFileSystemEntity>? _listener;
 
   Future<void> _grantAccess() async {
-    final uri = await openDocumentTree(initialUri: widget.uri);
-
-    if (uri == null) return;
+    await SharedStorage.pickDirectory(initialUri: widget.uri);
 
     _files = null;
 
@@ -69,6 +69,8 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
   }
 
   Future<void> _createCustomDocument() async {
+    if (_directory == null) return;
+
     final filename = await showDialog<String>(
       context: context,
       builder: (context) => const TextFieldDialog(
@@ -81,17 +83,14 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
 
     if (filename == null) return;
 
-    final createdFile = await createFile(
-      widget.uri,
+    final createdFile = await _directory!.createChildFile(
       mimeType: 'text/plain',
       displayName: filename,
     );
 
-    if (createdFile != null) {
-      _files?.add(createdFile);
+    _files?.add(createdFile);
 
-      if (mounted) setState(() {});
-    }
+    if (mounted) setState(() {});
   }
 
   Widget _buildCreateDocumentButton() {
@@ -113,8 +112,8 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
   }
 
   void _didUpdateDocument(
-    DocumentFile before,
-    DocumentFile? after,
+    ScopedFileSystemEntity before,
+    ScopedFileSystemEntity? after,
   ) {
     if (_files == null) return;
 
@@ -137,7 +136,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
             final file = _files![index];
 
             return FileExplorerCard(
-              documentFile: file,
+              scopedFileSystemEntity: file,
               didUpdateDocument: (document) =>
                   _didUpdateDocument(file, document),
             );
@@ -201,26 +200,15 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
   }
 
   Future<void> _loadFiles() async {
-    _hasPermission = await canRead(widget.uri) ?? false;
+    final directory = await ScopedDirectory.fromUri(widget.uri);
+
+    _hasPermission = await directory.canRead();
 
     if (!_hasPermission) {
       return setState(() => _files = []);
     }
 
-    final folderUri = widget.uri;
-
-    const columns = [
-      DocumentFileColumn.displayName,
-      DocumentFileColumn.size,
-      DocumentFileColumn.lastModified,
-      DocumentFileColumn.mimeType,
-      // The column below is a optional column
-      // you can wether include or not here and
-      // it will be always available on the results
-      DocumentFileColumn.id,
-    ];
-
-    final fileListStream = listFiles(folderUri, columns: columns);
+    final fileListStream = directory.list();
 
     _listener = fileListStream.listen(
       (file) {

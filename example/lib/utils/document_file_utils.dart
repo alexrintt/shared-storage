@@ -1,9 +1,14 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_storage/shared_storage.dart';
 
+import '../screens/large_file/large_file_screen.dart';
 import '../theme/spacing.dart';
+import '../widgets/buttons.dart';
 import 'disabled_text_style.dart';
 import 'mime_types.dart';
 
@@ -22,71 +27,169 @@ extension OpenUriWithExternalApp on Uri {
     final uri = this;
 
     try {
-      final launched = await openDocumentFile(uri);
+      await SharedStorage.launchUriWithExternalApp(uri);
+      print('Successfully opened $uri');
+    } on SharedStorageException catch (e) {
+      print('Failed to launch $uri. Cause: ${e.message}.');
+    }
+  }
+}
 
-      if (launched) {
-        print('Successfully opened $uri');
-      } else {
-        print('Failed to launch $uri');
+extension ShowDocumentFileContents on ScopedFile {
+  Future<void> showContents(BuildContext context) async {
+    if (context.mounted) {
+      final mimeTypeOrEmpty = mimeType;
+
+      if (!mimeTypeOrEmpty.startsWith(kTextMime) &&
+          !mimeTypeOrEmpty.startsWith(kImageMime)) {
+        return uri.openWithExternalApp();
       }
-    } on PlatformException {
-      print(
-        "There's no activity associated with the file type of this Uri: $uri",
+
+      await showModalBottomSheet(
+        context: context,
+        builder: (context) => DocumentContentViewer(file: this),
       );
     }
   }
 }
 
-extension ShowDocumentFileContents on DocumentFile {
-  Future<void> showContents(BuildContext context) async {
-    final mimeTypeOrEmpty = type ?? '';
-    final sizeInBytes = size ?? 0;
+class DocumentContentViewer extends StatefulWidget {
+  const DocumentContentViewer({super.key, required this.file});
 
-    const k10mb = 1024 * 1024 * 10;
+  final ScopedFile file;
 
-    if (!mimeTypeOrEmpty.startsWith(kTextMime) &&
-        !mimeTypeOrEmpty.startsWith(kImageMime)) {
-      if (mimeTypeOrEmpty == kApkMime) {
-        return context.showToast(
-          'Requesting to install a package (.apk) is not currently supported, to request this feature open an issue at github.com/alexrintt/shared-storage/issues',
-        );
-      }
+  @override
+  State<DocumentContentViewer> createState() => _DocumentContentViewerState();
+}
 
-      return uri.openWithExternalApp();
+class _DocumentContentViewerState extends State<DocumentContentViewer> {
+  late Uint8List _bytes;
+  StreamSubscription<Uint8List>? _subscription;
+  late int _bytesLoaded;
+  late bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _bytes = Uint8List.fromList([]);
+    _bytesLoaded = 0;
+    _loaded = false;
+    _startLoadingFile();
+  }
+
+  @override
+  void dispose() {
+    _unsubscribe();
+    super.dispose();
+  }
+
+  void _unsubscribe() {
+    _subscription?.cancel();
+  }
+
+  static const double _kLargerFileSupported = k1MB * 10;
+
+  Future<void> _startLoadingFile() async {
+    // The implementation of [getDocumentContent] is no longer blocking!
+    // It now just merges all events of [getDocumentContentAsStream].
+    // Basically: lazy loaded -> No performance issues.
+    final ScopedFile scopedFile = await ScopedFile.fromUri(widget.file.uri);
+
+    final byteStream = scopedFile.openRead().map(Uint8List.fromList);
+
+    _subscription = byteStream.listen(
+      (Uint8List chunk) {
+        _bytesLoaded += chunk.length;
+        if (_bytesLoaded < _kLargerFileSupported) {
+          // Load file
+          _bytes = Uint8List.fromList(_bytes + chunk);
+        } else {
+          // otherwise just bump we are not going to display a large file
+          _bytes = Uint8List.fromList([]);
+        }
+        setState(() {});
+      },
+      cancelOnError: false,
+      onError: (e, stackTrace) {
+        print('Error: $e, st: $stackTrace');
+        _loaded = true;
+        _unsubscribe();
+        setState(() {});
+      },
+      onDone: () {
+        print('Done');
+        _loaded = true;
+        _unsubscribe();
+        setState(() {});
+      },
+    );
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) super.setState(fn);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded || _bytesLoaded >= _kLargerFileSupported) {
+      // The ideal approach is to implement a backpressure using:
+      // - Pause: _subscription!.pause();
+      // - Resume: _subscription!.resume();
+      // 'Backpressure' is a short term for 'loading only when the user asks for'.
+      // This happens because there is no way to load a 5GB file into a variable and expect you app doesn't crash.
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Is done: $_loaded'),
+            if (_bytesLoaded >= k1MB * 10)
+              Text('File too long to show: ${widget.file.displayName}'),
+            ContentSizeCard(bytes: _bytesLoaded),
+            Wrap(
+              children: [
+                ActionButton(
+                  'Pause',
+                  onTap: () {
+                    if (_subscription?.isPaused == false) {
+                      _subscription?.pause();
+                    }
+                  },
+                ),
+                ActionButton(
+                  'Resume',
+                  onTap: () {
+                    if (_subscription?.isPaused == true) {
+                      _subscription?.resume();
+                    }
+                  },
+                ),
+              ],
+            )
+          ],
+        ),
+      );
     }
 
-    // Too long, will take too much time to read
-    if (sizeInBytes > k10mb) {
-      return context.showToast('File too long to open');
+    final type = widget.file.mimeType;
+    final mimeTypeOrEmpty = type;
+
+    final isImage = mimeTypeOrEmpty.startsWith(kImageMime);
+
+    if (isImage) {
+      return Image.memory(_bytes);
     }
 
-    final content = await getDocumentContent(uri);
+    final contentAsString = utf8.decode(_bytes);
 
-    if (content != null) {
-      final isImage = mimeTypeOrEmpty.startsWith(kImageMime);
+    final fileIsEmpty = contentAsString.isEmpty;
 
-      if (context.mounted) {
-        await showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            if (isImage) {
-              return Image.memory(content);
-            }
-
-            final contentAsString = String.fromCharCodes(content);
-
-            final fileIsEmpty = contentAsString.isEmpty;
-
-            return Container(
-              padding: k8dp.all,
-              child: Text(
-                fileIsEmpty ? 'This file is empty' : contentAsString,
-                style: fileIsEmpty ? disabledTextStyle() : null,
-              ),
-            );
-          },
-        );
-      }
-    }
+    return Container(
+      padding: k8dp.all,
+      child: Text(
+        fileIsEmpty ? 'This file is empty' : contentAsString,
+        style: fileIsEmpty ? disabledTextStyle() : null,
+      ),
+    );
   }
 }

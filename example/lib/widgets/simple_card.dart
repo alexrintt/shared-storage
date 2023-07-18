@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SimpleCard extends StatefulWidget {
-  const SimpleCard({Key? key, required this.onTap, required this.children})
-      : super(key: key);
+  const SimpleCard({super.key, required this.onTap, required this.children});
 
   final VoidCallback onTap;
   final List<Widget> children;

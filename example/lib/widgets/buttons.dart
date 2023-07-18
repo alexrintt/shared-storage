@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class Button extends StatelessWidget {
   const Button(
     this.text, {
-    Key? key,
+    super.key,
     this.color,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   final Color? color;
   final String text;
@@ -25,9 +25,9 @@ class Button extends StatelessWidget {
 class DangerButton extends StatelessWidget {
   const DangerButton(
     this.text, {
-    Key? key,
+    super.key,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   final String text;
   final VoidCallback onTap;
@@ -41,9 +41,9 @@ class DangerButton extends StatelessWidget {
 class ActionButton extends StatelessWidget {
   const ActionButton(
     this.text, {
-    Key? key,
+    super.key,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   final String text;
   final VoidCallback onTap;

@@ -15,7 +15,7 @@ class EnvironmentDirectory {
 
   final String id;
 
-  static const _kPrefix = 'EnvironmentDirectory';
+  static const String _kPrefix = 'EnvironmentDirectory';
 
   /// Available for Android [4.1 to 9.0]
   ///
@@ -23,7 +23,8 @@ class EnvironmentDirectory {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const alarms = EnvironmentDirectory._('$_kPrefix.Alarms');
+  static const EnvironmentDirectory alarms =
+      EnvironmentDirectory._('$_kPrefix.Alarms');
 
   /// Available for Android [4.1 to 9]
   ///
@@ -32,7 +33,8 @@ class EnvironmentDirectory {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const dcim = EnvironmentDirectory._('$_kPrefix.DCIM');
+  static const EnvironmentDirectory dcim =
+      EnvironmentDirectory._('$_kPrefix.DCIM');
 
   /// Available for Android [4.1 to 9]
   ///
@@ -41,7 +43,8 @@ class EnvironmentDirectory {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const downloads = EnvironmentDirectory._('$_kPrefix.Downloads');
+  static const EnvironmentDirectory downloads =
+      EnvironmentDirectory._('$_kPrefix.Downloads');
 
   /// Available for Android [4.1 to 9]
   ///
@@ -49,7 +52,8 @@ class EnvironmentDirectory {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const movies = EnvironmentDirectory._('$_kPrefix.Movies');
+  static const EnvironmentDirectory movies =
+      EnvironmentDirectory._('$_kPrefix.Movies');
 
   /// Available for Android [4.1 to 9]
   ///
@@ -57,7 +61,8 @@ class EnvironmentDirectory {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const music = EnvironmentDirectory._('$_kPrefix.Music');
+  static const EnvironmentDirectory music =
+      EnvironmentDirectory._('$_kPrefix.Music');
 
   /// Available for Android [4.1 to 9]
   ///
@@ -65,7 +70,7 @@ class EnvironmentDirectory {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const notifications =
+  static const EnvironmentDirectory notifications =
       EnvironmentDirectory._('$_kPrefix.Notifications');
 
   /// Available for Android [4.1 to 9]
@@ -74,7 +79,8 @@ class EnvironmentDirectory {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const pictures = EnvironmentDirectory._('$_kPrefix.Pictures');
+  static const EnvironmentDirectory pictures =
+      EnvironmentDirectory._('$_kPrefix.Pictures');
 
   /// Available for Android [4.1 to 9]
   ///
@@ -82,7 +88,8 @@ class EnvironmentDirectory {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const podcasts = EnvironmentDirectory._('$_kPrefix.Podcasts');
+  static const EnvironmentDirectory podcasts =
+      EnvironmentDirectory._('$_kPrefix.Podcasts');
 
   /// Available for Android [4.1 to 9]
   ///
@@ -90,7 +97,8 @@ class EnvironmentDirectory {
   @Deprecated(
     'Android specific APIs will be removed soon in order to be replaced with a new set of original cross-platform APIs.',
   )
-  static const ringtones = EnvironmentDirectory._('$_kPrefix.Ringtones');
+  static const EnvironmentDirectory ringtones =
+      EnvironmentDirectory._('$_kPrefix.Ringtones');
 
   @override
   bool operator ==(Object other) {

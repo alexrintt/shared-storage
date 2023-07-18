@@ -17,42 +17,61 @@ import '../../widgets/buttons.dart';
 import '../../widgets/key_value_text.dart';
 import '../../widgets/simple_card.dart';
 import '../../widgets/text_field_dialog.dart';
+import '../large_file/large_file_screen.dart';
 import 'file_explorer_page.dart';
 
 class FileExplorerCard extends StatefulWidget {
   const FileExplorerCard({
-    Key? key,
-    required this.documentFile,
+    super.key,
+    required this.scopedFileSystemEntity,
     required this.didUpdateDocument,
-  }) : super(key: key);
+    this.allowExpand = true,
+  });
 
-  final DocumentFile documentFile;
-  final void Function(DocumentFile?) didUpdateDocument;
+  final ScopedFileSystemEntity scopedFileSystemEntity;
+  final void Function(ScopedFileSystemEntity?) didUpdateDocument;
+  final bool allowExpand;
 
   @override
   _FileExplorerCardState createState() => _FileExplorerCardState();
 }
 
 class _FileExplorerCardState extends State<FileExplorerCard> {
-  DocumentFile get _file => widget.documentFile;
+  ScopedFileSystemEntity get _fileSystemEntity => widget.scopedFileSystemEntity;
 
-  static const _expandedThumbnailSize = Size.square(150);
+  ScopedFile? get _file {
+    if (_fileSystemEntity is ScopedFile) {
+      return _fileSystemEntity as ScopedFile;
+    }
+    return null;
+  }
+
+  ScopedDirectory? get _directory {
+    if (_fileSystemEntity is ScopedDirectory) {
+      return _fileSystemEntity as ScopedDirectory;
+    }
+    return null;
+  }
+
+  static const _kExpandedThumbnailSize = Size.square(150);
 
   Uint8List? _thumbnailImageBytes;
   Size? _thumbnailSize;
 
-  int get _sizeInBytes => _file.size ?? 0;
+  int get _sizeInBytes => _file?.length ?? 0;
 
   bool _expanded = false;
-  String? get _displayName => _file.name;
+  String? get _displayName => _fileSystemEntity.displayName;
 
   Future<void> _loadThumbnailIfAvailable() async {
-    final uri = _file.uri;
+    if (_isDirectory) return;
+
+    final uri = _fileSystemEntity.uri;
 
     final bitmap = await getDocumentThumbnail(
       uri: uri,
-      width: _expandedThumbnailSize.width,
-      height: _expandedThumbnailSize.height,
+      width: _kExpandedThumbnailSize.width,
+      height: _kExpandedThumbnailSize.height,
     );
 
     if (bitmap == null) {
@@ -147,7 +166,8 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
   void didUpdateWidget(covariant FileExplorerCard oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.documentFile.id != widget.documentFile.id) {
+    if (oldWidget.scopedFileSystemEntity.id !=
+        widget.scopedFileSystemEntity.id) {
       _loadThumbnailIfAvailable();
       if (mounted) setState(() => _expanded = false);
     }
@@ -169,7 +189,8 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
 
   Uint8List? content;
 
-  bool get _isDirectory => _file.isDirectory == true;
+  bool get _isDirectory => _fileSystemEntity is ScopedDirectory;
+  bool get _isFile => _fileSystemEntity is ScopedFile;
 
   int _generateLuckNumber() {
     final random = Random();
@@ -177,7 +198,17 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     return random.nextInt(1000);
   }
 
-  Widget _buildThumbnail({double? size}) {
+  Widget _buildThumbnailImage({double? size}) {
+    if (_isDirectory) {
+      return const Align(
+        alignment: Alignment.centerLeft,
+        child: Icon(
+          Icons.folder,
+          color: Colors.grey,
+        ),
+      );
+    }
+
     late Widget thumbnail;
 
     if (_thumbnailImageBytes == null) {
@@ -206,6 +237,12 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
         );
       }
     }
+
+    return thumbnail;
+  }
+
+  Widget _buildThumbnail({double? size}) {
+    final Widget thumbnail = _buildThumbnailImage(size: size);
 
     List<Widget> children;
 
@@ -241,14 +278,14 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     );
   }
 
-  Uri get _currentUri => widget.documentFile.uri;
+  Uri get _location => widget.scopedFileSystemEntity.uri;
 
   Widget _buildNotAvailableText() {
     return Text('Not available', style: disabledTextStyle());
   }
 
   Widget _buildOpenWithButton() =>
-      Button('Open with', onTap: _currentUri.openWithExternalApp);
+      Button('Open with', onTap: _location.openWithExternalApp);
 
   Widget _buildDocumentSimplifiedTile() {
     return ListTile(
@@ -259,33 +296,74 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(formatBytes(_sizeInBytes, 2)),
-      trailing: _buildExpandButton(),
+      trailing: widget.allowExpand ? _buildExpandButton() : null,
     );
   }
 
-  String? get _lastModified {
-    if (_file.lastModified == null) {
-      return null;
-    }
-
-    return _file.lastModified!.toIso8601String();
+  String get _lastModified {
+    return _fileSystemEntity.lastModified.toIso8601String();
   }
 
   Widget _buildDocumentMetadata() {
     return KeyValueText(
       entries: {
         'name': '$_displayName',
-        'type': '${_file.type}',
-        'isVirtual': '${_file.isVirtual}',
-        'isDirectory': '${_file.isDirectory}',
-        'isFile': '${_file.isFile}',
+        'type': '${_isFile ? _file!.mimeType : null}',
+        'isDirectory': '$_isDirectory',
+        'isFile': '$_isFile',
         'size': '${formatBytes(_sizeInBytes, 2)} ($_sizeInBytes bytes)',
-        'lastModified': _lastModified.toString(),
-        'id': '${_file.id}',
-        'parentUri': _file.parentUri?.apply((u) => Uri.decodeFull('$u')) ??
-            _buildNotAvailableText(),
-        'uri': Uri.decodeFull('${_file.uri}'),
+        'lastModified': _lastModified,
+        'id': _fileSystemEntity.id,
+        'parentUri':
+            _fileSystemEntity.parentUri?.apply((u) => Uri.decodeFull('$u')) ??
+                _buildNotAvailableText(),
+        'uri': Uri.decodeFull('${_fileSystemEntity.uri}'),
       },
+    );
+  }
+
+  Uri get _currentUri => _fileSystemEntity.uri;
+
+  Future<void> _shareFile() async {
+    if (_isFile) {
+      await SharedStorage.shareScopedFile(_file!);
+    }
+  }
+
+  Future<void> _copyTo() async {
+    assert(_isFile);
+
+    try {
+      final ScopedDirectory parentDirectory =
+          await SharedStorage.pickDirectory(persist: false);
+
+      if (_file?.mimeType != null && _file?.displayName != null) {
+        final ScopedFile recipient = await parentDirectory.createChildFile(
+          displayName: _file!.displayName,
+          mimeType: _file!.mimeType,
+        );
+
+        // TODO: Add stream based [copy] method to [ScopedFile].
+        _file!.copyTo(recipient.uri);
+      }
+    } on SharedStorageDirectoryWasNotSelectedException {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User did not select a directory.'),
+        ),
+      );
+    }
+  }
+
+  void _openLargeFileScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return LargeFileScreen(uri: widget.scopedFileSystemEntity.uri);
+        },
+      ),
     );
   }
 
@@ -309,6 +387,18 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
               : _fileConfirmation('Delete', _deleteDocument),
         ),
         if (!_isDirectory) ...[
+          ActionButton(
+            'Lazy load its content',
+            onTap: _openLargeFileScreen,
+          ),
+          ActionButton(
+            'Copy to',
+            onTap: _copyTo,
+          ),
+          ActionButton(
+            'Share Document',
+            onTap: _shareFile,
+          ),
           DangerButton(
             'Write to File',
             onTap: _fileConfirmation('Overwite', _overwriteFileContents),
@@ -330,7 +420,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     );
   }
 
-  String get _mimeTypeOrEmpty => _file.type ?? '';
+  String get _mimeTypeOrEmpty => _file?.mimeType ?? '';
 
   Future<void> _deleteDocument() async {
     final deleted = await delete(_currentUri);
@@ -368,9 +458,8 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
       context: context,
       builder: (context) {
         return TextFieldDialog(
-          labelText:
-              'New ${widget.documentFile.isDirectory ?? false ? 'directory' : 'file'} name:',
-          hintText: widget.documentFile.name ?? '',
+          labelText: 'New ${_isDirectory ? 'directory' : 'file'} name:',
+          hintText: _fileSystemEntity.displayName,
           actionText: 'Edit',
         );
       },
@@ -379,7 +468,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
     if (newDisplayName == null) return;
 
     final updatedDocumentFile =
-        await widget.documentFile.renameTo(newDisplayName);
+        await widget.scopedFileSystemEntity.rename(newDisplayName);
 
     widget.didUpdateDocument(updatedDocumentFile);
   }
@@ -418,14 +507,14 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
 
   Future<void> _openDirectory() async {
     if (_isDirectory) {
-      _openFolderFileListPage(_file.uri);
+      _openFolderFileListPage(_directory!.uri);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return SimpleCard(
-      onTap: _isDirectory ? _openDirectory : () => _file.showContents(context),
+      onTap: _isDirectory ? _openDirectory : () => _file!.showContents(context),
       children: [
         if (_expanded) ...[
           _buildThumbnail(size: 50),

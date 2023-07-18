@@ -30,6 +30,21 @@ Import:
 import 'package:shared_storage/shared_storage.dart' as shared_storage;
 ```
 
+## Permissions (optional)
+
+The following APIs require the `REQUEST_INSTALL_PACKAGES` permission in order to prompt the user to install arbitrary APKs:
+
+- `openDocumentFile` when trying to open APK files.
+
+If your want to display APK files inside your app and let users install it, then you need this permission, if that's not the case then you can just skip this step.
+
+```xml
+<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+```
+
+> Warning! In some cases the app can become ineligible in the Play Store when using this permission, be sure you need it. Most cases where you think you don't need it you are goddamn right.
+
+
 ## Plugin
 
 This plugin include **partial** support for the following APIs:
@@ -54,14 +69,8 @@ All these APIs are module based, which means they are implemented separadely and
 
 ## Support
 
-If you have ideas to share, bugs to report or need support, you can either open an issue or join our [Discord server](https://discord.gg/86GDERXZNS).
-
-## Android APIs
-
-Most Flutter plugins use Android API's under the hood. So this plugin does the same, and to call native Android storage APIs the following API's are being used:
-
-[`🔗android.os.Environment`](https://developer.android.com/reference/android/os/Environment#summary) [`🔗android.provider.MediaStore`](https://developer.android.com/reference/android/provider/MediaStore#summary) [`🔗android.provider.DocumentsProvider`](https://developer.android.com/guide/topics/providers/document-provider)
+If you have ideas to share, bugs to report or need support, you can either open an issue or join our [Discord server](https://discord.alexrintt.io).
 
 ---
 
-Thanks to all [contributors](https://github.com/alexrintt/shared-storage/tree/release#contributors).
+Last but not least, [thanks to all contributors](https://github.com/alexrintt/shared-storage/tree/release#contributors) that makes this plugin a better tool.
