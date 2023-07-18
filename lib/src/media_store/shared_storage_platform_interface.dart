@@ -1,9 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/services.dart';
-
 import '../../shared_storage.dart';
-import '../channels.dart';
 
 abstract class SharedStoragePlatformInterface {
   Future<ScopedFile> buildScopedFileFrom(File file);
