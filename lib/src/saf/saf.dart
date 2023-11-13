@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -312,7 +313,7 @@ Future<DocumentFile?> createFileAsString(
     parentUri,
     displayName: displayName,
     mimeType: mimeType,
-    bytes: Uint8List.fromList(content.codeUnits),
+    bytes: Uint8List.fromList(utf8.encode(content)),
   );
 }
 
@@ -384,7 +385,7 @@ Future<bool?> writeToFileAsString(
 }) {
   return writeToFileAsBytes(
     uri,
-    bytes: Uint8List.fromList(content.codeUnits),
+    bytes: Uint8List.fromList(utf8.encode(content)),
     mode: mode,
   );
 }
@@ -573,7 +574,7 @@ Future<String?> getDocumentContentAsString(
 }) async {
   final Uint8List? bytes = await getDocumentContent(uri);
 
-  return bytes?.apply((Uint8List a) => String.fromCharCodes(a));
+  return bytes?.apply((Uint8List a) => utf8.decode(a));
 }
 
 /// {@template sharedstorage.saf.getDocumentContentAsString}

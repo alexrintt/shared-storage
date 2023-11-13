@@ -161,7 +161,7 @@ final Uint8List? fileContent = await getDocumentContent(uri);
 /// Handle [fileContent]...
 
 /// If the file is intended to be human readable, you can convert the output to [String]:
-print(String.fromCharCodes(fileContent));
+print(utf8.decode(fileContent));
 ```
 
 ### <samp>getRealPathFromUri</samp>
@@ -253,7 +253,7 @@ final DocumentFile? createdFile = createFileAsBytes(
   parentUri,
   mimeType: 'text/plain',
   displayName: 'Sample File Name',
-  bytes: Uint8List.fromList(fileContent.codeUnits),
+  bytes: Uint8List.fromList(utf8.encode(fileContent)),
 );
 ```
 
@@ -272,14 +272,14 @@ final String fileContent = 'My File Content';
 /// Write to a file using a [Uint8List] as file contents [bytes]
 final bool? success = writeToFileAsBytes(
   documentUri,
-  bytes: Uint8List.fromList(fileContent.codeUnits),
+  bytes: Uint8List.fromList(utf8.encode(fileContent)),
   mode: FileMode.write,
 );
 
 /// Append to a file using a [Uint8List] as file contents [bytes]
 final bool? success = writeToFileAsBytes(
   documentUri,
-  bytes: Uint8List.fromList(fileContent.codeUnits),
+  bytes: Uint8List.fromList(utf8.encode(fileContent)),
   mode: FileMode.write,
 );
 ```
@@ -602,7 +602,7 @@ final DocumentFile? createdFile = createFile(
   parentUri,
   mimeType: 'text/plain',
   displayName: 'Sample File Name',
-  content: Uint8List.fromList(fileContent.codeUnits),
+  content: Uint8List.fromList(utf8.encode(fileContent)),
 );
 ```
 
@@ -637,14 +637,14 @@ final bool? success = writeToFile(
 /// Write to a file using a [Uint8List] as file contents [bytes]
 final bool? success = writeToFile(
   documentUri,
-  content: Uint8List.fromList(fileContent.codeUnits),
+  content: Uint8List.fromList(utf8.encode(fileContent)),
   mode: FileMode.write,
 );
 
 /// Append to a file using a [Uint8List] as file contents [bytes]
 final bool? success = writeToFile(
   documentUri,
-  content: Uint8List.fromList(fileContent.codeUnits),
+  content: Uint8List.fromList(utf8.encode(fileContent)),
   mode: FileMode.append,
 );
 ```
