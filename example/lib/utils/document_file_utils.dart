@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fl_toast/fl_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -67,7 +69,7 @@ extension ShowDocumentFileContents on DocumentFile {
               return Image.memory(content);
             }
 
-            final contentAsString = String.fromCharCodes(content);
+            final contentAsString = utf8.decode(content);
 
             final fileIsEmpty = contentAsString.isEmpty;
 

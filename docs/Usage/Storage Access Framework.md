@@ -161,7 +161,7 @@ final Uint8List? fileContent = await getDocumentContent(uri);
 /// Handle [fileContent]...
 
 /// If the file is intended to be human readable, you can convert the output to [String]:
-print(String.fromCharCodes(fileContent));
+print(utf8.decode(fileContent));
 ```
 
 ### <samp>getRealPathFromUri</samp>
