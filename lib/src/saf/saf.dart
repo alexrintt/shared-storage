@@ -313,7 +313,7 @@ Future<DocumentFile?> createFileAsString(
     parentUri,
     displayName: displayName,
     mimeType: mimeType,
-    bytes: Uint8List.fromList(content.codeUnits),
+    bytes: Uint8List.fromList(utf8.encode(content)),
   );
 }
 
@@ -385,7 +385,7 @@ Future<bool?> writeToFileAsString(
 }) {
   return writeToFileAsBytes(
     uri,
-    bytes: Uint8List.fromList(content.codeUnits),
+    bytes: Uint8List.fromList(utf8.encode(content)),
     mode: mode,
   );
 }
