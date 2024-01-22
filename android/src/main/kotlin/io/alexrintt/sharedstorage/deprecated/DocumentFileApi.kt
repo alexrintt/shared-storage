@@ -181,9 +181,11 @@ internal class DocumentFileApi(private val plugin: SharedStoragePlugin) :
 
             val createdDirectory =
               documentFromUri(plugin.context, uri)?.createDirectory(displayName)
-                ?: return
-
-            result.success(createDocumentFileMap(createdDirectory))
+            if (createdDirectory == null) {
+              result.notSupported(call.method, API_21)  
+            } else {
+              result.success(createDocumentFileMap(createdDirectory))
+            }
           } else {
             result.notSupported(call.method, API_21)
           }
