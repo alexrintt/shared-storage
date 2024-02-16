@@ -181,7 +181,7 @@ class _FileExplorerPageState extends State<FileExplorerPage> {
             _buildDocumentList()
           else
             _buildEmptyFolderWarning(),
-        ]
+        ],
       ],
     );
   }

@@ -430,7 +430,7 @@ class _FileExplorerCardState extends State<FileExplorerCard> {
         if (_expanded) ...[
           _buildThumbnail(size: 50),
           _buildDocumentMetadata(),
-          _buildAvailableActions()
+          _buildAvailableActions(),
         ] else
           _buildDocumentSimplifiedTile(),
       ],
