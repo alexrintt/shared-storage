@@ -25,7 +25,15 @@ extension FunctionalExtender<T> on T? {
   T? takeIf(bool Function(T) f) {
     final T? self = this;
 
-    return self != null && f(self) ? self : null;
+    if (self == null) {
+      return null;
+    }
+
+    if (f(self)) {
+      return self;
+    }
+
+    return null;
   }
 }
 

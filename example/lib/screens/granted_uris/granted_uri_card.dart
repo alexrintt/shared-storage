@@ -69,7 +69,7 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
       ActionButton(
         'Open file picker here',
         onTap: () => openDocumentTree(initialUri: widget.permissionUri.uri),
-      )
+      ),
     ];
   }
 
@@ -193,7 +193,7 @@ class _GrantedUriCardState extends State<GrantedUriCard> {
             didUpdateDocument: (updatedDocumentFile) {
               documentFile = updatedDocumentFile;
             },
-          )
+          ),
       ],
     );
   }
