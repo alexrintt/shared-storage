@@ -1,31 +1,37 @@
-name: Publish new plugin version to pub.dev
-run-name: >-
-  [shared_storage] package publish (${{ github.ref_name }}) triggered by @${{ github.actor }}
+name: Publish new plugin version
 on:
+  workflow_dispatch:
   push:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
+    branches:
+      - release
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write # This is required for requesting the JWT
-    defaults:
-      run:
-        working-directory: ./
+
     steps:
-      # Checkout repository
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # or: 'beta', 'dev', 'master' (or 'main')
-      - run: flutter --version
+          flutter-version: "3.7.7"
+          channel: "stable"
+      - run: |
+          flutter --version
+          flutter pub get
+          flutter analyze --fatal-infos
 
-      - name: Install dependencies
-        run: flutter pub get
+      - name: Create credentials file
+        run: echo $PUB_CREDENTIALS > ~/pub-credentials.json
+        env:
+          PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}
 
-      - name: Run Dart analyzer
-        run: flutter analyze --fatal-infos
+      - name: Add credentials to Dart folder
+        run: |
+          mkdir -p ${XDG_CONFIG_HOME:-${HOME:-default}}/dart
+          touch ${XDG_CONFIG_HOME:-${HOME:-default}}/dart/pub-credentials.json
+          cp ~/pub-credentials.json ${XDG_CONFIG_HOME:-${HOME:-default}}/dart/pub-credentials.json
+        env:
+          PUB_CREDENTIALS: ${{ secrets.PUB_CREDENTIALS }}
 
-      - name: Publish to pub dev
+      - name: Publish
         run: dart pub publish --force
