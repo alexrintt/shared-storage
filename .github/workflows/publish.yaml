@@ -1,14 +1,31 @@
-name: Publish to pub.dev
-
+name: Publish new plugin version to pub.dev
+run-name: >-
+  [shared_storage] package publish (${{ github.ref_name }}) triggered by @${{ github.actor }}
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
-
+      - "v[0-9]+.[0-9]+.[0-9]+"
 jobs:
   publish:
+    runs-on: ubuntu-latest
     permissions:
-      id-token: write # Required for authentication using OIDC
-    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
-    # with:
-    #   working-directory: path/to/package/within/repository
+      id-token: write # This is required for requesting the JWT
+    defaults:
+      run:
+        working-directory: ./
+    steps:
+      # Checkout repository
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable' # or: 'beta', 'dev', 'master' (or 'main')
+      - run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Dart analyzer
+        run: flutter analyze --fatal-infos
+
+      - name: Publish to pub dev
+        run: dart pub publish --force
