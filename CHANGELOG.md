@@ -1,3 +1,7 @@
+## 0.8.1
+
+Fix function_extender.dart error [#150](https://github.com/alexrintt/shared-storage/issues/150).
+
 ## 0.8.0
 
 New SAF API and Gradle version upgrade.
