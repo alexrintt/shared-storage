@@ -1,0 +1,1929 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Flutter plugin with low abstraction to work with native Android storage based APIs: Environment, Media Store and Storage Access Framework. Android 4.4+ (API Level 19+)">
+      
+      
+        <meta name="author" content="Alex Rintt">
+      
+      
+        <link rel="canonical" href="https://alexrintt.github.io/shared-storage/Usage/Storage%20Access%20Framework/">
+      
+      
+        <link rel="prev" href="../Media%20Store/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
+    
+    
+      
+        <title>Storage Access Framework - Shared Storage</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#import-package" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Shared Storage" class="md-header__button md-logo" aria-label="Shared Storage" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Shared Storage
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Storage Access Framework
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alexrintt/shared-storage" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alexrintt/shared-storage
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Shared Storage" class="md-nav__button md-logo" aria-label="Shared Storage" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Shared Storage
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alexrintt/shared-storage" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    alexrintt/shared-storage
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="false">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contributing" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Contributing/Ways%20to%20contribute/" class="md-nav__link">
+        Ways to contribute
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2_2" type="checkbox" id="__nav_2_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_2" tabindex="0" aria-expanded="false">
+          Setup environment
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Setup environment" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          Setup environment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Contributing/Setup%20environment/Debugging%20plugin/" class="md-nav__link">
+        Debugging plugin
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Contributing/Setup%20environment/Setup%20local%20environment/" class="md-nav__link">
+        Setup local environment
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="false">
+          Migrate notes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Migrate notes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Migrate notes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Migrate%20notes/Migrate%20to%20v0.3.0/" class="md-nav__link">
+        Migrate to v0.3.0
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Migrate%20notes/Migrate%20to%20v0.5.0/" class="md-nav__link">
+        Migrate to v0.5.0
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Migrate%20notes/Migrate%20to%20v0.6.0/" class="md-nav__link">
+        Migrate to v0.6.0
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Migrate%20notes/Migrate%20to%20v0.7.0/" class="md-nav__link">
+        Migrate to v0.7.0
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" tabindex="0" aria-expanded="true">
+          Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Usage" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Usage
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../API%20Labeling/" class="md-nav__link">
+        API Labeling
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Environment/" class="md-nav__link">
+        Environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Media%20Store/" class="md-nav__link">
+        Media Store
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Storage Access Framework
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Storage Access Framework
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#import-package" class="md-nav__link">
+    Import package
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-project" class="md-nav__link">
+    Example project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concepts" class="md-nav__link">
+    Concepts
+  </a>
+  
+    <nav class="md-nav" aria-label="Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-an-uri" class="md-nav__link">
+    What's an Uri?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permission-over-an-uri" class="md-nav__link">
+    Permission over an Uri
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-labeling" class="md-nav__link">
+    API Labeling
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    API reference
+  </a>
+  
+    <nav class="md-nav" aria-label="API reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opendocumenttree" class="md-nav__link">
+    openDocumentTree
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opendocument" class="md-nav__link">
+    openDocument
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listfiles" class="md-nav__link">
+    listFiles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opendocumentfile" class="md-nav__link">
+    openDocumentFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getdocumentcontent" class="md-nav__link">
+    getDocumentContent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getrealpathfromuri" class="md-nav__link">
+    getRealPathFromUri
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mirror-methods" class="md-nav__link">
+    Mirror methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Mirror methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exists" class="md-nav__link">
+    exists
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persisteduripermissions" class="md-nav__link">
+    persistedUriPermissions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#releasepersistableuripermission" class="md-nav__link">
+    releasePersistableUriPermission
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createfileasbytes" class="md-nav__link">
+    createFileAsBytes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writetofileasbytes" class="md-nav__link">
+    writeToFileAsBytes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canread" class="md-nav__link">
+    canRead
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canwrite" class="md-nav__link">
+    canWrite
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getdocumentthumbnail" class="md-nav__link">
+    getDocumentThumbnail
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentfilecolumn" class="md-nav__link">
+    DocumentFileColumn
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createdirectory" class="md-nav__link">
+    createDirectory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentlength" class="md-nav__link">
+    documentLength
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lastmodified" class="md-nav__link">
+    lastModified
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findfile" class="md-nav__link">
+    findFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fromtreeuri" class="md-nav__link">
+    fromTreeUri
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renameto" class="md-nav__link">
+    renameTo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parentfile" class="md-nav__link">
+    parentFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copy" class="md-nav__link">
+    copy
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alias-methods" class="md-nav__link">
+    Alias methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Alias methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ispersisteduri" class="md-nav__link">
+    isPersistedUri
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getdocumentcontentasstring" class="md-nav__link">
+    getDocumentContentAsString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createfileasstring" class="md-nav__link">
+    createFileAsString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writetofileasstring" class="md-nav__link">
+    writeToFileAsString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createfile" class="md-nav__link">
+    createFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writetofile" class="md-nav__link">
+    writeToFile
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#external-apis-deprecated" class="md-nav__link">
+    External APIs (deprecated)
+  </a>
+  
+    <nav class="md-nav" aria-label="External APIs (deprecated)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#child" class="md-nav__link">
+    child
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internal-types-classes" class="md-nav__link">
+    Internal Types (Classes)
+  </a>
+  
+    <nav class="md-nav" aria-label="Internal Types (Classes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentfile" class="md-nav__link">
+    DocumentFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#querymetadata" class="md-nav__link">
+    QueryMetadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentbitmap" class="md-nav__link">
+    DocumentBitmap
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extensions" class="md-nav__link">
+    Extensions
+  </a>
+  
+    <nav class="md-nav" aria-label="Extensions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uritodocumentfile-on-uri" class="md-nav__link">
+    Uri.toDocumentFile on Uri
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uriopendocumentfile-on-uri" class="md-nav__link">
+    Uri.openDocumentFile on Uri
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#android-official-documentation" class="md-nav__link">
+    Android Official Documentation
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#import-package" class="md-nav__link">
+    Import package
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-project" class="md-nav__link">
+    Example project
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concepts" class="md-nav__link">
+    Concepts
+  </a>
+  
+    <nav class="md-nav" aria-label="Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#whats-an-uri" class="md-nav__link">
+    What's an Uri?
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permission-over-an-uri" class="md-nav__link">
+    Permission over an Uri
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-labeling" class="md-nav__link">
+    API Labeling
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    API reference
+  </a>
+  
+    <nav class="md-nav" aria-label="API reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opendocumenttree" class="md-nav__link">
+    openDocumentTree
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opendocument" class="md-nav__link">
+    openDocument
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listfiles" class="md-nav__link">
+    listFiles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opendocumentfile" class="md-nav__link">
+    openDocumentFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getdocumentcontent" class="md-nav__link">
+    getDocumentContent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getrealpathfromuri" class="md-nav__link">
+    getRealPathFromUri
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mirror-methods" class="md-nav__link">
+    Mirror methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Mirror methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exists" class="md-nav__link">
+    exists
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persisteduripermissions" class="md-nav__link">
+    persistedUriPermissions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#releasepersistableuripermission" class="md-nav__link">
+    releasePersistableUriPermission
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createfileasbytes" class="md-nav__link">
+    createFileAsBytes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writetofileasbytes" class="md-nav__link">
+    writeToFileAsBytes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canread" class="md-nav__link">
+    canRead
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canwrite" class="md-nav__link">
+    canWrite
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getdocumentthumbnail" class="md-nav__link">
+    getDocumentThumbnail
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentfilecolumn" class="md-nav__link">
+    DocumentFileColumn
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createdirectory" class="md-nav__link">
+    createDirectory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentlength" class="md-nav__link">
+    documentLength
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lastmodified" class="md-nav__link">
+    lastModified
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findfile" class="md-nav__link">
+    findFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fromtreeuri" class="md-nav__link">
+    fromTreeUri
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renameto" class="md-nav__link">
+    renameTo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parentfile" class="md-nav__link">
+    parentFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#copy" class="md-nav__link">
+    copy
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alias-methods" class="md-nav__link">
+    Alias methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Alias methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ispersisteduri" class="md-nav__link">
+    isPersistedUri
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getdocumentcontentasstring" class="md-nav__link">
+    getDocumentContentAsString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createfileasstring" class="md-nav__link">
+    createFileAsString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writetofileasstring" class="md-nav__link">
+    writeToFileAsString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createfile" class="md-nav__link">
+    createFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writetofile" class="md-nav__link">
+    writeToFile
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#external-apis-deprecated" class="md-nav__link">
+    External APIs (deprecated)
+  </a>
+  
+    <nav class="md-nav" aria-label="External APIs (deprecated)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#child" class="md-nav__link">
+    child
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#internal-types-classes" class="md-nav__link">
+    Internal Types (Classes)
+  </a>
+  
+    <nav class="md-nav" aria-label="Internal Types (Classes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentfile" class="md-nav__link">
+    DocumentFile
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#querymetadata" class="md-nav__link">
+    QueryMetadata
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentbitmap" class="md-nav__link">
+    DocumentBitmap
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extensions" class="md-nav__link">
+    Extensions
+  </a>
+  
+    <nav class="md-nav" aria-label="Extensions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#uritodocumentfile-on-uri" class="md-nav__link">
+    Uri.toDocumentFile on Uri
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uriopendocumentfile-on-uri" class="md-nav__link">
+    Uri.openDocumentFile on Uri
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#android-official-documentation" class="md-nav__link">
+    Android Official Documentation
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+  <h1>Storage Access Framework</h1>
+
+<h2 id="import-package">Import package<a class="headerlink" href="#import-package" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="s1">&#39;package:shared_storage/shared_storage.dart&#39;</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">saf</span><span class="p">;</span>
+</code></pre></div>
+<p>Usage sample:</p>
+<div class="highlight"><pre><span></span><code><span class="n">saf</span><span class="p">.</span><span class="n">openDocumentTree</span><span class="p">(...);</span>
+<span class="n">saf</span><span class="p">.</span><span class="n">listFiles</span><span class="p">(...);</span>
+</code></pre></div>
+<p>But if you import without alias <code>import '...';</code> (Not recommeded because can conflict with other method/package names) you should use directly as functions:</p>
+<div class="highlight"><pre><span></span><code><span class="n">openDocumentTree</span><span class="p">(...);</span>
+<span class="n">listFiles</span><span class="p">(...);</span>
+</code></pre></div>
+<h2 id="example-project">Example project<a class="headerlink" href="#example-project" title="Permanent link">&para;</a></h2>
+<p>The example project does use of most of these APIs, that is available at <a href="https://github.com/alexrintt/shared-storage/tree/master/example"><code>/example</code></a></p>
+<h2 id="concepts">Concepts<a class="headerlink" href="#concepts" title="Permanent link">&para;</a></h2>
+<p>This is a brief explanation of the core concepts of this API.</p>
+<h3 id="whats-an-uri">What's an <code>Uri</code>?<a class="headerlink" href="#whats-an-uri" title="Permanent link">&para;</a></h3>
+<p><code>Uri</code> is a the most confusing concept we can found. Since it's not a regular string, it's not a regular url, neither a regular file system path.</p>
+<p>By the <a href="https://developer.android.com/reference/java/net/URI#uris,-urls,-and-urns">official docs</a>:</p>
+<blockquote>
+<p>A URI is a uniform resource identifier while a URL is a uniform resource locator. Hence every URL is a URI, abstractly speaking, but not every URI is a URL. This is because there is another subcategory of URIs, uniform resource names (URNs), which name resources but do not specify how to locate them. The mailto, news, and isbn URIs shown above are examples of URNs.</p>
+</blockquote>
+<p>Which translated means: this <code>Uri</code> <strong>can represent</strong> almost anything.</p>
+<p>Often this <code>Uri</code>s represent a folder or a file but not always. And different <code>Uri</code>s can point to the same file/folder</p>
+<h3 id="permission-over-an-uri">Permission over an <code>Uri</code><a class="headerlink" href="#permission-over-an-uri" title="Permanent link">&para;</a></h3>
+<p>To operate (read, delete, update, create) a file or folder within a directory, you need first to request permission of the user. These permissions are represented as <code>UriPermission</code>, <a href="https://developer.android.com/reference/android/content/UriPermission">reference</a>.</p>
+<h2 id="api-labeling">API Labeling<a class="headerlink" href="#api-labeling" title="Permanent link">&para;</a></h2>
+<p>See the label <a href="../API%20Labeling/">reference here</a>.</p>
+<h2 id="api-reference">API reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<p>Original API. These methods exists only in this package.</p>
+<p>Because methods are an abstraction from native API, for example: <code>openDocumentTree</code> is an abstraction because there's no such method in native Android, there you need to create a intent and start an activity which is not the goal of this package (re-create all Android APIs) but provide a powerful fully-configurable API to call these APIs.</p>
+<h3 id="opendocumenttree"><samp>openDocumentTree</samp><a class="headerlink" href="#opendocumenttree" title="Permanent link">&para;</a></h3>
+<p>This API allows you grant <code>Uri</code>s permission by calling like this:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="o">?</span><span class="w"> </span><span class="n">grantedUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">openDocumentTree</span><span class="p">();</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">grantedUri</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;Now I have permission over this Uri: </span><span class="si">$</span><span class="n">grantedUri</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="opendocument"><samp>openDocument</samp><a class="headerlink" href="#opendocument" title="Permanent link">&para;</a></h3>
+<p>Same as <code>openDocumentTree</code> but for file URIs, you can request user to select a file and filter by:</p>
+<ul>
+<li>Single or multiple files.</li>
+<li>Mime type.</li>
+</ul>
+<p>You can also specify if you want a one-time operation (<code>persistablePermission</code> = false) and if you don't need write access (<code>grantWritePermission</code> = false).</p>
+<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">kDownloadsFolder</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="s1">&#39;content://com.android.externalstorage.documents/tree/primary%3ADownloads/document/primary%3ADownloads&#39;</span><span class="p">;</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">Uri</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">selectedDocumentUris</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">openDocument</span><span class="p">(</span>
+<span class="w">  </span><span class="c1">// if you have a previously saved URI,</span>
+<span class="w">  </span><span class="c1">// you can use the specify the tree you user will see at startup of the file picker.</span>
+<span class="w">  </span><span class="nl">initialUri:</span><span class="w"> </span><span class="n">Uri</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">kDownloadsFolder</span><span class="p">),</span>
+
+<span class="w">  </span><span class="c1">// whether or not allow the user select multiple files.</span>
+<span class="w">  </span><span class="nl">multiple:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+
+<span class="w">  </span><span class="c1">// whether or not the selected URIs should be persisted across app and device reboots.</span>
+<span class="w">  </span><span class="nl">persistablePermission:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+
+<span class="w">  </span><span class="c1">// whether or not grant write permission required to edit file metadata (name) and it&#39;s contents.</span>
+<span class="w">  </span><span class="nl">grantWritePermission:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+
+<span class="w">  </span><span class="c1">// whether or not filter by mime type.</span>
+<span class="w">  </span><span class="nl">mimeType:</span><span class="w"> </span><span class="s1">&#39;image/*&#39;</span><span class="w"> </span><span class="c1">// default &#39;*/*&#39;</span>
+<span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">selectedDocumentUris</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;User cancelled the operation.&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// If [selectedDocumentUris] are [persistablePermission]s then it will be returned by this function</span>
+<span class="c1">// along with any another URIs you&#39;ve got permission over.</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UriPermission</span><span class="o">&gt;</span><span class="w"> </span><span class="n">persistedUris</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">persistedUriPermissions</span><span class="p">();</span>
+</code></pre></div>
+<h3 id="listfiles"><samp>listFiles</samp><a class="headerlink" href="#listfiles" title="Permanent link">&para;</a></h3>
+<p>This method list files lazily <strong>over a granted uri:</strong></p>
+<blockquote>
+<p><strong>Note</strong> <code>DocumentFileColumn.id</code> is optional. It is required to fetch the file list from native API. So it is enabled regardless if you include this column or not. And this applies only to this API (<code>listFiles</code>).</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="c1">/// *Must* be a granted uri from `openDocumentTree`, or a URI representing a child under such a granted uri.</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">myGrantedUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">documentFileOfMyGrantedUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">myGrantedUri</span><span class="p">.</span><span class="n">toDocumentFile</span><span class="p">();</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">documentFileOfMyGrantedUri</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;This is not a valid Uri permission or you do not have the permission&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">/// Columns/Fields you want access. Android handle storage as database.</span>
+<span class="c1">/// Allow you specify only the fields you need to use, avoiding querying unnecessary data</span>
+<span class="k">const</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DocumentFileColumn</span><span class="o">&gt;</span><span class="w"> </span><span class="n">columns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">DocumentFileColumn</span><span class="o">&gt;</span><span class="p">[</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">displayName</span><span class="p">,</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">size</span><span class="p">,</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">lastModified</span><span class="p">,</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="c1">// Optional column, will be available/queried regardless if is or not included here</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">mimeType</span><span class="p">,</span>
+<span class="p">];</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DocumentFile</span><span class="o">&gt;</span><span class="w"> </span><span class="n">files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">DocumentFile</span><span class="o">&gt;</span><span class="w"> </span><span class="n">onNewFileLoaded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">documentFileOfMyGrantedUri</span><span class="p">.</span><span class="n">listFiles</span><span class="p">(</span><span class="n">columns</span><span class="p">);</span>
+
+<span class="n">onNewFileLoaded</span><span class="p">.</span><span class="n">listen</span><span class="p">((</span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">files</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">file</span><span class="p">),</span><span class="w"> </span><span class="nl">onDone:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;All files were loaded&#39;</span><span class="p">));</span>
+</code></pre></div>
+<h3 id="opendocumentfile"><samp>openDocumentFile</samp><a class="headerlink" href="#opendocumentfile" title="Permanent link">&para;</a></h3>
+<p>Open a file uri in a external app, by starting a new activity with <code>ACTION_VIEW</code> Intent.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">fileUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="c1">/// This call will prompt the user: &quot;Open with&quot; dialog</span>
+<span class="c1">/// Or will open directly in the app if this there&#39;s only a single app that can handle this file type.</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">openDocumentFile</span><span class="p">(</span><span class="n">fileUri</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="getdocumentcontent"><samp>getDocumentContent</samp><a class="headerlink" href="#getdocumentcontent" title="Permanent link">&para;</a></h3>
+<p>Read a document file from its uri by opening a input stream and returning its bytes.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// See also: [getDocumentContentAsString]</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">Uint8List</span><span class="o">?</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">getDocumentContent</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+
+<span class="c1">/// Handle [fileContent]...</span>
+
+<span class="c1">/// If the file is intended to be human readable, you can convert the output to [String]:</span>
+<span class="n">print</span><span class="p">(</span><span class="n">utf8</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">fileContent</span><span class="p">));</span>
+</code></pre></div>
+<h3 id="getrealpathfromuri"><samp>getRealPathFromUri</samp><a class="headerlink" href="#getrealpathfromuri" title="Permanent link">&para;</a></h3>
+<p>Helper method to generate the file path of the given <code>uri</code>. This returns the real path to work with native old <code>File</code> API instead Uris, be aware this approach is no longer supported on Android 10+ (API 29+) and though new, this API is <strong>marked as deprecated</strong> and should be migrated to a <em>scoped-storage</em> approach.</p>
+<p>See <a href="https://stackoverflow.com/questions/20067508/get-real-path-from-uri-android-kitkat-new-storage-access-framework/20559175#20559175">Get real path from URI, Android KitKat new storage access framework</a> for details.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...;</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">filePath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">getRealPathFromUri</span><span class="p">(</span><span class="n">myUri</span><span class="p">);</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">File</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="n">filePath</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="mirror-methods">Mirror methods<a class="headerlink" href="#mirror-methods" title="Permanent link">&para;</a></h2>
+<p>Mirror methods are available to provide an way to call a native method without using any abstraction, available mirror methods:</p>
+<h3 id="exists"><samp>exists</samp><a class="headerlink" href="#exists" title="Permanent link">&para;</a></h3>
+<p>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#exists()"><code>DocumentFile.exists</code></a></p>
+<p>Returns <code>true</code> if a given <code>uri</code> exists.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kd">await</span><span class="w"> </span><span class="n">exists</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;There is no granted Uris&#39;</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;My granted Uris: </span><span class="si">$</span><span class="n">grantedUris</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="persisteduripermissions"><samp>persistedUriPermissions</samp><a class="headerlink" href="#persisteduripermissions" title="Permanent link">&para;</a></h3>
+<p>Mirror of <a href="https://developer.android.com/reference/android/content/ContentResolver#getPersistedUriPermissions()"><code>ContentResolver.getPersistedUriPermissions</code></a></p>
+<p>Basically this allow get the <strong>granted</strong> <code>Uri</code>s permissions after the app restarts without the need of requesting the folders again.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UriPermission</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">grantedUris</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">persistedUriPermissions</span><span class="p">();</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">grantedUris</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;There is no granted Uris&#39;</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;My granted Uris: </span><span class="si">$</span><span class="n">grantedUris</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>From the official docs:</p>
+<blockquote>
+<p>Return list of all URI permission grants that have been persisted by the calling app. That is, the returned permissions have been granted to the calling app. Only persistable grants taken with <code>takePersistableUriPermission(android.net.Uri, int)</code> are returned.
+Note: Some of the returned URIs may not be usable until after the user is unlocked.</p>
+</blockquote>
+<h3 id="releasepersistableuripermission"><samp>releasePersistableUriPermission</samp><a class="headerlink" href="#releasepersistableuripermission" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/android/content/ContentResolver#releasePersistableUriPermission(android.net.Uri,%20int)"><code>ContentResolver.releasePersistableUriPermission</code></a></samp></p>
+<p>Opposite of <code>openDocumentTree</code>. This method revoke all permissions you have under a specific <code>Uri</code>. This should be used to allow the user revoke the permission of <code>Uri</code>s inside your app without needing revoking at OS level.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">UriPermission</span><span class="o">&gt;</span><span class="w"> </span><span class="n">grantedUris</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="c1">/// Revoke all granted Uris</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">final</span><span class="w"> </span><span class="n">UriPermission</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">grantedUris</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">await</span><span class="w"> </span><span class="n">releasePersistableUriPermission</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">/// You can also revoke a single Uri</span>
+<span class="kd">await</span><span class="w"> </span><span class="n">releasePersistableUriPermission</span><span class="p">(</span><span class="n">grantedUris</span><span class="p">[</span><span class="m">0</span><span class="p">]);</span>
+</code></pre></div>
+<h3 id="createfileasbytes"><samp>createFileAsBytes</samp><a class="headerlink" href="#createfileasbytes" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createFile(java.lang.String,%20java.lang.String)"><code>DocumentFile.createFile</code></a></samp></p>
+<p>Create a file using raw bytes <code>Uint8List</code>.</p>
+<p>Given the parent uri, creates a new child document file that represents a single file given the <code>displayName</code>, <code>mimeType</code> and its <code>content</code> in bytes (file name, file type and file content in raw bytes, respectively).</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">parentUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;My File Content&#39;</span><span class="p">;</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">createdFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createFileAsBytes</span><span class="p">(</span>
+<span class="w">  </span><span class="n">parentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">mimeType:</span><span class="w"> </span><span class="s1">&#39;text/plain&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">displayName:</span><span class="w"> </span><span class="s1">&#39;Sample File Name&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">bytes:</span><span class="w"> </span><span class="n">Uint8List</span><span class="p">.</span><span class="n">fromList</span><span class="p">(</span><span class="n">utf8</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">fileContent</span><span class="p">)),</span>
+<span class="p">);</span>
+</code></pre></div>
+<h3 id="writetofileasbytes"><samp>writeToFileAsBytes</samp><a class="headerlink" href="#writetofileasbytes" title="Permanent link">&para;</a></h3>
+<p>Write to a file using raw bytes <code>Uint8List</code>.</p>
+<p>Given the document uri, opens the file in the specified <code>mode</code> and writes the <code>bytes</code> to it.</p>
+<p><code>mode</code> represents the mode in which the file will be opened for writing. Use <code>FileMode.write</code> for truncating (overwrite) and <code>FileMode.append</code> for appending to the file.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">documentUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;My File Content&#39;</span><span class="p">;</span>
+
+<span class="c1">/// Write to a file using a [Uint8List] as file contents [bytes]</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="o">?</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writeToFileAsBytes</span><span class="p">(</span>
+<span class="w">  </span><span class="n">documentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">bytes:</span><span class="w"> </span><span class="n">Uint8List</span><span class="p">.</span><span class="n">fromList</span><span class="p">(</span><span class="n">utf8</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">fileContent</span><span class="p">)),</span>
+<span class="w">  </span><span class="nl">mode:</span><span class="w"> </span><span class="n">FileMode</span><span class="p">.</span><span class="n">write</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="c1">/// Append to a file using a [Uint8List] as file contents [bytes]</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="o">?</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writeToFileAsBytes</span><span class="p">(</span>
+<span class="w">  </span><span class="n">documentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">bytes:</span><span class="w"> </span><span class="n">Uint8List</span><span class="p">.</span><span class="n">fromList</span><span class="p">(</span><span class="n">utf8</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">fileContent</span><span class="p">)),</span>
+<span class="w">  </span><span class="nl">mode:</span><span class="w"> </span><span class="n">FileMode</span><span class="p">.</span><span class="n">write</span><span class="p">,</span>
+<span class="p">);</span>
+</code></pre></div>
+<h3 id="canread"><samp>canRead</samp><a class="headerlink" href="#canread" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canRead()"><code>DocumentFile.canRead</code></a></samp></p>
+<p>Returns <code>true</code> if the caller can read the given <code>uri</code>, that is, if has the properly permissions.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kd">await</span><span class="w"> </span><span class="n">canRead</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;I have permissions to read </span><span class="si">$</span><span class="n">uri</span><span class="s1">&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Uint8List</span><span class="o">?</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">getDocumentContent</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">/// ...</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">UriPermission</span><span class="o">?</span><span class="w"> </span><span class="n">permission</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openDocumentTree</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">/// ...</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="canwrite"><samp>canWrite</samp><a class="headerlink" href="#canwrite" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#canWrite()"><code>DocumentFile.canWrite</code></a></samp></p>
+<p>Returns <code>true</code> if the caller can write the given <code>uri</code>, that is, if has the properly permissions.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="kd">await</span><span class="w"> </span><span class="n">canWrite</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;I have permissions to write </span><span class="si">$</span><span class="n">uri</span><span class="s1">&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">Uint8List</span><span class="o">?</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">renameTo</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;New File Name&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">/// ...</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">final</span><span class="w"> </span><span class="n">UriPermission</span><span class="o">?</span><span class="w"> </span><span class="n">permission</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openDocumentTree</span><span class="p">(</span>
+<span class="w">    </span><span class="n">uri</span><span class="p">,</span>
+<span class="w">    </span><span class="nl">grantWritePermission:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">/// ...</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="getdocumentthumbnail"><samp>getDocumentThumbnail</samp><a class="headerlink" href="#getdocumentthumbnail" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/android/provider/DocumentsContract#getDocumentThumbnail(android.content.ContentResolver,%20android.net.Uri,%20android.graphics.Point,%20android.os.CancellationSignal)"><code>DocumentsContract.getDocumentThumbnail</code></a></samp></p>
+<p>Returns the image thumbnail of a given <code>uri</code>, if any (e.g documents that can show a preview, like <em>images</em> of <em>gifs</em>, <code>null</code> otherwise).</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uint8List</span><span class="o">?</span><span class="w"> </span><span class="n">imageBytes</span><span class="p">;</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="o">?</span><span class="w"> </span><span class="n">rootUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file</span><span class="p">.</span><span class="n">metadata</span><span class="o">?</span><span class="p">.</span><span class="n">rootUri</span><span class="p">;</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">documentId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file</span><span class="p">.</span><span class="n">data</span><span class="o">?</span><span class="p">[</span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">id</span><span class="p">]</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="p">;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rootUri</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">documentId</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentBitmap</span><span class="o">?</span><span class="w"> </span><span class="n">bitmap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">getDocumentThumbnail</span><span class="p">(</span>
+<span class="w">  </span><span class="nl">rootUri:</span><span class="w"> </span><span class="n">rootUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">documentId:</span><span class="w"> </span><span class="n">documentId</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">width:</span><span class="w"> </span><span class="n">_size</span><span class="p">.</span><span class="n">width</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">height:</span><span class="w"> </span><span class="n">_size</span><span class="p">.</span><span class="n">height</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bitmap</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">mounted</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="n">setState</span><span class="p">(()</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">imageBytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bitmap</span><span class="p">.</span><span class="n">bytes</span><span class="p">);</span>
+
+<span class="c1">/// Later on...</span>
+<span class="nd">@override</span>
+<span class="n">Widget</span><span class="w"> </span><span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">imageBytes</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Loading</span><span class="p">(</span><span class="s1">&#39;My cool loading spinner&#39;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">Image</span><span class="p">.</span><span class="n">memory</span><span class="p">(</span><span class="n">imageBytes</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="documentfilecolumn"><samp>DocumentFileColumn</samp><a class="headerlink" href="#documentfilecolumn" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/android/provider/DocumentsContract.Document"><code>DocumentsContract.Document.&lt;Column&gt;</code></a></samp></p>
+<p>Use this class to refer to the SAF queryable columns in methods that requires granular/partial data fetch.</p>
+<p>For instance, in <code>listFiles</code> a large set can be returned, and to improve performance you can provide only the columns you want access/read.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// Columns/Fields you want access. Android handle storage as database.</span>
+<span class="c1">/// Allow you specify only the fields you need to use, avoiding querying unnecessary data</span>
+<span class="k">const</span><span class="w"> </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DocumentFileColumn</span><span class="o">&gt;</span><span class="w"> </span><span class="n">columns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&lt;</span><span class="n">DocumentFileColumn</span><span class="o">&gt;</span><span class="p">[</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">displayName</span><span class="p">,</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">size</span><span class="p">,</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">lastModified</span><span class="p">,</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+<span class="w">  </span><span class="n">DocumentFileColumn</span><span class="p">.</span><span class="n">mimeType</span><span class="p">,</span>
+<span class="p">];</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">DocumentFile</span><span class="o">&gt;</span><span class="w"> </span><span class="n">onNewFileLoaded</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">documentFileOfMyGrantedUri</span><span class="p">.</span><span class="n">listFiles</span><span class="p">(</span><span class="n">columns</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="delete"><samp>delete</samp><a class="headerlink" href="#delete" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#delete()"><code>DocumentFile.delete</code></a></samp></p>
+<p>Self explanatory, but just in case: delete the target uri (document file).</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">await</span><span class="w"> </span><span class="n">delete</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="createdirectory"><samp>createDirectory</samp><a class="headerlink" href="#createdirectory" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#createDirectory(java.lang.String)"><code>DocumentFile.createDirectory</code></a></samp></p>
+<p>Self explanatory, but just in case: creates a new child document file that represents a directory given the <code>displayName</code> (folder name).</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">parentUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">await</span><span class="w"> </span><span class="n">createDirectory</span><span class="p">(</span><span class="n">parentUri</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;My Folder Name&#39;</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="documentlength"><samp>documentLength</samp><a class="headerlink" href="#documentlength" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#length()"><code>DocumentFile.length</code></a></samp></p>
+<p>Returns the length of this file in bytes. Returns 0 if the file does not exist, or if the length is unknown.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="o">?</span><span class="w"> </span><span class="n">fileSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">documentLength</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="lastmodified"><samp>lastModified</samp><a class="headerlink" href="#lastmodified" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#lastModified()"><code>DocumentFile.lastModified</code></a></samp></p>
+<p>Returns the time <code>DateTime</code> when this file was last modified. Returns <code>null</code> if the file does not exist, or if the modified time is unknown.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="o">?</span><span class="w"> </span><span class="n">fileSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">documentLength</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="findfile"><samp>findFile</samp><a class="headerlink" href="#findfile" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#findFile(java.lang.String)"><code>DocumentFile.findFile</code></a></samp></p>
+<p>Search through <code>listFiles()</code> for the first document matching the given display name, this method has a really poor performance for large data sets.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">directoryUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">match</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">findFile</span><span class="p">(</span><span class="n">directoryUri</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Target File Name&#39;</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="fromtreeuri"><samp>fromTreeUri</samp><a class="headerlink" href="#fromtreeuri" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#fromTreeUri(android.content.Context,%20android.net.Uri)"><code>DocumentFile.fromTreeUri</code></a></samp></p>
+<p>Create a <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile"><code>DocumentFile</code></a> representing the document tree rooted at the given <a href="https://developer.android.com/reference/android/net/Uri.html"><code>Uri</code></a>.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">treeUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fromTreeUri</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="renameto"><samp>renameTo</samp><a class="headerlink" href="#renameto" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#renameTo(java.lang.String)"><code>DocumentFile.renameTo</code></a></samp></p>
+<p>Self explanatory, but just in case: rename the given document file given its uri and a new display name.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">await</span><span class="w"> </span><span class="n">renameTo</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;New Document Name&#39;</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="parentfile"><samp>parentFile</samp><a class="headerlink" href="#parentfile" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile#getParentFile()"><code>DocumentFile.parentFile</code></a></samp></p>
+<p>Returns the parent document file of a given document file (uri).</p>
+<p><code>null</code> if you do not have permission to see the parent folder.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">parentUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">parentFile</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="copy"><samp>copy</samp><a class="headerlink" href="#copy" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://developer.android.com/reference/android/provider/DocumentsContract#copyDocument(android.content.ContentResolver,%20android.net.Uri,%20android.net.Uri)"><code>DocumentsContract.copyDocument</code></a></samp></p>
+<p>Copy the given <code>uri</code> to a new <code>destinationUri</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">copiedFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">copy</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span><span class="w"> </span><span class="n">destination</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="alias-methods">Alias methods<a class="headerlink" href="#alias-methods" title="Permanent link">&para;</a></h2>
+<p>These APIs are only shortcuts/alias, that is, they do not call native code directly, these are just convenient methods.</p>
+<h3 id="ispersisteduri"><samp>isPersistedUri</samp><a class="headerlink" href="#ispersisteduri" title="Permanent link">&para;</a></h3>
+<p><samp>Alias for <code>persistedUriPermissions</code></samp></p>
+<p>Check if a given <code>Uri</code> is persisted/granted, that is, you have permission over it.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// Can be any Uri</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">maybeGrantedUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ensureThisIsGrantedUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">isPersistedUri</span><span class="p">(</span><span class="n">maybeGrantedUri</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ensureThisIsGrantedUri</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s1">&#39;I have permission over the Uri: </span><span class="si">$</span><span class="n">maybeGrantedUri</span><span class="s1">&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="getdocumentcontentasstring"><samp>getDocumentContentAsString</samp><a class="headerlink" href="#getdocumentcontentasstring" title="Permanent link">&para;</a></h3>
+<p><samp>Alias for <code>getDocumentContent</code></samp></p>
+<p>Read a document file from its uri by opening a input stream, reading its bytes and converting to <code>String</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">getDocumentContentAsString</span><span class="p">(</span><span class="n">uri</span><span class="p">);</span>
+
+<span class="n">print</span><span class="p">(</span><span class="n">fileContent</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="createfileasstring"><samp>createFileAsString</samp><a class="headerlink" href="#createfileasstring" title="Permanent link">&para;</a></h3>
+<p><samp>Alias for <code>createFileAsBytes</code></samp></p>
+<p>Convenient method to create a file using <code>content</code> as <code>String</code> instead <code>Uint8List</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">parentUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;My File Content&#39;</span><span class="p">;</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">createdFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createFileAsString</span><span class="p">(</span>
+<span class="w">  </span><span class="n">parentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">mimeType:</span><span class="w"> </span><span class="s1">&#39;text/plain&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">displayName:</span><span class="w"> </span><span class="s1">&#39;Sample File Name&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">content:</span><span class="w"> </span><span class="n">fileContent</span><span class="p">,</span>
+<span class="p">);</span>
+</code></pre></div>
+<h3 id="writetofileasstring"><samp>writeToFileAsString</samp><a class="headerlink" href="#writetofileasstring" title="Permanent link">&para;</a></h3>
+<p><samp>Alias for <code>writeToFileAsBytes</code></samp></p>
+<p>Convenient method to write to a file using <code>content</code> as <code>String</code> instead <code>Uint8List</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">documentUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;My File Content&#39;</span><span class="p">;</span>
+
+<span class="c1">/// Write to a file using a [Uint8List] as file contents [bytes]</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="o">?</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writeToFileAsString</span><span class="p">(</span>
+<span class="w">  </span><span class="n">documentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">content:</span><span class="w"> </span><span class="n">fileContent</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">mode:</span><span class="w"> </span><span class="n">FileMode</span><span class="p">.</span><span class="n">write</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="c1">/// Append to a file using a [Uint8List] as file contents [bytes]</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="o">?</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writeToFileAsBytes</span><span class="p">(</span>
+<span class="w">  </span><span class="n">documentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">content:</span><span class="w"> </span><span class="n">fileContent</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">mode:</span><span class="w"> </span><span class="n">FileMode</span><span class="p">.</span><span class="n">write</span><span class="p">,</span>
+<span class="p">);</span>
+</code></pre></div>
+<h3 id="createfile"><samp>createFile</samp><a class="headerlink" href="#createfile" title="Permanent link">&para;</a></h3>
+<p><samp>Alias for <code>createFileAsBytes</code> and <code>createFileAsString</code></samp></p>
+<p>Convenient method to create a file using <code>content</code> as <code>String</code> <strong>or</strong> <code>bytes</code> as <code>Uint8List</code>.</p>
+<p>You should provide either <code>content</code> or <code>bytes</code>, if both <code>bytes</code> will be used.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">parentUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;My File Content&#39;</span><span class="p">;</span>
+
+<span class="c1">/// Create a file using a [String] as file contents [content]</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">createdFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createFile</span><span class="p">(</span>
+<span class="w">  </span><span class="n">parentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">mimeType:</span><span class="w"> </span><span class="s1">&#39;text/plain&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">displayName:</span><span class="w"> </span><span class="s1">&#39;Sample File Name&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">content:</span><span class="w"> </span><span class="n">fileContent</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="c1">/// Create a file using a [Uint8List] as file contents [bytes]</span>
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">createdFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createFile</span><span class="p">(</span>
+<span class="w">  </span><span class="n">parentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">mimeType:</span><span class="w"> </span><span class="s1">&#39;text/plain&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">displayName:</span><span class="w"> </span><span class="s1">&#39;Sample File Name&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">content:</span><span class="w"> </span><span class="n">Uint8List</span><span class="p">.</span><span class="n">fromList</span><span class="p">(</span><span class="n">utf8</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">fileContent</span><span class="p">)),</span>
+<span class="p">);</span>
+</code></pre></div>
+<h3 id="writetofile"><samp>writeToFile</samp><a class="headerlink" href="#writetofile" title="Permanent link">&para;</a></h3>
+<p><samp>Alias for <code>writeToFileAsBytes</code> and <code>writeToFileAsString</code></samp></p>
+<p>Convenient method to write to a file using <code>content</code> as <code>String</code> <strong>or</strong> <code>bytes</code> as <code>Uint8List</code>.</p>
+<p>You should provide either <code>content</code> or <code>bytes</code>, if both <code>bytes</code> will be used.</p>
+<p><code>mode</code> represents the mode in which the file will be opened for writing. Use <code>FileMode.write</code> for truncating and <code>FileMode.append</code> for appending to the file.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">documentUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">String</span><span class="w"> </span><span class="n">fileContent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;My File Content&#39;</span><span class="p">;</span>
+
+<span class="c1">/// Write to a file using a [String] as file contents [content]</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="o">?</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writeToFile</span><span class="p">(</span>
+<span class="w">  </span><span class="n">documentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">content:</span><span class="w"> </span><span class="n">fileContent</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">mode:</span><span class="w"> </span><span class="n">FileMode</span><span class="p">.</span><span class="n">write</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="c1">/// Append to a file using a [String] as file contents [content]</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="o">?</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writeToFile</span><span class="p">(</span>
+<span class="w">  </span><span class="n">documentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">content:</span><span class="w"> </span><span class="n">fileContent</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">mode:</span><span class="w"> </span><span class="n">FileMode</span><span class="p">.</span><span class="n">append</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="c1">/// Write to a file using a [Uint8List] as file contents [bytes]</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="o">?</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writeToFile</span><span class="p">(</span>
+<span class="w">  </span><span class="n">documentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">content:</span><span class="w"> </span><span class="n">Uint8List</span><span class="p">.</span><span class="n">fromList</span><span class="p">(</span><span class="n">utf8</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">fileContent</span><span class="p">)),</span>
+<span class="w">  </span><span class="nl">mode:</span><span class="w"> </span><span class="n">FileMode</span><span class="p">.</span><span class="n">write</span><span class="p">,</span>
+<span class="p">);</span>
+
+<span class="c1">/// Append to a file using a [Uint8List] as file contents [bytes]</span>
+<span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="o">?</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">writeToFile</span><span class="p">(</span>
+<span class="w">  </span><span class="n">documentUri</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">content:</span><span class="w"> </span><span class="n">Uint8List</span><span class="p">.</span><span class="n">fromList</span><span class="p">(</span><span class="n">utf8</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">fileContent</span><span class="p">)),</span>
+<span class="w">  </span><span class="nl">mode:</span><span class="w"> </span><span class="n">FileMode</span><span class="p">.</span><span class="n">append</span><span class="p">,</span>
+<span class="p">);</span>
+</code></pre></div>
+<h2 id="external-apis-deprecated">External APIs (deprecated)<a class="headerlink" href="#external-apis-deprecated" title="Permanent link">&para;</a></h2>
+<p>These APIs are from external Android libraries.</p>
+<p>Will be moved to another package soon.</p>
+<h3 id="child"><samp>child</samp><a class="headerlink" href="#child" title="Permanent link">&para;</a></h3>
+<p><samp>Mirror of <a href="https://github.com/anggrayudi/SimpleStorage/blob/551fae55641dc58a9d3d99cb58fdf51c3d312b2d/storage/src/main/java/com/anggrayudi/storage/file/DocumentFileExt.kt#L270"><code>com.anggrayudi.storage.file.DocumentFile.child</code></a></samp></p>
+<p>Get the direct child of the given uri. Can be used to verify if a file already exists and check for conflicts.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">parentUri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">childDocument</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">child</span><span class="p">(</span><span class="n">parentUri</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Sample File Name&#39;</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">childDocument</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">/// This child exists...</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">/// Doesn&#39;t exists...</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="internal-types-classes">Internal Types (Classes)<a class="headerlink" href="#internal-types-classes" title="Permanent link">&para;</a></h2>
+<p>Internal type (class). Usually they are only to keep a safe typing and are not usually intended to be instantiated for the package user.</p>
+<h3 id="documentfile"><samp>DocumentFile</samp><a class="headerlink" href="#documentfile" title="Permanent link">&para;</a></h3>
+<p>This class represents but is not the mirror of the original <a href="https://developer.android.com/reference/androidx/documentfile/provider/DocumentFile"><code>DocumentFile</code></a>.</p>
+<p>This class is not intended to be instantiated, and it is only used for typing and convenient purposes.</p>
+<h3 id="querymetadata"><samp>QueryMetadata</samp><a class="headerlink" href="#querymetadata" title="Permanent link">&para;</a></h3>
+<p>This class wraps useful metadata of the source queries returned by the <code>DocumentFile</code>.</p>
+<p>This class is not intended to be instantiated, and it is only used for typing and convenience purposes.</p>
+<h3 id="documentbitmap"><samp>DocumentBitmap</samp><a class="headerlink" href="#documentbitmap" title="Permanent link">&para;</a></h3>
+<p>This class represent the bitmap/image of a document.</p>
+<p>Usually the thumbnail of the document.</p>
+<p>Should be used to show a list/grid preview of a file list.</p>
+<p>See also <code>getDocumentThumbnail</code>.</p>
+<p>This class is not intended to be instantiated, and it is only used for typing and convenient purposes.</p>
+<h2 id="extensions">Extensions<a class="headerlink" href="#extensions" title="Permanent link">&para;</a></h2>
+<p>These are most alias methods implemented through Dart extensions.</p>
+<h3 id="uritodocumentfile-on-uri"><samp>Uri.toDocumentFile on <a href="https://api.dart.dev/stable/2.17.1/dart-core/Uri-class.html"><code>Uri</code></a></samp><a class="headerlink" href="#uritodocumentfile-on-uri" title="Permanent link">&para;</a></h3>
+<p><samp>Alias for <code>DocumentFile.fromTreeUri(this)</code></samp></p>
+<p>This method convert <code>this</code> uri to the respective <code>DocumentFile</code> (if exists, otherwise <code>null</code>).</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">final</span><span class="w"> </span><span class="n">DocumentFile</span><span class="o">?</span><span class="w"> </span><span class="n">documentFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uri</span><span class="p">.</span><span class="n">toDocumentFile</span><span class="p">();</span>
+</code></pre></div>
+<h3 id="uriopendocumentfile-on-uri"><samp>Uri.openDocumentFile on <a href="https://api.dart.dev/stable/2.17.1/dart-core/Uri-class.html"><code>Uri</code></a></samp><a class="headerlink" href="#uriopendocumentfile-on-uri" title="Permanent link">&para;</a></h3>
+<p><samp>Alias for <code>openDocumentFile(this)</code></samp></p>
+<p>This method open the current uri in a third-part application through <code>ACTION_VIEW</code> intent.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">final</span><span class="w"> </span><span class="n">Uri</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">...</span>
+
+<span class="kd">await</span><span class="w"> </span><span class="n">uri</span><span class="p">.</span><span class="n">openDocumentFile</span><span class="p">();</span>
+</code></pre></div>
+<h2 id="android-official-documentation">Android Official Documentation<a class="headerlink" href="#android-official-documentation" title="Permanent link">&para;</a></h2>
+<p>The <strong>Storage Access Framework</strong> <a href="https://developer.android.com/guide/topics/providers/document-provider">official documentation is available here.</a></p>
+<p>All the APIs listed in this plugin module are derivated from the official docs.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+    
+  </body>
+</html>
